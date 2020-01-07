@@ -54,6 +54,7 @@ def start():
     while True:
         print(1)
         datagram = server.recv(65536)
+        print(2)
         if not datagram:
             print(4)
             break
