@@ -17,7 +17,7 @@ botshell.connect("/app/bot_shell.sock")
 botshell.sendall(b"wake_head\n")
 
 if os.path.exists("/dev/libcamera_stream"):
-    os.remove("/dev/libcamera_stream")\
+    os.remove("/dev/libcamera_stream")
 
 print("Opening socket...")
 server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
@@ -58,11 +58,6 @@ def start():
         if not datagram:
             print(4)
             break
-
-        # Dump contents for view here
-        print("-" * 20)
-        print(datagram)
-        print(len(datagram))
 
         # Handle based on state machine
         if state == SockState.SEARCHING:
