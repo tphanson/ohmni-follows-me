@@ -50,8 +50,8 @@ def start():
     lastrot = 0
     lastvel = 0
 
-    print("Listening...")
     server.settimeout(0.5)
+    print("Listening...")
     while True:
 
         try:
