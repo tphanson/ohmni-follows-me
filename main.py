@@ -1,7 +1,7 @@
 import sys
 
 import tensorflow as tf
-from test import camera, wheel, cam
+from tests import camera, wheel, cam
 from ohmni import start as ohmni
 
 tf.get_logger().setLevel('ERROR')
