@@ -1,12 +1,7 @@
-import platform
-import subprocess
 from PIL import Image
-from PIL import ImageDraw
-
 import socket
 import os
 import os.path
-import time
 from enum import Enum
 from struct import *
 
