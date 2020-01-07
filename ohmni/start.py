@@ -4,8 +4,8 @@ from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
-TURN = 100
-SPEED = 300
+TURN = 120
+SPEED = 350
 
 
 def start(server, botshell):
