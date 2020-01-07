@@ -1,51 +1,89 @@
-import cv2 as cv
-import threading
-import time
-from queue import Queue
+from PIL import Image
+import socket
+import os
+import os.path
+from enum import Enum
+from struct import *
 
 
-class Camera:
-    def __init__(self):
-        self.queue = Queue(2)
-        self.stop = threading.Event()
-        self.stream_thread = threading.Thread(
-            target=self.stream, args=(self.stop, self.queue, cv.VideoCapture(0),))
-        self.play_thread = threading.Thread(
-            target=self.play, args=(self.stop, self.queue, 1/24,))
+if os.path.exists("/dev/libcamera_stream"):
+    os.remove("/dev/libcamera_stream")
 
-    def play(self, stop, q, sec):
-        print("You can press Q button to stop the test!")
-        while True and not stop.wait(0.01):
-            time.sleep(sec)
-            frame = q.get()
-            cv.imshow("camera-tups", frame)
-            if cv.waitKey(10) & 0xFF == ord('q'):
-                break
-        cv.destroyWindow("camera-tups")
+print("Opening socket...")
+server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+server.bind("/dev/libcamera_stream")
+os.chown("/dev/libcamera_stream", 1047, 1047)
 
-    def stream(self, stop, q, stream):
-        while stream.isOpened() and not stop.wait(0.01):
-            ret, frame = stream.read()
-            if ret is not True:
-                break
-            if q.full():
-                q.get()
-            q.put(frame)
 
-    def test_camera(self):
-        if not self.stream_thread.isAlive():
-            self.stream_thread.start()
-        if not self.play_thread.isAlive():
-            self.play_thread.start()
+class SockState(Enum):
+    SEARCHING = 1
+    FILLING = 2
 
-    def get_stream(self):
-        if not self.stream_thread.isAlive():
-            self.stream_thread.start()
-        return self.queue
 
-    def terminate(self):
-        self.stop.set()
-        if self.play_thread.isAlive():
-            self.play_thread.join()
-        if self.stream_thread.isAlive():
-            self.stream_thread.join()
+def start():
+
+    state = SockState.SEARCHING
+    imgdata = None
+    framewidth = 0
+    frameheight = 0
+    frameformat = 0
+    framesize = 0
+
+    print("Listening...")
+    while True:
+
+        datagram = server.recv(65536)
+        if not datagram:
+            break
+
+        # Handle based on state machine
+        if state == SockState.SEARCHING:
+
+            # Check for non-control packets
+            if len(datagram) < 12 or len(datagram) > 64:
+                continue
+
+            # Check for magic
+            if not datagram.startswith(b'OHMNICAM'):
+                continue
+
+            # Unpack the bytes here now for the message type
+            msgtype = unpack("I", datagram[8:12])
+            if msgtype[0] == 1:
+                params = unpack("IIII", datagram[12:28])
+
+                state = SockState.FILLING
+                imgdata = bytearray()
+
+                framewidth = params[0]
+                frameheight = params[1]
+                frameformat = params[2]
+                framesize = params[3]
+
+        # Filling image buffer now
+        elif state == SockState.FILLING:
+
+            # Append to buffer here
+            imgdata.extend(datagram)
+
+            # Check size
+            if len(imgdata) < framesize:
+                continue
+
+            # Resize and submit
+            imgbytes = bytes(imgdata)
+            newim = Image.frombytes(
+                "L", (framewidth, frameheight), imgbytes, "raw", "L")
+            rgbim = newim.convert("RGB")
+
+            print(rgbim)
+
+            # Go back to initial state
+            state = SockState.SEARCHING
+
+    print("-" * 20)
+    print("Shutting down...")
+    server.close()
+
+    os.remove("/dev/libcamera_stream")
+    print("Done")

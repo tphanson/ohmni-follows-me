@@ -5,12 +5,6 @@ import os.path
 from enum import Enum
 from struct import *
 
-# Open connection to bot shell and send some commands
-botshell = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-botshell.connect("/app/bot_shell.sock")
-botshell.sendall(b"say hello\n")
-botshell.sendall(b"wake_head\n")
-
 if os.path.exists("/dev/libcamera_stream"):
     os.remove("/dev/libcamera_stream")
 
@@ -64,6 +58,8 @@ def start():
                 frameheight = params[1]
                 frameformat = params[2]
                 framesize = params[3]
+
+                print(framewidth, frameheight, frameformat, framesize)
 
         # Filling image buffer now
         elif state == SockState.FILLING:
