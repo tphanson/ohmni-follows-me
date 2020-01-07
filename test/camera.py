@@ -50,22 +50,10 @@ def start():
     lastrot = 0
     lastvel = 0
 
-    server.settimeout(0.5)
     print("Listening...")
     while True:
         print(1)
-        try:
-            print(2)
-            datagram = server.recv(65536)
-        except socket.timeout:
-            print(3)
-            if lastrot != 0 or lastvel != 0:
-                print("socket timeout, clear manual_move")
-                botshell.sendall("manual_move 0 0\n".encode())
-                lastrot = 0
-                lastvel = 0
-            continue
-
+        datagram = server.recv(65536)
         if not datagram:
             print(4)
             break
