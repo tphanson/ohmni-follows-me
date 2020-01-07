@@ -35,6 +35,8 @@ def start():
         if not datagram:
             break
 
+        print(state)
+
         # Handle based on state machine
         if state == SockState.SEARCHING:
 
