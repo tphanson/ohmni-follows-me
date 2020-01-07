@@ -31,7 +31,7 @@ class SockState(Enum):
     FILLING = 2
 
 
-def main():
+def start():
 
     state = SockState.SEARCHING
     imgdata = None
@@ -117,7 +117,3 @@ def main():
 
     os.remove("/dev/libcamera_stream")
     print("Done")
-
-
-if __name__ == '__main__':
-    main()

@@ -1,7 +1,7 @@
 import sys
 
 import tensorflow as tf
-from test import camera, wheel
+from test import camera, wheel, cam
 from ohmni import start as ohmni
 
 tf.get_logger().setLevel('ERROR')
@@ -12,6 +12,8 @@ if __name__ == "__main__":
             camera.start()
         if sys.argv[2] == 'wheel':
             wheel.start()
+        if sys.argv[2] == 'cam':
+            cam.start()
 
     elif sys.argv[1] == '--ohmni':
         if sys.argv[2] == 'start':
