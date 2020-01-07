@@ -67,10 +67,10 @@ def start(server, botshell):
                 print(xmed)
                 if xmed < 310:
                     # Turn left
-                    botshell.sendall("manual_move -50 -50\n".encode())
+                    botshell.sendall("manual_move -20 -20\n".encode())
                 elif xmed > 330:
                     # Turn right
-                    botshell.sendall("manual_move 50 50\n".encode())
+                    botshell.sendall("manual_move 20 20\n".encode())
                 else:
                     # Stop
                     botshell.sendall("manual_move 0 0\n".encode())
