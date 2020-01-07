@@ -95,6 +95,8 @@ def start():
                 "L", (framewidth, frameheight), imgbytes, "raw", "L")
             rgbim = newim.convert("RGB")
 
+            print(rgbim)
+
             # ADD YOUR LOGIC HERE TO PROCESS newim/rgbim
 
             # Go back to initial state
