@@ -1,40 +1,27 @@
-import os
 import cv2 as cv
-import numpy as np
 
 from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
-
-VIDEO0 = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), "../data/chaplin.mp4")
-VIDEO5 = os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), "../data/MOT17-05-SDP.mp4")
 
 
 def start(server):
     idtr = IdentityTracking()
     hd = HumanDetection()
 
-    cap = cv.VideoCapture(VIDEO0)
-    if (cap.isOpened() == False):
-        print("Error opening video stream or file")
-
     is_first_frames = idtr.tensor_length
     historical_boxes = []
     historical_obj_imgs = []
 
-    while(cap.isOpened()):
+    while(True):
         pilimg = camera.fetch(server)
-        print(pilimg)
-        
+
+        if pilimg is None:
+            continue
+
         timer = cv.getTickCount()
-        ret, frame = cap.read()
 
-        if ret != True:
-            break
-
-        img = image.convert_cv_to_pil(frame)
+        img = pilimg
         img = image.resize(img, (640, 480))
         objs = hd.predict(img)
 
@@ -77,22 +64,8 @@ def start(server):
             print(predictions)
             print(predictions[argmax])
 
-        # Test human detection
-        # image.draw_objs(img, objs)
-        # Test historical frames
-        # his_img = None
-        # for _img in historical_obj_imgs:
-        #     if his_img is None:
-        #         his_img = _img
-        #     else:
-        #         his_img = np.concatenate((his_img, _img), axis=1)
-        # cv.imshow('History', his_img)
-        # cv.moveWindow('History', 90, 650)
-
-        # img = image.convert_pil_to_cv(img)
-        # cv.imshow('Video', img)
-        # if cv.waitKey(10) & 0xFF == ord('q'):
-        #     break
+        if cv.waitKey(10) & 0xFF == ord('q'):
+            break
 
         # Calculate Frames per second (FPS)
         print("Estimated Time: ", (cv.getTickCount()-timer)/cv.getTickFrequency())
