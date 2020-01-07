@@ -10,7 +10,6 @@ if os.path.exists("/dev/libcamera_stream"):
 
 print("Opening socket...")
 server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-server.close()
 server.bind("/dev/libcamera_stream")
 os.chown("/dev/libcamera_stream", 1047, 1047)
 
