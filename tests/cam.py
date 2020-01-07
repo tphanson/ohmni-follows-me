@@ -36,30 +36,30 @@ def start():
             break
 
         # Handle based on state machine
-        # if state == SockState.SEARCHING:
+        if state == SockState.SEARCHING:
 
-        #     # Check for non-control packets
-        #     if len(datagram) < 12 or len(datagram) > 64:
-        #         continue
+            # Check for non-control packets
+            if len(datagram) < 12 or len(datagram) > 64:
+                continue
 
-        #     # Check for magic
-        #     if not datagram.startswith(b'OHMNICAM'):
-        #         continue
+            # Check for magic
+            if not datagram.startswith(b'OHMNICAM'):
+                continue
 
-        #     # Unpack the bytes here now for the message type
-        #     msgtype = unpack("I", datagram[8:12])
-        #     if msgtype[0] == 1:
-        #         params = unpack("IIII", datagram[12:28])
+            # Unpack the bytes here now for the message type
+            msgtype = unpack("I", datagram[8:12])
+            if msgtype[0] == 1:
+                params = unpack("IIII", datagram[12:28])
 
-        #         state = SockState.FILLING
-        #         imgdata = bytearray()
+                state = SockState.FILLING
+                imgdata = bytearray()
 
-        #         framewidth = params[0]
-        #         frameheight = params[1]
-        #         frameformat = params[2]
-        #         framesize = params[3]
+                framewidth = params[0]
+                frameheight = params[1]
+                frameformat = params[2]
+                framesize = params[3]
 
-        #         print(framewidth, frameheight, frameformat, framesize)
+                print(framewidth, frameheight, frameformat, framesize)
 
         # Filling image buffer now
         if state == SockState.FILLING:
