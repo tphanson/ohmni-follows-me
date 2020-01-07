@@ -49,9 +49,9 @@ def start():
 
     print("Listening...")
     while True:
-        print(1)
+        print(1, server)
         datagram = server.recv(65536)
-        print(2)
+        print(2, datagram)
         if not datagram:
             print(4)
             break
