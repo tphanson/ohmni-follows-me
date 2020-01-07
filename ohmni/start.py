@@ -4,7 +4,7 @@ from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
-TURN = 120
+TURN = 110
 SPEED = 320
 
 
