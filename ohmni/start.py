@@ -29,6 +29,7 @@ def start(server, botshell):
         objs = hd.predict(img)
 
         if len(objs) == 0:
+            botshell.sendall("manual_move 0 0\n".encode())
             continue
 
         if is_first_frames > 0:
