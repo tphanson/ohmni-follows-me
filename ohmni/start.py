@@ -2,7 +2,7 @@ import os
 import cv2 as cv
 import numpy as np
 
-from utils import image
+from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
@@ -25,6 +25,9 @@ def start():
     historical_obj_imgs = []
 
     while(cap.isOpened()):
+        pilimg = camera.fetch()
+        print(pilimg)
+        
         timer = cv.getTickCount()
         ret, frame = cap.read()
 

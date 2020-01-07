@@ -20,7 +20,7 @@ class SockState(Enum):
     FILLING = 2
 
 
-def start():
+def fetch():
 
     state = SockState.SEARCHING
     imgdata = None
@@ -29,58 +29,40 @@ def start():
     frameformat = 0
     framesize = 0
 
-    print("Listening...")
-    while True:
+    datagram = server.recv(65536)
+    if not datagram:
+        break
 
-        datagram = server.recv(65536)
-        if not datagram:
-            break
+    if state == SockState.SEARCHING:
+        if len(datagram) < 12 or len(datagram) > 64:
+            continue
+        if not datagram.startswith(b'OHMNICAM'):
+            continue
+        msgtype = unpack("I", datagram[8:12])
+        if msgtype[0] == 1:
+            params = unpack("IIII", datagram[12:28])
 
-        # Handle based on state machine
-        if state == SockState.SEARCHING:
+            state = SockState.FILLING
+            imgdata = bytearray()
 
-            # Check for non-control packets
-            if len(datagram) < 12 or len(datagram) > 64:
-                continue
+            framewidth = params[0]
+            frameheight = params[1]
+            frameformat = params[2]
+            framesize = params[3]
 
-            # Check for magic
-            if not datagram.startswith(b'OHMNICAM'):
-                continue
+    elif state == SockState.FILLING:
+        imgdata.extend(datagram)
+        if len(imgdata) < framesize:
+            continue
+        imgbytes = bytes(imgdata)
+        newim = Image.frombytes(
+            "L", (framewidth, frameheight), imgbytes, "raw", "L")
+        rgbim = newim.convert("RGB")
+        state = SockState.SEARCHING
+        return rgbim
 
-            # Unpack the bytes here now for the message type
-            msgtype = unpack("I", datagram[8:12])
-            if msgtype[0] == 1:
-                params = unpack("IIII", datagram[12:28])
 
-                state = SockState.FILLING
-                imgdata = bytearray()
-
-                framewidth = params[0]
-                frameheight = params[1]
-                frameformat = params[2]
-                framesize = params[3]
-
-        # Filling image buffer now
-        elif state == SockState.FILLING:
-
-            # Append to buffer here
-            imgdata.extend(datagram)
-
-            # Check size
-            if len(imgdata) < framesize:
-                continue
-
-            # Resize and submit
-            imgbytes = bytes(imgdata)
-            newim = Image.frombytes(
-                "L", (framewidth, frameheight), imgbytes, "raw", "L")
-            rgbim = newim.convert("RGB")
-
-            print(rgbim)
-
-            # Go back to initial state
-            state = SockState.SEARCHING
-
+def terminate():
     print("-" * 20)
     print("Shutting down...")
     server.close()
