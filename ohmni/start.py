@@ -73,10 +73,10 @@ def start(server, botshell):
                 else:
                     # Stop
                     botshell.sendall("manual_move 0 0\n".encode())
-                if area > 170000:
+                if area > 150000:
                     # Backward
                     botshell.sendall("manual_move -100 100\n".encode())
-                elif area < 150000:
+                elif area < 120000:
                     # Forward
                     botshell.sendall("manual_move 100 -100\n".encode())
                 else:
