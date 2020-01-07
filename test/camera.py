@@ -47,9 +47,6 @@ def start():
     frameformat = 0
     framesize = 0
 
-    lastrot = 0
-    lastvel = 0
-
     print("Listening...")
     while True:
         print(1)
@@ -108,7 +105,6 @@ def start():
 
             # Go back to initial state
             state = SockState.SEARCHING
-            #print("Got complete frame")
 
     print("-" * 20)
     print("Shutting down...")
