@@ -1,18 +1,6 @@
 from PIL import Image
-import socket
-import os
-import os.path
 from enum import Enum
 from struct import *
-
-
-if os.path.exists("/dev/libcamera_stream"):
-    os.remove("/dev/libcamera_stream")
-
-print("Opening socket...")
-server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-server.bind("/dev/libcamera_stream")
-os.chown("/dev/libcamera_stream", 1047, 1047)
 
 
 class SockState(Enum):
@@ -20,7 +8,7 @@ class SockState(Enum):
     FILLING = 2
 
 
-def fetch():
+def fetch(server):
 
     state = SockState.SEARCHING
     imgdata = None
@@ -61,12 +49,3 @@ def fetch():
             rgbim = newim.convert("RGB")
             state = SockState.SEARCHING
             return rgbim
-
-
-def terminate():
-    print("-" * 20)
-    print("Shutting down...")
-    server.close()
-
-    os.remove("/dev/libcamera_stream")
-    print("Done")
