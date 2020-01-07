@@ -4,7 +4,7 @@ from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
-VELOCITY = 200
+VELOCITY = 300
 
 def start(server, botshell):
     idtr = IdentityTracking()
@@ -71,10 +71,10 @@ def start(server, botshell):
                 elif xmed > 440:
                     # Turn right
                     botshell.sendall("manual_move {} {}\n".format(int(VELOCITY/2), int(VELOCITY/2)).encode())
-                elif area > 150000:
+                elif area > 100000:
                     # Backward
                     botshell.sendall("manual_move -{} {}\n".format(VELOCITY, VELOCITY).encode())
-                elif area < 100000:
+                elif area < 50000:
                     # Forward
                     botshell.sendall("manual_move {} -{}\n".format(VELOCITY, VELOCITY).encode())
                 else:
