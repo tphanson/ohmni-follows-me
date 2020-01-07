@@ -4,7 +4,7 @@ from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
-VELOCITY = 400
+VELOCITY = 100
 
 def start(server, botshell):
     idtr = IdentityTracking()
