@@ -30,13 +30,13 @@ class SockState(Enum):
     FILLING = 2
 
 
-def keyboardInterruptHandler(signal, frame):
-    print("Stopping...")
-    botshell.sendall("manual_move 0 0\n".encode())
-    exit(0)
+# def keyboardInterruptHandler(signal, frame):
+#     print("Stopping...")
+#     botshell.sendall("manual_move 0 0\n".encode())
+#     exit(0)
 
 
-signal.signal(signal.SIGINT, keyboardInterruptHandler)
+# signal.signal(signal.SIGINT, keyboardInterruptHandler)
 
 
 def start():
