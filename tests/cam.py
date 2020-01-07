@@ -22,10 +22,7 @@ def start(server):
 
         datagram = server.recv(65536)
         if not datagram:
-            print('break')
             break
-
-        print(state)
 
         # Handle based on state machine
         if state == SockState.SEARCHING:
@@ -60,7 +57,6 @@ def start(server):
             imgdata.extend(datagram)
 
             # Check size
-            print(len(imgdata), framesize)
             if len(imgdata) < framesize:
                 continue
 
