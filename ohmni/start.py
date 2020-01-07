@@ -64,20 +64,21 @@ def start(server, botshell):
                 xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
                 area = (obj.bbox.xmax-obj.bbox.xmin) * \
                     (obj.bbox.ymax-obj.bbox.ymin)
+                if xmed < 310:
+                    # Turn right
+                    botshell.sendall("manual_move 50 50\n".encode())
+                elif xmed > 330:
+                    # Turn left
+                    botshell.sendall("manual_move -50 -50\n".encode())
+                else:
+                    # Stop
+                    botshell.sendall("manual_move 0 0\n".encode())
                 if area > 170000:
                     # Backward
                     botshell.sendall("manual_move -100 100\n".encode())
-                    # if xmed < 310:
-                    #     picar.right()
-                    # elif xmed > 330:
-                    #     picar.left()
                 elif area < 150000:
                     # Forward
                     botshell.sendall("manual_move 100 -100\n".encode())
-                    # if xmed < 310:
-                    #     picar.left()
-                    # elif xmed > 330:
-                    #     picar.right()
                 else:
                     # Stop
                     botshell.sendall("manual_move 0 0\n".encode())
