@@ -45,6 +45,7 @@ def start():
     server.settimeout(0.5)
 
     botshell.sendall("manual_move -100 -100\n".encode())
+    time.sleep(2)
 
     print("-" * 20)
     print("Shutting down...")
