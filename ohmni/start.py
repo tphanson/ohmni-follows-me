@@ -79,7 +79,7 @@ def start(server, botshell):
                     # Backward
                     botshell.sendall(
                         "manual_move -{} {}\n".format(SPEED, SPEED).encode())
-                elif area < 90000:
+                elif area < 70000:
                     # Forward
                     botshell.sendall(
                         "manual_move {} -{}\n".format(SPEED, SPEED).encode())
