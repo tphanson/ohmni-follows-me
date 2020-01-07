@@ -10,86 +10,86 @@ if os.path.exists("/dev/libcamera_stream"):
 
 print('Chay may lan vay ong noi')
 print("Opening socket...")
-server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-server.bind("/dev/libcamera_stream")
-os.chown("/dev/libcamera_stream", 1047, 1047)
+# server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+# server.bind("/dev/libcamera_stream")
+# os.chown("/dev/libcamera_stream", 1047, 1047)
 
 
-class SockState(Enum):
-    SEARCHING = 1
-    FILLING = 2
+# class SockState(Enum):
+#     SEARCHING = 1
+#     FILLING = 2
 
 
-def start():
+# def start():
 
-    state = SockState.SEARCHING
-    imgdata = None
-    framewidth = 0
-    frameheight = 0
-    frameformat = 0
-    framesize = 0
+#     state = SockState.SEARCHING
+#     imgdata = None
+#     framewidth = 0
+#     frameheight = 0
+#     frameformat = 0
+#     framesize = 0
 
-    print("Listening...")
-    while True:
+#     print("Listening...")
+#     while True:
 
-        datagram = server.recv(65536)
-        if not datagram:
-            print('break')
-            break
+#         datagram = server.recv(65536)
+#         if not datagram:
+#             print('break')
+#             break
 
-        print(state)
+#         print(state)
 
-        # Handle based on state machine
-        if state == SockState.SEARCHING:
+#         # Handle based on state machine
+#         if state == SockState.SEARCHING:
 
-            # Check for non-control packets
-            if len(datagram) < 12 or len(datagram) > 64:
-                continue
+#             # Check for non-control packets
+#             if len(datagram) < 12 or len(datagram) > 64:
+#                 continue
 
-            # Check for magic
-            if not datagram.startswith(b'OHMNICAM'):
-                continue
+#             # Check for magic
+#             if not datagram.startswith(b'OHMNICAM'):
+#                 continue
 
-            # Unpack the bytes here now for the message type
-            msgtype = unpack("I", datagram[8:12])
-            if msgtype[0] == 1:
-                params = unpack("IIII", datagram[12:28])
+#             # Unpack the bytes here now for the message type
+#             msgtype = unpack("I", datagram[8:12])
+#             if msgtype[0] == 1:
+#                 params = unpack("IIII", datagram[12:28])
 
-                state = SockState.FILLING
-                imgdata = bytearray()
+#                 state = SockState.FILLING
+#                 imgdata = bytearray()
 
-                framewidth = params[0]
-                frameheight = params[1]
-                frameformat = params[2]
-                framesize = params[3]
+#                 framewidth = params[0]
+#                 frameheight = params[1]
+#                 frameformat = params[2]
+#                 framesize = params[3]
 
-                print(framewidth, frameheight, frameformat, framesize)
+#                 print(framewidth, frameheight, frameformat, framesize)
 
-        # Filling image buffer now
-        if state == SockState.FILLING:
+#         # Filling image buffer now
+#         if state == SockState.FILLING:
 
-            # Append to buffer here
-            imgdata.extend(datagram)
+#             # Append to buffer here
+#             imgdata.extend(datagram)
 
-            # Check size
-            print(len(imgdata), framesize)
-            if len(imgdata) < framesize:
-                continue
+#             # Check size
+#             print(len(imgdata), framesize)
+#             if len(imgdata) < framesize:
+#                 continue
 
-            # Resize and submit
-            imgbytes = bytes(imgdata)
-            newim = Image.frombytes(
-                "L", (framewidth, frameheight), imgbytes, "raw", "L")
-            rgbim = newim.convert("RGB")
+#             # Resize and submit
+#             imgbytes = bytes(imgdata)
+#             newim = Image.frombytes(
+#                 "L", (framewidth, frameheight), imgbytes, "raw", "L")
+#             rgbim = newim.convert("RGB")
 
-            print(rgbim)
+#             print(rgbim)
 
-            # Go back to initial state
-            state = SockState.SEARCHING
+#             # Go back to initial state
+#             state = SockState.SEARCHING
 
-    print("-" * 20)
-    print("Shutting down...")
-    server.close()
+#     print("-" * 20)
+#     print("Shutting down...")
+#     server.close()
 
-    os.remove("/dev/libcamera_stream")
-    print("Done")
+#     os.remove("/dev/libcamera_stream")
+#     print("Done")
