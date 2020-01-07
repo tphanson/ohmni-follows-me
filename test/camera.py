@@ -53,10 +53,12 @@ def start():
     server.settimeout(0.5)
     print("Listening...")
     while True:
-
+        print(1)
         try:
+            print(2)
             datagram = server.recv(65536)
         except socket.timeout:
+            print(3)
             if lastrot != 0 or lastvel != 0:
                 print("socket timeout, clear manual_move")
                 botshell.sendall("manual_move 0 0\n".encode())
@@ -65,22 +67,27 @@ def start():
             continue
 
         if not datagram:
+            print(4)
             break
 
         # Handle based on state machine
         if state == SockState.SEARCHING:
-
+            print(5)
             # Check for non-control packets
             if len(datagram) < 12 or len(datagram) > 64:
+                print(6)
                 continue
 
             # Check for magic
             if not datagram.startswith(b'OHMNICAM'):
+                print(7)
                 continue
 
             # Unpack the bytes here now for the message type
             msgtype = unpack("I", datagram[8:12])
+            print(8)
             if msgtype[0] == 1:
+                print(9)
                 params = unpack("IIII", datagram[12:28])
 
                 state = SockState.FILLING
@@ -93,12 +100,13 @@ def start():
 
         # Filling image buffer now
         elif state == SockState.FILLING:
-
+            print(10)
             # Append to buffer here
             imgdata.extend(datagram)
 
             # Check size
             if len(imgdata) < framesize:
+                print(11)
                 continue
 
             # Resize and submit
