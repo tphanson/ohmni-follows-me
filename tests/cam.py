@@ -70,6 +70,7 @@ def start():
             imgdata.extend(datagram)
 
             # Check size
+            print(len(imgdata), framesize)
             if len(imgdata) < framesize:
                 continue
 
