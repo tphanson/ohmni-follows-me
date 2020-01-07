@@ -5,7 +5,7 @@ from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
 TURN = 150
-SPEED = 400
+SPEED = 350
 
 
 def start(server, botshell):
