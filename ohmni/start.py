@@ -64,7 +64,6 @@ def start(server, botshell):
                 xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
                 area = (obj.bbox.xmax-obj.bbox.xmin) * \
                     (obj.bbox.ymax-obj.bbox.ymin)
-                print(xmed)
                 if xmed < 200:
                     # Turn left
                     botshell.sendall("manual_move -50 -50\n".encode())
