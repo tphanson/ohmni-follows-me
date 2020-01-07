@@ -13,7 +13,7 @@ from struct import *
 # Open connection to bot shell
 botshell = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 botshell.connect("/app/bot_shell.sock")
-#botshell.sendall(b"say hello\n")
+botshell.sendall(b"say hello\n")
 botshell.sendall(b"wake_head\n")
 
 if os.path.exists("/dev/libcamera_stream"):
