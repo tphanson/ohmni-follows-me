@@ -31,15 +31,6 @@ class SockState(Enum):
     FILLING = 2
 
 
-# def keyboardInterruptHandler(signal, frame):
-#     print("Stopping...")
-#     botshell.sendall("manual_move 0 0\n".encode())
-#     exit(0)
-
-
-# signal.signal(signal.SIGINT, keyboardInterruptHandler)
-
-
 def start():
 
     state = SockState.SEARCHING
@@ -57,6 +48,11 @@ def start():
         if not datagram:
             print(2)
             break
+        print(3)
+        # Dump contents for view here
+        #print("-" * 20)
+        # print(datagram)
+        # print(len(datagram))
 
         # Handle based on state machine
         if state == SockState.SEARCHING:
@@ -73,6 +69,7 @@ def start():
             msgtype = unpack("I", datagram[8:12])
             if msgtype[0] == 1:
                 params = unpack("IIII", datagram[12:28])
+                #print("Got frame start msg:", params)
 
                 state = SockState.FILLING
                 imgdata = bytearray()
@@ -81,6 +78,14 @@ def start():
                 frameheight = params[1]
                 frameformat = params[2]
                 framesize = params[3]
+
+            # elif msgtype[0] == 2:
+                # END FRAME - for now no-op
+                #print("Got end frame.")
+
+            # else:
+                # No op for other
+                #print("Got other msgtype.")
 
         # Filling image buffer now
         elif state == SockState.FILLING:
@@ -100,8 +105,11 @@ def start():
 
             print(rgbim)
 
+            # ADD YOUR LOGIC HERE TO PROCESS newim/rgbim
+
             # Go back to initial state
             state = SockState.SEARCHING
+            #print("Got complete frame")
 
     print("-" * 20)
     print("Shutting down...")
