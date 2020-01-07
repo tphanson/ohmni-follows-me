@@ -29,37 +29,38 @@ def fetch():
     frameformat = 0
     framesize = 0
 
-    datagram = server.recv(65536)
-    if not datagram:
-        break
+    while True:
+        datagram = server.recv(65536)
+        if not datagram:
+            return None
 
-    if state == SockState.SEARCHING:
-        if len(datagram) < 12 or len(datagram) > 64:
-            continue
-        if not datagram.startswith(b'OHMNICAM'):
-            continue
-        msgtype = unpack("I", datagram[8:12])
-        if msgtype[0] == 1:
-            params = unpack("IIII", datagram[12:28])
+        if state == SockState.SEARCHING:
+            if len(datagram) < 12 or len(datagram) > 64:
+                continue
+            if not datagram.startswith(b'OHMNICAM'):
+                continue
+            msgtype = unpack("I", datagram[8:12])
+            if msgtype[0] == 1:
+                params = unpack("IIII", datagram[12:28])
 
-            state = SockState.FILLING
-            imgdata = bytearray()
+                state = SockState.FILLING
+                imgdata = bytearray()
 
-            framewidth = params[0]
-            frameheight = params[1]
-            frameformat = params[2]
-            framesize = params[3]
+                framewidth = params[0]
+                frameheight = params[1]
+                frameformat = params[2]
+                framesize = params[3]
 
-    elif state == SockState.FILLING:
-        imgdata.extend(datagram)
-        if len(imgdata) < framesize:
-            continue
-        imgbytes = bytes(imgdata)
-        newim = Image.frombytes(
-            "L", (framewidth, frameheight), imgbytes, "raw", "L")
-        rgbim = newim.convert("RGB")
-        state = SockState.SEARCHING
-        return rgbim
+        elif state == SockState.FILLING:
+            imgdata.extend(datagram)
+            if len(imgdata) < framesize:
+                continue
+            imgbytes = bytes(imgdata)
+            newim = Image.frombytes(
+                "L", (framewidth, frameheight), imgbytes, "raw", "L")
+            rgbim = newim.convert("RGB")
+            state = SockState.SEARCHING
+            return rgbim
 
 
 def terminate():
