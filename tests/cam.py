@@ -8,6 +8,7 @@ from struct import *
 if os.path.exists("/dev/libcamera_stream"):
     os.remove("/dev/libcamera_stream")
 
+print('Chay may lan vay ong noi')
 print("Opening socket...")
 server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 server.bind("/dev/libcamera_stream")
@@ -33,6 +34,7 @@ def start():
 
         datagram = server.recv(65536)
         if not datagram:
+            print('break')
             break
 
         print(state)
