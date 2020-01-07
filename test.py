@@ -44,9 +44,11 @@ def main():
     while True:
 
         datagram = server.recv(65536)
+        print(1)
         if not datagram:
+            print(2)
             break
-
+        print(3)
         # Dump contents for view here
         #print("-" * 20)
         # print(datagram)
@@ -100,6 +102,8 @@ def main():
             newim = Image.frombytes(
                 "L", (framewidth, frameheight), imgbytes, "raw", "L")
             rgbim = newim.convert("RGB")
+
+            print(rgbim)
 
             # ADD YOUR LOGIC HERE TO PROCESS newim/rgbim
 
