@@ -5,7 +5,7 @@ from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
 
-def start(server):
+def start(server, botshell):
     idtr = IdentityTracking()
     hd = HumanDetection()
 
@@ -59,6 +59,28 @@ def start(server):
                 historical_boxes = bboxes_batch[argmax].copy()
                 historical_obj_imgs = obj_imgs_batch[argmax].copy()
                 image.draw_objs(img, [obj])
+
+                # Drive car
+                xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
+                area = (obj.bbox.xmax-obj.bbox.xmin) * \
+                    (obj.bbox.ymax-obj.bbox.ymin)
+                if area > 170000:
+                    # Backward
+                    botshell.sendall("manual_move -100 100\n".encode())
+                    # if xmed < 310:
+                    #     picar.right()
+                    # elif xmed > 330:
+                    #     picar.left()
+                elif area < 150000:
+                    # Forward
+                    botshell.sendall("manual_move 100 -100\n".encode())
+                    # if xmed < 310:
+                    #     picar.left()
+                    # elif xmed > 330:
+                    #     picar.right()
+                else:
+                    # Stop
+                    botshell.sendall("manual_move 0 0\n".encode())
 
             print("==================")
             print(predictions)

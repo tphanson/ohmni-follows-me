@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     elif sys.argv[1] == '--ohmni':
         if sys.argv[2] == 'start':
-            ohmni.start(server)
+            ohmni.start(server, botshell)
 
     else:
         print("Error: Invalid option!")
@@ -40,6 +40,5 @@ if __name__ == "__main__":
 print("-" * 20)
 print("Shutting down...")
 server.close()
-
 os.remove("/dev/libcamera_stream")
 print("Done")
