@@ -58,6 +58,11 @@ def start():
             print(4)
             break
 
+        # Dump contents for view here
+        print("-" * 20)
+        print(datagram)
+        print(len(datagram))
+
         # Handle based on state machine
         if state == SockState.SEARCHING:
             print(5)
