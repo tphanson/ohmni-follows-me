@@ -12,7 +12,7 @@ VIDEO5 = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), "../data/MOT17-05-SDP.mp4")
 
 
-def start():
+def start(server):
     idtr = IdentityTracking()
     hd = HumanDetection()
 
@@ -25,7 +25,7 @@ def start():
     historical_obj_imgs = []
 
     while(cap.isOpened()):
-        pilimg = camera.fetch()
+        pilimg = camera.fetch(server)
         print(pilimg)
         
         timer = cv.getTickCount()

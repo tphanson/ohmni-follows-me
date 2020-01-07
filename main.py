@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     elif sys.argv[1] == '--ohmni':
         if sys.argv[2] == 'start':
-            ohmni.start()
+            ohmni.start(server)
 
     else:
         print("Error: Invalid option!")
