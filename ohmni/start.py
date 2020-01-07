@@ -67,22 +67,22 @@ def start(server, botshell):
                 print(xmed)
                 if xmed < 200:
                     # Turn left
-                    botshell.sendall("manual_move -30 -30\n".encode())
+                    botshell.sendall("manual_move -50 -50\n".encode())
+                    continue
                 elif xmed > 440:
                     # Turn right
-                    botshell.sendall("manual_move 30 30\n".encode())
+                    botshell.sendall("manual_move 50 50\n".encode())
+                    continue
+
+                if area > 150000:
+                    # Backward
+                    botshell.sendall("manual_move -100 100\n".encode())
+                elif area < 100000:
+                    # Forward
+                    botshell.sendall("manual_move 100 -100\n".encode())
                 else:
                     # Stop
                     botshell.sendall("manual_move 0 0\n".encode())
-                # if area > 150000:
-                #     # Backward
-                #     botshell.sendall("manual_move -100 100\n".encode())
-                # elif area < 120000:
-                #     # Forward
-                #     botshell.sendall("manual_move 100 -100\n".encode())
-                # else:
-                #     # Stop
-                #     botshell.sendall("manual_move 0 0\n".encode())
 
             print("==================")
             print(predictions)
