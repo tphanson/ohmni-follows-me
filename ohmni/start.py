@@ -68,13 +68,10 @@ def start(server, botshell):
                 if xmed < 200:
                     # Turn left
                     botshell.sendall("manual_move -50 -50\n".encode())
-                    continue
                 elif xmed > 440:
                     # Turn right
                     botshell.sendall("manual_move 50 50\n".encode())
-                    continue
-
-                if area > 150000:
+                elif area > 150000:
                     # Backward
                     botshell.sendall("manual_move -100 100\n".encode())
                 elif area < 100000:
