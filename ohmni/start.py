@@ -4,8 +4,8 @@ from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
-TURN = 110
-SPEED = 320
+RO = 110
+MO = 320
 
 
 def start(server, botshell):
@@ -70,20 +70,16 @@ def start(server, botshell):
                     (obj.bbox.ymax-obj.bbox.ymin)
                 if xmed < 200:
                     # Turn left
-                    botshell.sendall(
-                        "manual_move -{} -{}\n".format(TURN, TURN).encode())
+                    botshell.sendall(f"manual_move -{RO} -{RO}\n".encode())
                 elif xmed > 440:
                     # Turn right
-                    botshell.sendall(
-                        "manual_move {} {}\n".format(TURN, TURN).encode())
+                    botshell.sendall(f"manual_move {RO} {RO}\n".encode())
                 elif area > 100000:
                     # Backward
-                    botshell.sendall(
-                        "manual_move -{} {}\n".format(SPEED, SPEED).encode())
+                    botshell.sendall(f"manual_move -{MO} {MO}\n".encode())
                 elif area < 70000:
                     # Forward
-                    botshell.sendall(
-                        "manual_move {} -{}\n".format(SPEED, SPEED).encode())
+                    botshell.sendall(f"manual_move {MO} -{MO}\n".encode())
                 else:
                     # Stop
                     botshell.sendall("manual_move 0 0\n".encode())
