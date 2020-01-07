@@ -67,16 +67,16 @@ def start(server, botshell):
                     (obj.bbox.ymax-obj.bbox.ymin)
                 if xmed < 200:
                     # Turn left
-                    botshell.sendall("manual_move -{} -{}\n".format(int(VELOCITY/2)).encode())
+                    botshell.sendall("manual_move -{} -{}\n".format(int(VELOCITY/2), int(VELOCITY/2)).encode())
                 elif xmed > 440:
                     # Turn right
-                    botshell.sendall("manual_move {} {}\n".format(int(VELOCITY/2)).encode())
+                    botshell.sendall("manual_move {} {}\n".format(int(VELOCITY/2), int(VELOCITY/2)).encode())
                 elif area > 150000:
                     # Backward
-                    botshell.sendall("manual_move -{} {}\n".format(VELOCITY).encode())
+                    botshell.sendall("manual_move -{} {}\n".format(VELOCITY, VELOCITY).encode())
                 elif area < 100000:
                     # Forward
-                    botshell.sendall("manual_move {} -{}\n".format(VELOCITY).encode())
+                    botshell.sendall("manual_move {} -{}\n".format(VELOCITY, VELOCITY).encode())
                 else:
                     # Stop
                     botshell.sendall("manual_move 0 0\n".encode())
