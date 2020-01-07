@@ -1,6 +1,6 @@
+import argparse
 import platform
 import subprocess
-import signal
 from PIL import Image
 from PIL import ImageDraw
 
@@ -11,7 +11,7 @@ import time
 from enum import Enum
 from struct import *
 
-# Open connection to bot shell
+# Open connection to bot shell and send some commands
 botshell = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 botshell.connect("/app/bot_shell.sock")
 botshell.sendall(b"say hello\n")
@@ -51,7 +51,7 @@ def start():
 
     print("Listening...")
     while True:
-        
+
         datagram = server.recv(65536)
         print(1)
         if not datagram:
@@ -60,6 +60,7 @@ def start():
 
         # Handle based on state machine
         if state == SockState.SEARCHING:
+
             # Check for non-control packets
             if len(datagram) < 12 or len(datagram) > 64:
                 continue
@@ -83,6 +84,7 @@ def start():
 
         # Filling image buffer now
         elif state == SockState.FILLING:
+
             # Append to buffer here
             imgdata.extend(datagram)
 
