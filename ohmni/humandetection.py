@@ -38,6 +38,6 @@ class HumanDetection:
         scale = detect.set_input(self.interpreter, img.shape,
                                  lambda size: cv.resize(img, size))
         self.interpreter.invoke()
-        objs = detect.get_output(self.interpreter, self.confidence, scale)
-        objs = list(filter(lambda obj: True if obj.label == 0 else False, objs))
+        objs = detect.get_output(
+            self.interpreter, self.confidence, scale, True)
         return objs

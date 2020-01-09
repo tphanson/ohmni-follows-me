@@ -29,7 +29,7 @@ def output_tensor(interpreter, i):
     return np.squeeze(tensor)
 
 
-def get_output(interpreter, score_threshold, image_scale=1.0):
+def get_output(interpreter, score_threshold, image_scale=1.0, human_only=False):
     boxes = output_tensor(interpreter, 0)
     class_ids = output_tensor(interpreter, 1)
     scores = output_tensor(interpreter, 2)
@@ -49,5 +49,7 @@ def get_output(interpreter, score_threshold, image_scale=1.0):
                       ymin=ymin,
                       xmax=xmax,
                       ymax=ymax).scale(sx, sy).map(int))
-
-    return [make(i) for i in range(count) if scores[i] >= score_threshold]
+    if (human_only):
+        return [make(i) for i in range(count) if scores[i] >= score_threshold] and int(class_ids[i]) == 0
+    else:
+        return [make(i) for i in range(count) if scores[i] >= score_threshold]

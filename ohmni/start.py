@@ -5,7 +5,7 @@ from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
-RO = 110
+RO = 100
 MO = 320
 
 
