@@ -25,9 +25,11 @@ def start(server, botshell):
 
         timer = cv.getTickCount()
 
-        
-        img = pilimg
-        img = image.resize(img, (640, 480))
+        imgstart = time.time()
+        img = image.resize(pilimg, (640, 480))
+        imgend = time.time()
+        print('Image estimated time {:.4f}'.format(imgend-imgstart))
+
         tpustart = time.time()
         objs = hd.predict(img)
         tpuend = time.time()
@@ -97,6 +99,7 @@ def start(server, botshell):
             break
 
         # Calculate Frames per second (FPS)
-        print("Total Estimated Time: ", (cv.getTickCount()-timer)/cv.getTickFrequency())
+        print("Total Estimated Time: ",
+              (cv.getTickCount()-timer)/cv.getTickFrequency())
         fps = cv.getTickFrequency() / (cv.getTickCount() - timer)
         print("FPS: {:.1f}".format(fps))
