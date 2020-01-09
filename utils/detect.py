@@ -14,7 +14,7 @@ def input_tensor(interpreter):
 
 def set_input(interpreter, size, resize):
     width, height = input_size(interpreter)
-    w, h = size
+    (h, w, _) = size
     scale = min(width / w, height / h)
     w, h = int(w * scale), int(h * scale)
     tensor = input_tensor(interpreter)

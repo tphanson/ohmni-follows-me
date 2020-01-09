@@ -28,12 +28,11 @@ def start(server, botshell):
         imgstart = time.time()
         img = image.convert_pil_to_cv(pilimg)
         cv_img = cv.resize(img, (640, 480))
-        pil_img = image.convert_cv_to_pil(cv_img)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
         tpustart = time.time()
-        objs = hd.predict(pil_img)
+        objs = hd.predict(cv_img)
         tpuend = time.time()
         print('TPU estimated time {:.4f}'.format(tpuend-tpustart))
 

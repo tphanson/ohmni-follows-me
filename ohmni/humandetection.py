@@ -1,7 +1,8 @@
 import os
 import tflite_runtime.interpreter as tflite
+import cv2 as cv
 
-from utils import detect, image
+from utils import detect
 
 EDGETPU_SHARED_LIB = 'libedgetpu.so.1'
 LABELS = os.path.join(os.path.dirname(
@@ -34,8 +35,8 @@ class HumanDetection:
 
     def predict(self, img):
         self.interpreter.allocate_tensors()
-        scale = detect.set_input(self.interpreter, img.size,
-                                 lambda size: image.resize(img, size))
+        scale = detect.set_input(self.interpreter, img.shape,
+                                 lambda size: cv.resize(img, size))
         self.interpreter.invoke()
         objs = detect.get_output(self.interpreter, self.confidence, scale)
         objs = list(filter(lambda obj: True if obj.label == 0 else False, objs))
