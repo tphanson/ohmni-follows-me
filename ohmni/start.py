@@ -24,9 +24,12 @@ def start(server, botshell):
 
         timer = cv.getTickCount()
 
+        tpustart = time.time()
         img = pilimg
         img = image.resize(img, (640, 480))
         objs = hd.predict(img)
+        tpuend = time.time()
+        print('TPU estimated time {:.4f}'.format(tpuend-tpustart))
 
         if len(objs) == 0:
             botshell.sendall("manual_move 0 0\n".encode())
