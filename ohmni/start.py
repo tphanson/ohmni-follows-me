@@ -96,6 +96,6 @@ def start(server, botshell):
             break
 
         # Calculate Frames per second (FPS)
-        print("Estimated Time: ", (cv.getTickCount()-timer)/cv.getTickFrequency())
+        print("Total Estimated Time: ", (cv.getTickCount()-timer)/cv.getTickFrequency())
         fps = cv.getTickFrequency() / (cv.getTickCount() - timer)
         print("FPS: {:.1f}".format(fps))
