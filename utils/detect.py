@@ -50,6 +50,6 @@ def get_output(interpreter, score_threshold, image_scale=1.0, human_only=False):
                       xmax=xmax,
                       ymax=ymax).scale(sx, sy).map(int))
     if (human_only):
-        return [make(i) for i in range(count) if scores[i] >= score_threshold] and int(class_ids[i]) == 0
+        return [make(i) for i in range(count) if (scores[i] >= score_threshold and int(class_ids[i]) == 0)]
     else:
-        return [make(i) for i in range(count) if scores[i] >= score_threshold]
+        return [make(i) for i in range(count) if (scores[i] >= score_threshold)]
