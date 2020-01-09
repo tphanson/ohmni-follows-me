@@ -26,7 +26,9 @@ def start(server, botshell):
         timer = cv.getTickCount()
 
         imgstart = time.time()
-        img = image.resize(pilimg, (640, 480))
+        img = image.convert_pil_to_cv(pilimg)
+        img = cv.resize(img, (640, 480))
+        img = image.convert_cv_to_pil(img)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
