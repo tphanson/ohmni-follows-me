@@ -14,8 +14,7 @@ def input_tensor(interpreter):
 
 def set_input(interpreter, img):
     tensor = input_tensor(interpreter)
-    tensor.fill(0)  # padding
-    tensor = img
+    tensor[:300, :300] = img
 
 
 def output_tensor(interpreter, i):
