@@ -1,6 +1,5 @@
 import os
 import tflite_runtime.interpreter as tflite
-import cv2 as cv
 
 from utils import detect
 
