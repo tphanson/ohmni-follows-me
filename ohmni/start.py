@@ -25,9 +25,10 @@ def start(server, botshell):
 
         timer = cv.getTickCount()
 
-        tpustart = time.time()
+        
         img = pilimg
         img = image.resize(img, (640, 480))
+        tpustart = time.time()
         objs = hd.predict(img)
         tpuend = time.time()
         print('TPU estimated time {:.4f}'.format(tpuend-tpustart))
