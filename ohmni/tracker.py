@@ -73,7 +73,7 @@ class IdentityTracking:
         self.accuracy_metric = keras.metrics.BinaryAccuracy(
             name='train_accurary')
 
-        self.checkpoint_dir = './models/idtr/training_checkpoints_' + \
+        self.checkpoint_dir = './training_checkpoints_' + \
             str(self.image_shape[0]) + '_' + str(self.tensor_length)
         self.checkpoint_prefix = os.path.join(self.checkpoint_dir, 'ckpt')
         self.checkpoint = tf.train.Checkpoint(optimizer=self.optimizer,
