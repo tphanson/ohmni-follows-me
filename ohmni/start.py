@@ -6,7 +6,7 @@ from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
 RO = 100
-MO = 320
+MO = 500
 
 
 def start(server, botshell):
