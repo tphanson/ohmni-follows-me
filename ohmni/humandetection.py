@@ -35,9 +35,7 @@ class HumanDetection:
 
     def predict(self, img):
         self.interpreter.allocate_tensors()
-        scale = detect.set_input(self.interpreter, img.shape,
-                                 lambda size: cv.resize(img, size))
+        detect.set_input(self.interpreter, img)
         self.interpreter.invoke()
-        objs = detect.get_output(
-            self.interpreter, self.confidence, scale, True)
+        objs = detect.get_output(self.interpreter, self.confidence, True)
         return objs

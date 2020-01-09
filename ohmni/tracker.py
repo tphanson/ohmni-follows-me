@@ -85,10 +85,10 @@ class IdentityTracking:
 
     def formaliza_data(self, obj, frame):
         xmin = 0 if obj.bbox.xmin < 0 else obj.bbox.xmin
-        xmax = 640 if obj.bbox.xmax > 640 else obj.bbox.xmax
+        xmax = 300 if obj.bbox.xmax > 300 else obj.bbox.xmax
         ymin = 0 if obj.bbox.ymin < 0 else obj.bbox.ymin
-        ymax = 480 if obj.bbox.ymax > 480 else obj.bbox.ymax
-        box = [xmin/640, ymin/480, xmax/640, ymax/480]
+        ymax = 300 if obj.bbox.ymax > 300 else obj.bbox.ymax
+        box = [xmin/300, ymin/300, xmax/300, ymax/300]
         if xmin == xmax:
             return np.zeros(self.image_shape)
         if ymin == ymax:

@@ -12,15 +12,10 @@ def input_tensor(interpreter):
     return interpreter.tensor(tensor_index)()[0]
 
 
-def set_input(interpreter, size, resize):
-    width, height = input_size(interpreter)
-    (h, w, _) = size
-    scale = min(width / w, height / h)
-    w, h = int(w * scale), int(h * scale)
+def set_input(interpreter, img):
     tensor = input_tensor(interpreter)
     tensor.fill(0)  # padding
-    tensor[:h, :w] = resize((w, h))
-    return scale
+    tensor = img
 
 
 def output_tensor(interpreter, i):
@@ -29,14 +24,11 @@ def output_tensor(interpreter, i):
     return np.squeeze(tensor)
 
 
-def get_output(interpreter, score_threshold, image_scale=1.0, human_only=False):
+def get_output(interpreter, score_threshold, human_only=False):
     boxes = output_tensor(interpreter, 0)
     class_ids = output_tensor(interpreter, 1)
     scores = output_tensor(interpreter, 2)
     count = int(output_tensor(interpreter, 3))
-
-    width, height = input_size(interpreter)
-    sx, sy = width / image_scale, height / image_scale
 
     def make(i):
         ymin, xmin, ymax, xmax = boxes[i]
@@ -45,10 +37,10 @@ def get_output(interpreter, score_threshold, image_scale=1.0, human_only=False):
             frame=0,
             label=int(class_ids[i]),
             score=scores[i],
-            bbox=BBox(xmin=xmin,
-                      ymin=ymin,
-                      xmax=xmax,
-                      ymax=ymax).scale(sx, sy).map(int))
+            bbox=BBox(xmin=int(xmin*300),
+                      ymin=int(ymin*300),
+                      xmax=int(xmax*300),
+                      ymax=int(ymax*300)))
     if (human_only):
         return [make(i) for i in range(count) if (scores[i] >= score_threshold and int(class_ids[i]) == 0)]
     else:
