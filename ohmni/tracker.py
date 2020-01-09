@@ -6,8 +6,8 @@ import tensorflow as tf
 from tensorflow import keras
 import tensorflow_hub as hub
 import numpy as np
+import cv2 as cv
 
-from utils import image
 
 IMAGE_SHAPE = (96, 96)
 
@@ -84,11 +84,18 @@ class IdentityTracking:
             tf.train.latest_checkpoint(self.checkpoint_dir))
 
     def formaliza_data(self, obj, frame):
-        box = [obj.bbox.xmin/640, obj.bbox.ymin/480,
-               obj.bbox.xmax/640, obj.bbox.ymax/480]
-        cropped_obj_img = image.crop(frame, obj)
-        resized_obj_img = image.resize(cropped_obj_img, self.image_shape)
-        obj_img = image.convert_pil_to_cv(resized_obj_img)/255.0
+        xmin = 0 if obj.bbox.xmin < 0 else obj.bbox.xmin
+        xmax = 640 if obj.bbox.xmax > 640 else obj.bbox.xmax
+        ymin = 0 if obj.bbox.ymin < 0 else obj.bbox.ymin
+        ymax = 480 if obj.bbox.ymax > 480 else obj.bbox.ymax
+        box = [xmin/640, ymin/480, xmax/640, ymax/480]
+        if xmin == xmax:
+            return np.zeros(self.image_shape)
+        if ymin == ymax:
+            return np.zeros(self.image_shape)
+        cropped_obj_img = frame[ymin:ymax, xmin:xmax]
+        resized_obj_img = cv.resize(cropped_obj_img, self.image_shape)
+        obj_img = resized_obj_img/255.0
         return box, obj_img
 
     @tf.function

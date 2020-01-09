@@ -27,13 +27,13 @@ def start(server, botshell):
 
         imgstart = time.time()
         img = image.convert_pil_to_cv(pilimg)
-        img = cv.resize(img, (640, 480))
-        img = image.convert_cv_to_pil(img)
+        cv_img = cv.resize(img, (640, 480))
+        pil_img = image.convert_cv_to_pil(cv_img)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
         tpustart = time.time()
-        objs = hd.predict(img)
+        objs = hd.predict(pil_img)
         tpuend = time.time()
         print('TPU estimated time {:.4f}'.format(tpuend-tpustart))
 
@@ -45,7 +45,7 @@ def start(server, botshell):
             obj_id = 0
             if len(objs) > obj_id:
                 is_first_frames -= 1
-                box, obj_img = idtr.formaliza_data(objs[obj_id], img)
+                box, obj_img = idtr.formaliza_data(objs[obj_id], cv_img)
                 historical_boxes.append(box)
                 historical_obj_imgs.append(obj_img)
             continue
@@ -54,7 +54,7 @@ def start(server, botshell):
             obj_imgs_batch = []
 
             for obj in objs:
-                box, obj_img = idtr.formaliza_data(obj, img)
+                box, obj_img = idtr.formaliza_data(obj, cv_img)
                 boxes_tensor = historical_boxes.copy()
                 boxes_tensor.pop(0)
                 boxes_tensor.append(box)
@@ -71,7 +71,6 @@ def start(server, botshell):
                 obj = objs[argmax]
                 historical_boxes = bboxes_batch[argmax].copy()
                 historical_obj_imgs = obj_imgs_batch[argmax].copy()
-                image.draw_objs(img, [obj])
 
                 # Drive car
                 xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
@@ -96,9 +95,6 @@ def start(server, botshell):
             print("==================")
             print(predictions)
             print(predictions[argmax])
-
-        if cv.waitKey(10) & 0xFF == ord('q'):
-            break
 
         # Calculate Frames per second (FPS)
         print("Total Estimated Time: ",
