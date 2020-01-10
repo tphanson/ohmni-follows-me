@@ -9,7 +9,7 @@ from ohmni.tracker import IdentityTracking
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
 # 0.43 mm/s/unit
-RO = 150
+RO = 125
 SLOW_MO = 400
 MEDIUM_MO = 750
 FAST_MO = 1000
