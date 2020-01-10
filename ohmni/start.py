@@ -10,10 +10,10 @@ from ohmni.tracker import IdentityTracking
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
-RO = 930
+RO = 300
 SLOW_MO = 300
-MEDIUM_MO = 600
-FAST_MO = 1200
+MEDIUM_MO = 500
+FAST_MO = 1000
 
 
 def start(server, botshell):
