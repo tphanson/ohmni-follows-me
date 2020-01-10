@@ -5,7 +5,8 @@ from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
-# Open camera: monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
+# Open camera:
+# monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
 # 0.43 mm/s/unit
 RO = 100
@@ -84,12 +85,15 @@ def start(server, botshell):
                 elif xmed > 200:
                     # Turn right
                     botshell.sendall(f"manual_move {RO} {RO}\n".encode())
-                elif area > 30000:
-                    # Backward
+                elif area > 25000:
+                    # Medium Backward
                     botshell.sendall(f"manual_move -{MO} {MO}\n".encode())
                 elif area < 20000:
-                    # Forward
+                    # Medium Forward
                     botshell.sendall(f"manual_move {MO} -{MO}\n".encode())
+                elif area < 15000:
+                    # Fast Forward
+                    botshell.sendall(f"manual_move {MO*2} -{MO*2}\n".encode())
                 else:
                     # Stop
                     botshell.sendall("manual_move 0 0\n".encode())
