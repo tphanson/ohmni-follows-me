@@ -79,6 +79,7 @@ def start(server, botshell):
                 xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
                 area = (obj.bbox.xmax-obj.bbox.xmin) * \
                     (obj.bbox.ymax-obj.bbox.ymin)
+                print('AREA:', area)
                 if xmed < 100:
                     # Turn left
                     botshell.sendall(f"manual_move -{RO} -{RO}\n".encode())
@@ -95,7 +96,8 @@ def start(server, botshell):
                 elif area < 18000:
                     print('move fast')
                     # Fast Forward
-                    botshell.sendall(f"manual_move {int(MO*2)} -{int(MO*2)}\n".encode())
+                    botshell.sendall(
+                        f"manual_move {int(MO*2)} -{int(MO*2)}\n".encode())
                 else:
                     # Stop
                     botshell.sendall("manual_move 0 0\n".encode())
