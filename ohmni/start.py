@@ -87,15 +87,20 @@ def start(server, botshell):
                     # Turn right
                     botshell.sendall(f"manual_move {RO} {RO}\n".encode())
                 elif area > 30000:
-                    # Medium Backward
+                    # Slow Backward
                     botshell.sendall(f"manual_move -{MO} {MO}\n".encode())
-                elif area < 15000:
+                elif area < 10000:
                     print('move fast')
                     # Fast Forward
                     botshell.sendall(f"manual_move {MO*2} -{MO*2}\n".encode())
-                elif area < 20000:
+                elif area < 15000:
                     print('move medium')
                     # Medium Forward
+                    botshell.sendall(
+                        f"manual_move {int(MO*1.5)} -{int(MO*1.5)}\n".encode())
+                elif area < 20000:
+                    print('move fast')
+                    # Fast Forward
                     botshell.sendall(f"manual_move {MO} -{MO}\n".encode())
                 else:
                     # Stop
