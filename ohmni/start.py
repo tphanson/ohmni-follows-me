@@ -8,11 +8,12 @@ from ohmni.tracker import IdentityTracking
 # Open camera:
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
-# 0.43 mm/s/unit
-RO = 125
+# RO: 0.00253 rad/s/unit ; unit: (1,1)
+# MOV: 0.43 mm/s/unit ; unit: (1,-1)
+RO = 930
 SLOW_MO = 300
-MEDIUM_MO = 500
-FAST_MO = 1000
+MEDIUM_MO = 600
+FAST_MO = 1200
 
 
 def start(server, botshell):
