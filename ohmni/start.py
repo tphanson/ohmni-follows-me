@@ -10,9 +10,9 @@ from ohmni.tracker import IdentityTracking
 
 # 0.43 mm/s/unit
 RO = 150
-SLOW_MO = 300
-MEDIUM_MO = 500
-FAST_MO = 750
+SLOW_MO = 400
+MEDIUM_MO = 750
+FAST_MO = 1500
 
 
 def start(server, botshell):
@@ -104,7 +104,7 @@ def start(server, botshell):
                         f"manual_move {MEDIUM_MO} -{MEDIUM_MO}\n".encode())
                 elif area < 20000:
                     print('move fast')
-                    # Fast Forward
+                    # Slow Forward
                     botshell.sendall(
                         f"manual_move {SLOW_MO} -{SLOW_MO}\n".encode())
                 else:
