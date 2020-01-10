@@ -83,7 +83,8 @@ def start(server, botshell):
                 xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
                 area = (obj.bbox.xmax-obj.bbox.xmin) * \
                     (obj.bbox.ymax-obj.bbox.ymin)
-                print('AREA:', area)
+                print('*** XMED:', xmed)
+                print('*** AREA:', area)
                 if xmed < 60:
                     # Fast Left
                     botshell.sendall(
