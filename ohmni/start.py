@@ -12,7 +12,7 @@ from ohmni.tracker import IdentityTracking
 RO = 150
 SLOW_MO = 400
 MEDIUM_MO = 750
-FAST_MO = 1500
+FAST_MO = 1000
 
 
 def start(server, botshell):
