@@ -85,13 +85,13 @@ def start(server, botshell):
                 elif xmed > 200:
                     # Turn right
                     botshell.sendall(f"manual_move {RO} {RO}\n".encode())
-                elif area > 25000:
+                elif area > 30000:
                     # Medium Backward
                     botshell.sendall(f"manual_move -{MO} {MO}\n".encode())
                 elif area < 20000:
                     # Medium Forward
                     botshell.sendall(f"manual_move {MO} -{MO}\n".encode())
-                elif area < 15000:
+                elif area < 18000:
                     # Fast Forward
                     botshell.sendall(f"manual_move {MO*2} -{MO*2}\n".encode())
                 else:
