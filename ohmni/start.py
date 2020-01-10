@@ -5,9 +5,11 @@ from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import IdentityTracking
 
+# Open camera: monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
+
 # 0.43 mm/s/unit
 RO = 100
-MO = 3000
+MO = 775
 
 
 def start(server, botshell):
