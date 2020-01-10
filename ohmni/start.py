@@ -10,8 +10,7 @@ from ohmni.tracker import IdentityTracking
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
-SLOW_RO = 75
-MEDIUM_RO = 150
+MEDIUM_RO = 100
 FAST_RO = 300
 SLOW_MO = 300
 MEDIUM_MO = 500
