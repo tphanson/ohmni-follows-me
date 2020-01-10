@@ -9,8 +9,10 @@ from ohmni.tracker import IdentityTracking
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
 # 0.43 mm/s/unit
-RO = 100
-MO = 500
+RO = 150
+SLOW_MO = 300
+MEDIUM_MO = 500
+FAST_MO = 750
 
 
 def start(server, botshell):
@@ -87,21 +89,24 @@ def start(server, botshell):
                     # Turn right
                     botshell.sendall(f"manual_move {RO} {RO}\n".encode())
                 elif area > 30000:
-                    # Slow Backward
-                    botshell.sendall(f"manual_move -{MO} {MO}\n".encode())
+                    # Medium Backward
+                    botshell.sendall(
+                        f"manual_move -{MEDIUM_MO} {MEDIUM_MO}\n".encode())
                 elif area < 10000:
                     print('move fast')
                     # Fast Forward
-                    botshell.sendall(f"manual_move {MO*2} -{MO*2}\n".encode())
+                    botshell.sendall(
+                        f"manual_move {FAST_MO} -{FAST_MO}\n".encode())
                 elif area < 15000:
                     print('move medium')
                     # Medium Forward
                     botshell.sendall(
-                        f"manual_move {int(MO*1.5)} -{int(MO*1.5)}\n".encode())
+                        f"manual_move {MEDIUM_MO} -{MEDIUM_MO}\n".encode())
                 elif area < 20000:
                     print('move fast')
                     # Fast Forward
-                    botshell.sendall(f"manual_move {MO} -{MO}\n".encode())
+                    botshell.sendall(
+                        f"manual_move {SLOW_MO} -{SLOW_MO}\n".encode())
                 else:
                     # Stop
                     botshell.sendall("manual_move 0 0\n".encode())
