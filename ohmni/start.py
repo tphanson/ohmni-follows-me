@@ -104,25 +104,15 @@ def start(server, botshell):
                     # Slow Forward
                     LW = LW + SLOW_MO
                     RW = RW - SLOW_MO
-                    
-                if LW < 0:  # Backward
-                    if xmed < 120:
-                        # Right
-                        LW = LW + RO
-                        RW = RW + RO
-                    elif xmed > 180:
-                        # Left
-                        LW = LW - RO
-                        RW = RW - RO
-                else:  # Backward
-                    if xmed < 120:
-                        # Left
-                        LW = LW - RO
-                        RW = RW - RO
-                    elif xmed > 180:
-                        # Right
-                        LW = LW + RO
-                        RW = RW + RO
+
+                if xmed < 120:
+                    # Left
+                    LW = LW - RO
+                    RW = RW - RO
+                elif xmed > 180:
+                    # Right
+                    LW = LW + RO
+                    RW = RW + RO
 
                 botshell.sendall(f"manual_move {LW} {RW}\n".encode())
 
