@@ -4,12 +4,13 @@ import os
 import time
 import tensorflow as tf
 from tensorflow import keras
-import tensorflow_hub as hub
 import numpy as np
 import cv2 as cv
 
+from ohmni.mobilenet import Mobilenet
 
 IMAGE_SHAPE = (96, 96)
+HISTORICAL_LENGTH = 4
 
 
 class FeaturesExtractor(keras.Model):
@@ -17,18 +18,14 @@ class FeaturesExtractor(keras.Model):
         super(FeaturesExtractor, self).__init__()
         self.fc_units = units
         self.tensor_length = tensor_length
-        self.extractor = hub.KerasLayer(
-            'https://tfhub.dev/google/imagenet/mobilenet_v2_050_96/feature_vector/4',
-            trainable=False,
-            input_shape=(IMAGE_SHAPE+(3,))
-        )
+        self.extractor = Mobilenet()
         self.fc = keras.layers.Dense(self.fc_units, activation='relu')
 
     def call(self, x):
         (batch_size, _, _, _, _) = x.shape
-        cnn_inputs = tf.reshape(
+        cnn_inputs = np.reshape(
             x, [batch_size*self.tensor_length, IMAGE_SHAPE[0], IMAGE_SHAPE[1], 3])
-        logits = self.extractor(cnn_inputs)
+        logits = self.extractor.predict(cnn_inputs)
         fc_output = self.fc(logits)
         features = tf.reshape(
             fc_output, [batch_size, self.tensor_length, self.fc_units])
@@ -53,7 +50,7 @@ class MovementExtractor(keras.Model):
 
 class IdentityTracking:
     def __init__(self):
-        self.tensor_length = 4
+        self.tensor_length = HISTORICAL_LENGTH
         self.batch_size = 64
         self.image_shape = IMAGE_SHAPE
         self.fextractor = FeaturesExtractor(self.tensor_length, 512)
