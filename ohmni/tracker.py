@@ -19,14 +19,16 @@ class FeaturesExtractor(keras.Model):
         self.fc_units = units
         self.tensor_length = tensor_length
         self.extractor = Mobilenet()
+        self.ga = tf.keras.layers.GlobalAveragePooling2D()
         self.fc = keras.layers.Dense(self.fc_units, activation='relu')
 
     def call(self, x):
         (batch_size, _, _, _, _) = x.shape
         cnn_inputs = np.reshape(
             x, [batch_size*self.tensor_length, IMAGE_SHAPE[0], IMAGE_SHAPE[1], 3])
-        logits = self.extractor.predict(cnn_inputs)
-        fc_output = self.fc(logits)
+        extractor_output = self.extractor.predict(cnn_inputs)
+        ga_output = self.ga(extractor_output)
+        fc_output = self.fc(ga_output)
         features = tf.reshape(
             fc_output, [batch_size, self.tensor_length, self.fc_units])
         return features
