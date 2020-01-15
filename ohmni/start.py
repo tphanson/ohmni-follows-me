@@ -10,8 +10,7 @@ from ohmni.tracker import IdentityTracking
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
-MEDIUM_RO = 100
-FAST_RO = 300
+RO = 200
 SLOW_MO = 300
 MEDIUM_MO = 500
 FAST_MO = 1000
@@ -85,22 +84,12 @@ def start(server, botshell):
                     (obj.bbox.ymax-obj.bbox.ymin)
                 print('*** XMED:', xmed)
                 print('*** AREA:', area)
-                if xmed < 60:
+                if xmed < 120:
                     # Fast Left
-                    botshell.sendall(
-                        f"manual_move -{FAST_RO} -{FAST_RO}\n".encode())
-                elif xmed < 120:
-                    # Medium Left
-                    botshell.sendall(
-                        f"manual_move -{MEDIUM_RO} -{MEDIUM_RO}\n".encode())
-                elif xmed > 240:
-                    # Fast Right
-                    botshell.sendall(
-                        f"manual_move {FAST_RO} {FAST_RO}\n".encode())
+                    botshell.sendall(f"manual_move -{RO} -{RO}\n".encode())
                 elif xmed > 180:
-                    # Medium Right
-                    botshell.sendall(
-                        f"manual_move {MEDIUM_RO} {MEDIUM_RO}\n".encode())
+                    # Fast Right
+                    botshell.sendall(f"manual_move {RO} {RO}\n".encode())
                 elif area > 30000:
                     # Medium Backward
                     botshell.sendall(
