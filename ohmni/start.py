@@ -84,31 +84,47 @@ def start(server, botshell):
                     (obj.bbox.ymax-obj.bbox.ymin)
                 print('*** XMED:', xmed)
                 print('*** AREA:', area)
-                if xmed < 120:
-                    # Fast Left
-                    botshell.sendall(f"manual_move -{RO} -{RO}\n".encode())
-                elif xmed > 180:
-                    # Fast Right
-                    botshell.sendall(f"manual_move {RO} {RO}\n".encode())
-                elif area > 30000:
+
+                LW = 0
+                RW = 0
+
+                if area > 30000:
                     # Medium Backward
-                    botshell.sendall(
-                        f"manual_move -{MEDIUM_MO} {MEDIUM_MO}\n".encode())
+                    LW = LW - MEDIUM_MO
+                    RW = RW + MEDIUM_MO
                 elif area < 10000:
                     # Fast Forward
-                    botshell.sendall(
-                        f"manual_move {FAST_MO} -{FAST_MO}\n".encode())
+                    LW = LW + FAST_MO
+                    RW = RW - FAST_MO
                 elif area < 15000:
                     # Medium Forward
-                    botshell.sendall(
-                        f"manual_move {MEDIUM_MO} -{MEDIUM_MO}\n".encode())
+                    LW = LW + MEDIUM_MO
+                    RW = RW - MEDIUM_MO
                 elif area < 20000:
                     # Slow Forward
-                    botshell.sendall(
-                        f"manual_move {SLOW_MO} -{SLOW_MO}\n".encode())
-                else:
-                    # Stop
-                    botshell.sendall("manual_move 0 0\n".encode())
+                    LW = LW + SLOW_MO
+                    RW = RW - SLOW_MO
+                    
+                if LW < 0:  # Backward
+                    if xmed < 120:
+                        # Right
+                        LW = LW + RO
+                        RW = RW + RO
+                    elif xmed > 180:
+                        # Left
+                        LW = LW - RO
+                        RW = RW - RO
+                else:  # Backward
+                    if xmed < 120:
+                        # Left
+                        LW = LW - RO
+                        RW = RW - RO
+                    elif xmed > 180:
+                        # Right
+                        LW = LW + RO
+                        RW = RW + RO
+
+                botshell.sendall(f"manual_move {LW} {RW}\n".encode())
 
             print("==================")
             print(predictions)
