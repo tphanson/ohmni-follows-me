@@ -7,7 +7,7 @@ from tensorflow import keras
 import numpy as np
 import cv2 as cv
 
-from ohmni.mobilenet import Mobilenet
+from src.mobilenet import Mobilenet
 
 IMAGE_SHAPE = (96, 96)
 FEATURE_SHAPE = (3, 3, 1280)
@@ -19,11 +19,12 @@ class ImageExtractor():
         self.tensor_length = tensor_length
         self.extractor = Mobilenet()
 
-    def call(self, x):
+    def call(self, x, training):
         (batch_size, _, _, _, _) = x.shape
-
+        if training:
+            x = x.numpy()
         cnn_inputs = np.reshape(
-            x.numpy(), [batch_size*self.tensor_length, IMAGE_SHAPE[0], IMAGE_SHAPE[1], 3])
+            x, [batch_size*self.tensor_length, IMAGE_SHAPE[0], IMAGE_SHAPE[1], 3])
         extractor_output = self.extractor.predict(cnn_inputs)
         features = tf.reshape(
             extractor_output, [batch_size, self.tensor_length, FEATURE_SHAPE[0], FEATURE_SHAPE[1], FEATURE_SHAPE[2]])
@@ -143,7 +144,7 @@ class IdentityTracking:
                 while True:
                     bboxes, imgs, labels = next(iterator)
                     steps_per_epoch += 1
-                    cnn_inputs = self.iextractor.call(imgs)
+                    cnn_inputs = self.iextractor.call(imgs, True)
                     self.train_step(bboxes, cnn_inputs, labels)
             except StopIteration:
                 pass
@@ -163,23 +164,20 @@ class IdentityTracking:
 
     def predict(self, bboxes_batch, obj_imgs_batch):
         movstart = time.time()
-        mov_features = self.mextractor(np.array(bboxes_batch))
+        mov_features = self.mextractor(
+            np.array(bboxes_batch, dtype=np.float32))
         movend = time.time()
         print('MOV estimated time {:.4f}'.format(movend-movstart))
 
         cnnstart = time.time()
-        temp=tf.constant(obj_imgs_batch, dtype=tf.float32)
+        cnn_inputs = self.iextractor.call(
+            np.array(obj_imgs_batch, dtype=np.float32), False)
+        cnn_features = self.fextractor(cnn_inputs)
         cnnend = time.time()
         print('CNN estimated time {:.4f}'.format(cnnend-cnnstart))
-        cnn_inputs = self.iextractor.call(temp)
-
-        mnnstart = time.time()
-        mnn_features = self.fextractor(cnn_inputs)
-        mnnend = time.time()
-        print('MNN estimated time {:.4f}'.format(mnnend-mnnstart))
 
         clstart = time.time()
-        x = tf.concat([mov_features, mnn_features], 2)
+        x = tf.concat([mov_features, cnn_features], 2)
         y = self.mymodel(x)
         predictions = tf.reshape(y, [-1])
         clend = time.time()
