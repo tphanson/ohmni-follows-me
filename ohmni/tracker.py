@@ -114,54 +114,6 @@ class IdentityTracking:
         obj_img = resized_obj_img/255.0
         return box, obj_img
 
-    @tf.function
-    def train_step(self, bboxes, cnn_inputs, labels):
-        with tf.GradientTape() as tape:
-            mov_features = self.mextractor(bboxes)
-            cnn_features = self.fextractor(cnn_inputs)
-            x = tf.concat([mov_features, cnn_features], 2)
-            y = self.mymodel(x)
-            predictions = tf.reshape(y, [-1])
-            loss = self.loss(labels, predictions)
-        variables = self.mymodel.trainable_variables + \
-            self.mextractor.trainable_variables + self.fextractor.trainable_variables
-        gradients = tape.gradient(loss, variables)
-        self.optimizer.apply_gradients(zip(gradients, variables))
-
-        self.loss_metric(loss)
-        self.accuracy_metric(labels, predictions)
-        return labels, predictions
-
-    def train(self, dataset, epochs=10):
-        for epoch in range(epochs):
-
-            start = time.time()
-            steps_per_epoch = 0
-
-            iterator = iter(dataset)
-
-            try:
-                while True:
-                    bboxes, imgs, labels = next(iterator)
-                    steps_per_epoch += 1
-                    cnn_inputs = self.iextractor.call(imgs, True)
-                    self.train_step(bboxes, cnn_inputs, labels)
-            except StopIteration:
-                pass
-
-            self.checkpoint.save(file_prefix=self.checkpoint_prefix)
-
-            end = time.time()
-            print('Epoch {}'.format(epoch + 1))
-            print('\tSteps per epoch: {}'.format(steps_per_epoch))
-            print('\tLoss Metric {:.4f}'.format(self.loss_metric.result()))
-            print('\tAccuracy Metric {:.4f}'.format(
-                self.accuracy_metric.result()*100))
-            print('\tTime taken for 1 epoch {:.4f} sec\n'.format(end - start))
-
-            self.loss_metric.reset_states()
-            self.accuracy_metric.reset_states()
-
     def predict(self, bboxes_batch, obj_imgs_batch):
         movstart = time.time()
         mov_features = self.mextractor(
@@ -178,8 +130,14 @@ class IdentityTracking:
 
         clstart = time.time()
         x = tf.concat([mov_features, cnn_features], 2)
+        clend1 = time.time()
+        print('\t Concat {:.4f}'.format(clend1-clstart))
         y = self.mymodel(x)
+        clend2 = time.time()
+        print('\t Model {:.4f}'.format(clend2-clend1))
         predictions = tf.reshape(y, [-1])
+        clend3 = time.time()
+        print('\t Reshape {:.4f}'.format(clend3-clend2))
         clend = time.time()
         print('Classification estimated time {:.4f}'.format(clend-clstart))
 
