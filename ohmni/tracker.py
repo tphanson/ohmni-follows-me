@@ -169,7 +169,7 @@ class IdentityTracking:
 
         cnnstart = time.time()
         cnn_inputs = self.iextractor.call(
-            tf.constant(obj_imgs_batch, dtype=tf.float32))cnnstart = time.time()
+            tf.constant(obj_imgs_batch, dtype=tf.float32))
         cnnend = time.time()
         print('CNN estimated time {:.4f}'.format(cnnend-cnnstart))
         
