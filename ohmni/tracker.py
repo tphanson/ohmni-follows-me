@@ -10,7 +10,24 @@ import cv2 as cv
 from ohmni.mobilenet import Mobilenet
 
 IMAGE_SHAPE = (96, 96)
+FEATURE_SHAPE = (3, 3, 1280)
 HISTORICAL_LENGTH = 4
+
+
+class ImageExtractor():
+    def __init__(self, tensor_length):
+        self.tensor_length = tensor_length
+        self.extractor = Mobilenet()
+
+    def call(self, x):
+        (batch_size, _, _, _, _) = x.shape
+
+        cnn_inputs = np.reshape(
+            x.numpy(), [batch_size*self.tensor_length, IMAGE_SHAPE[0], IMAGE_SHAPE[1], 3])
+        extractor_output = self.extractor.predict(cnn_inputs)
+        features = tf.reshape(
+            extractor_output, [batch_size, self.tensor_length, FEATURE_SHAPE[0], FEATURE_SHAPE[1], FEATURE_SHAPE[2]])
+        return features
 
 
 class FeaturesExtractor(keras.Model):
@@ -18,20 +35,18 @@ class FeaturesExtractor(keras.Model):
         super(FeaturesExtractor, self).__init__()
         self.fc_units = units
         self.tensor_length = tensor_length
-        self.extractor = Mobilenet()
         self.ga = tf.keras.layers.GlobalAveragePooling2D()
         self.fc = keras.layers.Dense(self.fc_units, activation='relu')
 
     def call(self, x):
         (batch_size, _, _, _, _) = x.shape
-        cnn_inputs = np.reshape(
-            x, [batch_size*self.tensor_length, IMAGE_SHAPE[0], IMAGE_SHAPE[1], 3])
-        extractor_output = self.extractor.predict(cnn_inputs)
-        ga_output = self.ga(extractor_output)
-        fc_output = self.fc(ga_output)
         features = tf.reshape(
+            x, [batch_size*self.tensor_length, FEATURE_SHAPE[0], FEATURE_SHAPE[1], FEATURE_SHAPE[2]])
+        ga_output = self.ga(features)
+        fc_output = self.fc(ga_output)
+        output = tf.reshape(
             fc_output, [batch_size, self.tensor_length, self.fc_units])
-        return features
+        return output
 
 
 class MovementExtractor(keras.Model):
@@ -55,6 +70,7 @@ class IdentityTracking:
         self.tensor_length = HISTORICAL_LENGTH
         self.batch_size = 64
         self.image_shape = IMAGE_SHAPE
+        self.iextractor = ImageExtractor(self.tensor_length)
         self.fextractor = FeaturesExtractor(self.tensor_length, 512)
         self.mextractor = MovementExtractor(self.tensor_length, 256)
 
@@ -125,8 +141,9 @@ class IdentityTracking:
 
             try:
                 while True:
-                    bboxes, cnn_inputs, labels = next(iterator)
+                    bboxes, imgs, labels = next(iterator)
                     steps_per_epoch += 1
+                    cnn_inputs = self.iextractor.call(imgs)
                     self.train_step(bboxes, cnn_inputs, labels)
             except StopIteration:
                 pass
@@ -151,7 +168,9 @@ class IdentityTracking:
         print('MOV estimated time {:.4f}'.format(movend-movstart))
 
         cnnstart = time.time()
-        cnn_features = self.fextractor(np.array(obj_imgs_batch))
+        cnn_inputs = self.iextractor.call(
+            tf.constant(obj_imgs_batch, dtype=tf.float32))
+        cnn_features = self.fextractor(cnn_inputs)
         cnnend = time.time()
         print('CNN estimated time {:.4f}'.format(cnnend-cnnstart))
 
