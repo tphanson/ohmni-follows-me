@@ -7,7 +7,7 @@ from tensorflow import keras
 import numpy as np
 import cv2 as cv
 
-from src.mobilenet import Mobilenet
+from ohmni.mobilenet import Mobilenet
 
 IMAGE_SHAPE = (96, 96)
 FEATURE_SHAPE = (3, 3, 1280)
