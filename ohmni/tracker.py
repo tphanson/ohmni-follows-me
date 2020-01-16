@@ -131,13 +131,10 @@ class IdentityTracking:
         clstart = time.time()
         x = tf.concat([mov_features, cnn_features], 2)
         clend1 = time.time()
-        print('\t Concat {:.4f}'.format(clend1-clstart))
         y = self.mymodel(x)
         clend2 = time.time()
         print('\t Model {:.4f}'.format(clend2-clend1))
         predictions = tf.reshape(y, [-1])
-        clend3 = time.time()
-        print('\t Reshape {:.4f}'.format(clend3-clend2))
         clend = time.time()
         print('Classification estimated time {:.4f}'.format(clend-clstart))
 

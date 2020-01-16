@@ -125,3 +125,4 @@ def start(server, botshell):
               (cv.getTickCount()-timer)/cv.getTickFrequency())
         fps = cv.getTickFrequency() / (cv.getTickCount() - timer)
         print("FPS: {:.1f}".format(fps))
+        print("\n\n")
