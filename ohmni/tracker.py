@@ -131,7 +131,9 @@ class IdentityTracking:
         clstart = time.time()
         x = tf.concat([mov_features, cnn_features], 2)
         clend1 = time.time()
-        y = self.mymodel(x)
+        y = np.array([])
+        for i in x:
+            y = np.append(y, self.mymodel(tf.convert_to_tensor([i])))
         clend2 = time.time()
         print('\t Model {:.4f}'.format(clend2-clend1))
         predictions = tf.reshape(y, [-1])
