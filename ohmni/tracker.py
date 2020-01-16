@@ -168,10 +168,10 @@ class IdentityTracking:
         print('MOV estimated time {:.4f}'.format(movend-movstart))
 
         cnnstart = time.time()
-        cnn_inputs = self.iextractor.call(
-            tf.constant(obj_imgs_batch, dtype=tf.float32))
+        temp=tf.constant(obj_imgs_batch, dtype=tf.float32)
         cnnend = time.time()
         print('CNN estimated time {:.4f}'.format(cnnend-cnnstart))
+        cnn_inputs = self.iextractor.call(temp)
 
         mnnstart = time.time()
         mnn_features = self.fextractor(cnn_inputs)
