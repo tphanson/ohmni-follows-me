@@ -179,7 +179,7 @@ class IdentityTracking:
         print('CNN estimated time {:.4f}'.format(rnnend-rnnstart))
 
         clstart = time.time()
-        x = tf.concat([mov_features, cnn_features], 2)
+        x = tf.concat([mov_features, rnn_features], 2)
         y = self.mymodel(x)
         predictions = tf.reshape(y, [-1])
         clend = time.time()
