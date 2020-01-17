@@ -116,7 +116,8 @@ class IdentityTracking:
 
     def predict(self, bboxes_batch, obj_imgs_batch):
         movstart = time.time()
-        mov_features = self.mextractor(bboxes_batch)
+        mov_features = self.mextractor(
+            tf.convert_to_tensor(bboxes_batch))
         movend = time.time()
         print('MOV estimated time {:.4f}'.format(movend-movstart))
 
