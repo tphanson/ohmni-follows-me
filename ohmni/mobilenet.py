@@ -24,7 +24,7 @@ class Mobilenet():
         output_details = self.interpreter.get_output_details()
         for (count, obj) in enumerate(tensor):
             self.interpreter.allocate_tensors()
-            self.interpreter.set_tensor(input_details[i]['index'], [obj])
+            self.interpreter.set_tensor(input_details[count]['index'], [obj])
         self.interpreter.invoke()
 
         print(count)
