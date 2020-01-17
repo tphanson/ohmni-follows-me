@@ -22,13 +22,15 @@ class Mobilenet():
         re = None
         input_details = self.interpreter.get_input_details()
         output_details = self.interpreter.get_output_details()
-        for obj in tensor:
+        for (count, obj) in enumerate(tensor):
             self.interpreter.allocate_tensors()
-            self.interpreter.set_tensor(input_details[0]['index'], [obj])
-            self.interpreter.invoke()
-            feature = self.interpreter.get_tensor(output_details[0]['index'])
-            if re is None:
-                re = feature
-            else:
-                re = np.append(re, feature, axis=0)
+            self.interpreter.set_tensor(input_details[i]['index'], [obj])
+        self.interpreter.invoke()
+
+        print(count)
+        feature = self.interpreter.get_tensor(output_details[0]['index'])
+        if re is None:
+            re = feature
+        else:
+            re = np.append(re, feature, axis=0)
         return re
