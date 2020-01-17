@@ -23,11 +23,11 @@ class Mobilenet():
         input_details = self.interpreter.get_input_details()
         output_details = self.interpreter.get_output_details()
         for (count, obj) in enumerate(tensor):
+            print(count)
             self.interpreter.allocate_tensors()
             self.interpreter.set_tensor(input_details[count]['index'], [obj])
+        
         self.interpreter.invoke()
-
-        print(count)
         feature = self.interpreter.get_tensor(output_details[0]['index'])
         if re is None:
             re = feature
