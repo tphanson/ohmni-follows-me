@@ -21,7 +21,6 @@ class Mobilenet():
     def predict(self, tensor):
         re = None
         input_details = self.interpreter.get_input_details()
-        print(input_details)
         output_details = self.interpreter.get_output_details()
         for obj in tensor:
             self.interpreter.allocate_tensors()
