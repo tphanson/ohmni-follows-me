@@ -17,18 +17,26 @@ class FeaturesExtractor(keras.Model):
         super(FeaturesExtractor, self).__init__()
         self.fc_units = units
         self.tensor_length = tensor_length
-        self.conv = tf.keras.layers.Conv2D(
-            32, 3, activation='relu', input_shape=(IMAGE_SHAPE+(3,)))
-        self.ft = tf.keras.layers.Flatten()
-        self.fc = keras.layers.Dense(self.fc_units, activation='relu')
+
+        self.model = keras.Sequential([
+            keras.layers.Conv2D(
+                32, 3, activation='relu', input_shape=(IMAGE_SHAPE+(3,))),
+            keras.layers.Flatten(),
+            keras.layers.Dense(self.fc_units, activation='relu')
+        ])
+        # self.conv = keras.layers.Conv2D(
+        #     32, 3, activation='relu', input_shape=(IMAGE_SHAPE+(3,)))
+        # self.ft = keras.layers.Flatten()
+        # self.fc = keras.layers.Dense(self.fc_units, activation='relu')
 
     def call(self, x):
         (batch_size, _, _, _, _) = x.shape
         imgs = tf.reshape(
             x, [batch_size*self.tensor_length, IMAGE_SHAPE[0], IMAGE_SHAPE[1], 3])
-        conv_output = self.conv(imgs)
-        ft_output = self.ft(conv_output)
-        fc_output = self.fc(ft_output)
+        fc_output = self.model(imgs)
+        # conv_output = self.conv(imgs)
+        # ft_output = self.ft(conv_output)
+        # fc_output = self.fc(ft_output)
         output = tf.reshape(
             fc_output, [batch_size, self.tensor_length, self.fc_units])
         return output

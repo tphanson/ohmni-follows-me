@@ -44,7 +44,7 @@ def start(server, botshell):
         print('TPU estimated time {:.4f}'.format(tpuend-tpustart))
 
         if len(objs) == 0:
-            botshell.sendall("manual_move 0 0\n".encode())
+            botshell.sendall(b"manual_move 0 0\n")
             continue
 
         if is_first_frames > 0:
