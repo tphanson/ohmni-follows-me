@@ -97,10 +97,10 @@ class IdentityTracking:
         return box, obj_img
 
     def predict(self, bboxes_batch, obj_imgs_batch):
-        movstart = time.time()
-        mov_features = self.mextractor(np.array(bboxes_batch))
-        movend = time.time()
-        print('MOV estimated time {:.4f}'.format(movend-movstart))
+        motstart = time.time()
+        mot_features = self.mextractor(np.array(bboxes_batch))
+        motend = time.time()
+        print('MOT estimated time {:.4f}'.format(motend-motstart))
 
         cnnstart = time.time()
         app_features = self.fextractor(np.array(obj_imgs_batch))
@@ -108,7 +108,7 @@ class IdentityTracking:
         print('CNN estimated time {:.4f}'.format(cnnend-cnnstart))
 
         clstart = time.time()
-        features = tf.concat([mov_features, app_features], 2)
+        features = tf.concat([mot_features, app_features], 2)
         (batch_size, _, _) = features.shape
         encode, decode = tf.split(
             features, [self.tensor_length-1, 1], axis=1)
