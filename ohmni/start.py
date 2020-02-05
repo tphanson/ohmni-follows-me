@@ -115,7 +115,9 @@ def start(server, botshell):
                     RW = RW + RO
 
                 botshell.sendall(f"manual_move {LW} {RW}\n".encode())
-
+            else:
+                botshell.sendall(f"manual_move 0 0\n")
+                
             print("==================")
             print(predictions)
             print(predictions[argmax])

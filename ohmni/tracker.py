@@ -29,7 +29,7 @@ class FeaturesExtractor(keras.Model):
         conv_output = self.conv(imgs)
         ft_output = self.ft(conv_output)
         fc_output = self.fc(ft_output)
-        output = tf.reshape(
+        output = np.reshape(
             fc_output, [batch_size, self.tensor_length, self.fc_units])
         return output
 
@@ -45,7 +45,7 @@ class MotionExtractor(keras.Model):
         (batch_size, _, _) = x.shape
         bbox_inputs = np.reshape(x, [batch_size*self.tensor_length, 4])
         fc_output = self.fc(bbox_inputs)
-        features = tf.reshape(
+        features = np.reshape(
             fc_output, [batch_size, self.tensor_length, self.fc_units])
         return features
 
