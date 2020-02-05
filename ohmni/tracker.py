@@ -115,13 +115,7 @@ class IdentityTracking:
         l_input = tf.reduce_mean(encode, 1)
         r_input = tf.reshape(decode, [batch_size, -1])
         x = tf.concat([l_input, r_input], 1)
-        clend1 = time.time()
-        # y = np.array([])
-        # for i in x:
-        #     y = np.append(y, self.mymodel(tf.convert_to_tensor([i])))
         y = self.mymodel(x)
-        clend2 = time.time()
-        print('\t Model {:.4f}'.format(clend2-clend1))
         predictions = tf.reshape(y, [-1])
         clend = time.time()
         print('Classification estimated time {:.4f}'.format(clend-clstart))
