@@ -24,7 +24,7 @@ class FeaturesExtractor(keras.Model):
 
     def call(self, x):
         (batch_size, _, _, _, _) = x.shape
-        imgs = tf.reshape(
+        imgs = np.reshape(
             x, [batch_size*self.tensor_length, IMAGE_SHAPE[0], IMAGE_SHAPE[1], 3])
         conv_output = self.conv(imgs)
         ft_output = self.ft(conv_output)
@@ -43,7 +43,7 @@ class MotionExtractor(keras.Model):
 
     def call(self, x):
         (batch_size, _, _) = x.shape
-        bbox_inputs = tf.reshape(x, [batch_size*self.tensor_length, 4])
+        bbox_inputs = np.reshape(x, [batch_size*self.tensor_length, 4])
         fc_output = self.fc(bbox_inputs)
         features = tf.reshape(
             fc_output, [batch_size, self.tensor_length, self.fc_units])
@@ -103,7 +103,7 @@ class IdentityTracking:
         print('MOV estimated time {:.4f}'.format(movend-movstart))
 
         cnnstart = time.time()
-        app_features = self.fextractor(tf.convert_to_tensor(obj_imgs_batch))
+        app_features = self.fextractor(np.array(obj_imgs_batch))
         cnnend = time.time()
         print('CNN estimated time {:.4f}'.format(cnnend-cnnstart))
 
