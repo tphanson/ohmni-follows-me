@@ -116,7 +116,7 @@ def start(server, botshell):
 
                 botshell.sendall(f"manual_move {LW} {RW}\n".encode())
             else:
-                botshell.sendall(f"manual_move 0 0\n".encode())
+                botshell.sendall(b"manual_move 0 0\n")
 
             print("==================")
             print(predictions)
