@@ -17,7 +17,6 @@ class FeaturesExtractor(keras.Model):
         super(FeaturesExtractor, self).__init__()
         self.fc_units = units
         self.tensor_length = tensor_length
-
         self.model = keras.Sequential([
             keras.layers.Conv2D(
                 32, 3, activation='relu', input_shape=(IMAGE_SHAPE+(3,))),
@@ -47,12 +46,17 @@ class MotionExtractor(keras.Model):
         super(MotionExtractor, self).__init__()
         self.fc_units = units
         self.tensor_length = tensor_length
-        self.fc = keras.layers.Dense(self.fc_units, activation='relu')
+        self.model = keras.Sequential([
+            keras.layers.Dense(
+                self.fc_units, activation='relu', input_shape=(4,))
+        ])
+        # self.fc = keras.layers.Dense(self.fc_units, activation='relu')
 
     def call(self, x):
         (batch_size, _, _) = x.shape
         bbox_inputs = tf.reshape(x, [batch_size*self.tensor_length, 4])
-        fc_output = self.fc(bbox_inputs)
+        fc_output = self.model(bbox_inputs)
+        # fc_output = self.fc(bbox_inputs)
         features = tf.reshape(
             fc_output, [batch_size, self.tensor_length, self.fc_units])
         return features
