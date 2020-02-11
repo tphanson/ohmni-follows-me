@@ -11,7 +11,7 @@ MEDIUM_MO = 1000
 FAST_MO = 2500
 # Action zones
 AREA = [8000, 15000, 20000, 30000]
-XMED = [110, 125, 140, 160, 175, 190]
+XMED = [110, 130, 145, 155, 170, 190]
 
 
 class Controller:
