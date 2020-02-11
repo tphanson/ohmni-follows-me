@@ -11,7 +11,7 @@ MEDIUM_MO = 1000
 FAST_MO = 2500
 # Action zones
 AREA = [8000, 15000, 20000, 30000]
-XMED = [115, 140, 160, 185]
+XMED = [110, 125, 140, 160, 175, 190]
 
 
 class Controller:
@@ -23,20 +23,20 @@ class Controller:
         right_margin = 0
         speed = 0
         if run == 'fast':
-            left_margin = XMED[1]
-            right_margin = XMED[2]
+            left_margin = XMED[2]
+            right_margin = XMED[3]
             speed = SLOW_RO
         elif run == 'medium':
             left_margin = XMED[1]
-            right_margin = XMED[2]
+            right_margin = XMED[4]
             speed = MEDIUM_RO
         elif run == 'slow':
             left_margin = XMED[0]
-            right_margin = XMED[3]
+            right_margin = XMED[5]
             speed = FAST_RO
         else:
-            left_margin = XMED[0]
-            right_margin = XMED[3]
+            left_margin = XMED[1]
+            right_margin = XMED[4]
             speed = MEDIUM_RO
 
         left_wheel = 0
