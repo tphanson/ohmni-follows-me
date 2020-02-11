@@ -19,7 +19,7 @@ echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sud
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 sudo apt-get update
 sudo apt-get install -y libedgetpu1-std
-pip3 install tflite_runtime-1.14.0-cp36-cp36m-linux_x86_64.whl
+pip3 install https://dl.google.com/coral/python/tflite_runtime-2.1.0-cp36-cp36m-linux_x86_64.whl
 
 # Install dependencies
 pip3 install opencv-python Pillow
