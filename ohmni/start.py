@@ -104,7 +104,7 @@ def start(server, botshell):
                     # Medium Backward
                     LW = LW - MEDIUM_MO
                     RW = RW + MEDIUM_MO
-                elif area < 9000:
+                elif area < 8000:
                     # Fast Forward
                     LW = LW + FAST_MO
                     RW = RW - FAST_MO
