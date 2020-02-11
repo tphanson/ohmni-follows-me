@@ -11,7 +11,7 @@ from ohmni.tracker import Inference
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
-SLOW_RO = 150
+SLOW_RO = 200
 MEDIUM_RO = 350
 SLOW_MO = 500
 MEDIUM_MO = 1000
