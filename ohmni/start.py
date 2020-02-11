@@ -14,7 +14,7 @@ from ohmni.tracker import Inference
 SLOW_RO = 150
 MEDIUM_RO = 350
 SLOW_MO = 500
-MEDIUM_MO = 900
+MEDIUM_MO = 1000
 FAST_MO = 1800
 
 
