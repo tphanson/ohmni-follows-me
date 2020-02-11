@@ -14,8 +14,8 @@ from ohmni.tracker import Inference
 SLOW_RO = 150
 MEDIUM_RO = 350
 SLOW_MO = 500
-MEDIUM_MO = 1000
-FAST_MO = 2000
+MEDIUM_MO = 900
+FAST_MO = 1800
 
 
 def start(server, botshell):
@@ -82,7 +82,7 @@ def start(server, botshell):
                     argmax = index
             print("Distance:", distancemax)
 
-            if distancemax < 4:
+            if distancemax < 5:
                 prev_vector = vectormax
                 obj = objs[argmax]
 
