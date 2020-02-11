@@ -84,7 +84,7 @@ def start(server, botshell):
                     argmax = index
 
             print('*** Object distance:', debug_register)
-            print('*** Minimum istance:', distancemax)
+            print('*** Minimum distance:', distancemax)
 
             if distancemax < 5:
                 prev_vector = vectormax
@@ -104,7 +104,7 @@ def start(server, botshell):
                     # Medium Backward
                     LW = LW - MEDIUM_MO
                     RW = RW + MEDIUM_MO
-                elif area < 10000:
+                elif area < 9000:
                     # Fast Forward
                     LW = LW + FAST_MO
                     RW = RW - FAST_MO
