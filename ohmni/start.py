@@ -74,18 +74,18 @@ def start(server, botshell):
                 d = np.linalg.norm(v, 2)
                 debug_register.append(d)
                 if index == 0:
+                    argmax = index
                     distancemax = d
                     vectormax = vector
-                    argmax = index
                     continue
                 if d < distancemax:
+                    argmax = index
                     distancemax = d
                     vectormax = vector
-                    argmax = index
 
             print('*** Object distance:', debug_register)
             print('*** Minimum distance:', distancemax)
-
+            
             if distancemax < 5:
                 prev_vector = vectormax
                 obj = objs[argmax]
@@ -139,6 +139,7 @@ def start(server, botshell):
                 # Dynamic test
                 botshell.sendall(f"manual_move {LW} {RW}\n".encode())
             else:
+                print('*** Manual move:', 0, 0)
                 botshell.sendall(b"manual_move 0 0\n")
 
         # Calculate Frames per second (FPS)
