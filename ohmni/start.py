@@ -1,9 +1,10 @@
 import time
 import cv2 as cv
+import numpy as np
 
 from utils import image, camera
 from ohmni.humandetection import HumanDetection
-from ohmni.tracker import IdentityTracking
+from ohmni.tracker import Inference
 
 # Open camera:
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
@@ -17,14 +18,13 @@ FAST_MO = 1500
 
 
 def start(server, botshell):
-    idtr = IdentityTracking()
+    inference = Inference()
     hd = HumanDetection()
 
-    is_first_frames = idtr.tensor_length
-    historical_boxes = []
-    historical_obj_imgs = []
+    prev_vector = None
 
     while(True):
+        print("======================================")
         pilimg = camera.fetch(server)
 
         if pilimg is None:
@@ -47,36 +47,43 @@ def start(server, botshell):
             botshell.sendall(b"manual_move 0 0\n")
             continue
 
-        if is_first_frames > 0:
+        if prev_vector is None:
             obj_id = 0
-            if len(objs) > obj_id:
-                is_first_frames -= 1
-                box, obj_img = idtr.formaliza_data(objs[obj_id], cv_img)
-                historical_boxes.append(box)
-                historical_obj_imgs.append(obj_img)
-            continue
+            if len(objs) <= obj_id:
+                continue
+            box, obj_img = inference.formaliza_data(objs[obj_id], cv_img)
+            prev_vector = inference.predict([obj_img], [box])
         else:
             bboxes_batch = []
             obj_imgs_batch = []
 
             for obj in objs:
-                box, obj_img = idtr.formaliza_data(obj, cv_img)
-                boxes_tensor = historical_boxes.copy()
-                boxes_tensor.pop(0)
-                boxes_tensor.append(box)
-                obj_imgs_tensor = historical_obj_imgs.copy()
-                obj_imgs_tensor.pop(0)
-                obj_imgs_tensor.append(obj_img)
-                bboxes_batch.append(boxes_tensor)
-                obj_imgs_batch.append(obj_imgs_tensor)
+                box, obj_img = inference.formaliza_data(obj, cv_img)
+                bboxes_batch.append(box)
+                obj_imgs_batch.append(obj_img)
 
-            predictions, argmax = idtr.predict(bboxes_batch, obj_imgs_batch)
-            predictions = predictions.numpy()
-            argmax = argmax.numpy()
-            if predictions[argmax] >= 0.7:
+            vectors = inference.predict(obj_imgs_batch, bboxes_batch)
+            argmax = 0
+            distancemax = None
+            vectormax = None
+            
+            for index, vector in enumerate(vectors):
+                v = vector - prev_vector
+                d = np.linalg.norm(v, 2)
+                if index == 0:
+                    distancemax = d
+                    vectormax = vector
+                    argmax = index
+                    continue
+                if d < distancemax:
+                    distancemax = d
+                    vectormax = vector
+                    argmax = index
+            print("Distance:", distancemax)
+
+            if distancemax < 4:
+                prev_vector = vectormax
                 obj = objs[argmax]
-                historical_boxes = bboxes_batch[argmax].copy()
-                historical_obj_imgs = obj_imgs_batch[argmax].copy()
 
                 # Drive car
                 xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
@@ -120,10 +127,6 @@ def start(server, botshell):
                 # botshell.sendall(f"manual_move {LW} {RW}\n".encode())
             else:
                 botshell.sendall(b"manual_move 0 0\n")
-
-            print("==================")
-            print(predictions)
-            print(predictions[argmax])
 
         # Calculate Frames per second (FPS)
         print("Total Estimated Time: ",

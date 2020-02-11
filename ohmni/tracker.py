@@ -2,84 +2,24 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import os
 import time
-import tensorflow as tf
-from tensorflow import keras
+import tflite_runtime.interpreter as tflite
 import numpy as np
 import cv2 as cv
 
-
 IMAGE_SHAPE = (96, 96)
-HISTORICAL_LENGTH = 4
+EDGETPU_SHARED_LIB = 'libedgetpu.so.1'
+EDGE_MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                          "../tpu/ohmnilabs_features_extractor_quant_postprocess_edgetpu.tflite")
 
 
-class FeaturesExtractor(keras.Model):
-    def __init__(self, tensor_length, units):
-        super(FeaturesExtractor, self).__init__()
-        self.fc_units = units
-        self.tensor_length = tensor_length
-        self.conv = keras.layers.Conv2D(
-            32, 3, activation='relu', input_shape=(IMAGE_SHAPE+(3,)))
-        self.ft = keras.layers.Flatten()
-        self.fc = keras.layers.Dense(self.fc_units, activation='relu')
-
-    def call(self, x):
-        (batch_size, _, _, _, _) = x.shape
-        imgs = tf.reshape(
-            x, [batch_size*self.tensor_length, IMAGE_SHAPE[0], IMAGE_SHAPE[1], 3])
-        conv_output = self.conv(imgs)
-        ft_output = self.ft(conv_output)
-        fc_output = self.fc(ft_output)
-        output = tf.reshape(
-            fc_output, [batch_size, self.tensor_length, self.fc_units])
-        return output
-
-
-class MotionExtractor(keras.Model):
-    def __init__(self, tensor_length, units):
-        super(MotionExtractor, self).__init__()
-        self.fc_units = units
-        self.tensor_length = tensor_length
-        self.fc = keras.layers.Dense(self.fc_units, activation='relu')
-
-    def call(self, x):
-        (batch_size, _, _) = x.shape
-        bbox_inputs = tf.reshape(x, [batch_size*self.tensor_length, 4])
-        fc_output = self.fc(bbox_inputs)
-        features = tf.reshape(
-            fc_output, [batch_size, self.tensor_length, self.fc_units])
-        return features
-
-
-class IdentityTracking:
+class Inference:
     def __init__(self):
-        self.tensor_length = HISTORICAL_LENGTH
-        self.batch_size = 64
         self.image_shape = IMAGE_SHAPE
-        self.fextractor = FeaturesExtractor(self.tensor_length, 128)
-        self.mextractor = MotionExtractor(self.tensor_length, 128)
-
-        self.mymodel = keras.Sequential([
-            keras.layers.Dense(256, activation='relu', input_shape=(512,)),
-            keras.layers.Dense(64, activation='relu'),
-            keras.layers.Dense(1, activation='sigmoid')
-        ])
-
-        self.optimizer = keras.optimizers.Adam()
-        self.loss = keras.losses.BinaryCrossentropy()
-
-        self.loss_metric = keras.metrics.Mean(name='train_loss')
-        self.accuracy_metric = keras.metrics.BinaryAccuracy(
-            name='train_accurary')
-
-        self.checkpoint_dir = './ohmni/training_checkpoints_' + \
-            str(self.image_shape[0]) + '_' + str(self.tensor_length)
-        self.checkpoint_prefix = os.path.join(self.checkpoint_dir, 'ckpt')
-        self.checkpoint = tf.train.Checkpoint(optimizer=self.optimizer,
-                                              fextractor=self.fextractor,
-                                              mextractor=self.mextractor,
-                                              mymodel=self.mymodel)
-        self.checkpoint.restore(
-            tf.train.latest_checkpoint(self.checkpoint_dir))
+        self.interpreter = tflite.Interpreter(
+            model_path=EDGE_MODEL,
+            experimental_delegates=[
+                tflite.load_delegate(EDGETPU_SHARED_LIB)
+            ])
 
     def formaliza_data(self, obj, frame):
         xmin = 0 if obj.bbox.xmin < 0 else obj.bbox.xmin
@@ -96,28 +36,26 @@ class IdentityTracking:
         obj_img = resized_obj_img/255.0
         return box, obj_img
 
-    def predict(self, bboxes_batch, obj_imgs_batch):
-        motstart = time.time()
-        mot_features = self.mextractor(np.array(bboxes_batch))
-        motend = time.time()
-        print('MOT estimated time {:.4f}'.format(motend-motstart))
+    def predict(self, imgs, bboxes):
+        estart = time.time()
+        features = None
+        input_details = self.interpreter.get_input_details()
+        output_details = self.interpreter.get_output_details()
 
-        cnnstart = time.time()
-        app_features = self.fextractor(np.array(obj_imgs_batch))
-        cnnend = time.time()
-        print('CNN estimated time {:.4f}'.format(cnnend-cnnstart))
+        for img in imgs:
+            img = np.array(img, dtype=np.float32)
+            self.interpreter.allocate_tensors()
+            self.interpreter.set_tensor(input_details[0]['index'], [img])
+            self.interpreter.invoke()
+            feature = self.interpreter.get_tensor(output_details[0]['index'])
+            if features is None:
+                features = feature
+            else:
+                features = np.append(features, feature, axis=0)
 
-        clstart = time.time()
-        features = tf.concat([mot_features, app_features], 2)
-        (batch_size, _, _) = features.shape
-        encode, decode = tf.split(
-            features, [self.tensor_length-1, 1], axis=1)
-        l_input = tf.reduce_mean(encode, 1)
-        r_input = tf.reshape(decode, [batch_size, -1])
-        x = tf.concat([l_input, r_input], 1)
-        y = self.mymodel(x)
-        predictions = tf.reshape(y, [-1])
-        clend = time.time()
-        print('Classification estimated time {:.4f}'.format(clend-clstart))
+        bboxes = np.array(bboxes, dtype=np.float32)
+        output = np.concatenate((features, bboxes), axis=1)
+        eend = time.time()
+        print('Extractor estimated time {:.4f}'.format(eend-estart))
 
-        return predictions, tf.math.argmax(predictions)
+        return output
