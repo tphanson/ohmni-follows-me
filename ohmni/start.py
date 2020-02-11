@@ -11,7 +11,8 @@ from ohmni.tracker import Inference
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
-RO = 350
+SLOW_RO = 150
+MEDIUM_RO = 350
 SLOW_MO = 700
 MEDIUM_MO = 1000
 FAST_MO = 2000
@@ -66,7 +67,7 @@ def start(server, botshell):
             argmax = 0
             distancemax = None
             vectormax = None
-            
+
             for index, vector in enumerate(vectors):
                 v = vector - prev_vector
                 d = np.linalg.norm(v, 2)
@@ -114,12 +115,20 @@ def start(server, botshell):
 
                 if xmed < 120:
                     # Left
-                    LW = LW - RO
-                    RW = RW - RO
+                    if area < 20000:
+                        LW = LW - MEDIUM_RO
+                        RW = RW - MEDIUM_RO
+                    else:
+                        LW = LW - SLOW_RO
+                        RW = RW - SLOW_RO
                 elif xmed > 180:
                     # Right
-                    LW = LW + RO
-                    RW = RW + RO
+                    if area < 20000:
+                        LW = LW + MEDIUM_RO
+                        RW = RW + MEDIUM_RO
+                    else:
+                        LW = LW + SLOW_RO
+                        RW = RW + SLOW_RO
 
                 # Static test
                 # print('*** Manual move:', LW, RW)
