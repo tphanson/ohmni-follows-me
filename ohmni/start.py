@@ -13,9 +13,9 @@ from ohmni.tracker import Inference
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
 SLOW_RO = 150
 MEDIUM_RO = 350
-SLOW_MO = 700
-MEDIUM_MO = 1000
-FAST_MO = 2000
+SLOW_MO = 400
+MEDIUM_MO = 700
+FAST_MO = 1500
 
 
 def start(server, botshell):
