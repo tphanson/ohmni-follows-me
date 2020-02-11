@@ -67,10 +67,12 @@ def start(server, botshell):
             argmax = 0
             distancemax = None
             vectormax = None
+            debug_register = []
 
             for index, vector in enumerate(vectors):
                 v = vector - prev_vector
                 d = np.linalg.norm(v, 2)
+                debug_register.append(d)
                 if index == 0:
                     distancemax = d
                     vectormax = vector
@@ -80,7 +82,9 @@ def start(server, botshell):
                     distancemax = d
                     vectormax = vector
                     argmax = index
-            print("Distance:", distancemax)
+
+            print('*** Object distance:', debug_register)
+            print('*** Minimum istance:', distancemax)
 
             if distancemax < 5:
                 prev_vector = vectormax
