@@ -13,9 +13,9 @@ from ohmni.tracker import Inference
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
 SLOW_RO = 150
 MEDIUM_RO = 350
-SLOW_MO = 400
-MEDIUM_MO = 700
-FAST_MO = 1500
+SLOW_MO = 500
+MEDIUM_MO = 1000
+FAST_MO = 2000
 
 
 def start(server, botshell):
@@ -116,19 +116,19 @@ def start(server, botshell):
                 if xmed < 120:
                     # Left
                     if area < 20000:
-                        LW = LW - MEDIUM_RO
-                        RW = RW - MEDIUM_RO
-                    else:
                         LW = LW - SLOW_RO
                         RW = RW - SLOW_RO
+                    else:
+                        LW = LW - MEDIUM_RO
+                        RW = RW - MEDIUM_RO
                 elif xmed > 180:
                     # Right
                     if area < 20000:
-                        LW = LW + MEDIUM_RO
-                        RW = RW + MEDIUM_RO
-                    else:
                         LW = LW + SLOW_RO
                         RW = RW + SLOW_RO
+                    else:
+                        LW = LW + MEDIUM_RO
+                        RW = RW + MEDIUM_RO
 
                 # Static test
                 # print('*** Manual move:', LW, RW)
