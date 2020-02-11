@@ -83,7 +83,7 @@ def start(server, botshell):
                     distancemax = d
                     vectormax = vector
 
-            print('*** Object distance:', debug_register)
+            print('*** Object distances:', debug_register)
             print('*** Minimum distance:', distancemax)
             
             if distancemax < 5:
