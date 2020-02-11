@@ -135,7 +135,7 @@ def start(server, botshell):
                         RW = RW + MEDIUM_RO
 
                 # Static test
-                # print('*** Manual move:', LW, RW)
+                print('*** Manual move:', LW, RW)
                 # Dynamic test
                 botshell.sendall(f"manual_move {LW} {RW}\n".encode())
             else:
