@@ -5,6 +5,7 @@ import numpy as np
 from utils import image, camera
 from ohmni.humandetection import HumanDetection
 from ohmni.tracker import Inference
+from ohmni.controller import Controller
 
 # Open camera:
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
@@ -21,6 +22,7 @@ FAST_MO = 2500
 def start(server, botshell):
     inference = Inference()
     hd = HumanDetection()
+    ctrl = Controller()
 
     prev_vector = None
 
@@ -85,54 +87,19 @@ def start(server, botshell):
 
             print('*** Object distances:', debug_register)
             print('*** Minimum distance:', distancemax)
-            
+
             if distancemax < 5:
                 prev_vector = vectormax
                 obj = objs[argmax]
 
                 # Drive car
-                xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
                 area = (obj.bbox.xmax-obj.bbox.xmin) * \
                     (obj.bbox.ymax-obj.bbox.ymin)
-                print('*** XMED:', xmed)
+                xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
                 print('*** AREA:', area)
+                print('*** XMED:', xmed)
 
-                LW = 0
-                RW = 0
-
-                if area > 30000:
-                    # Medium Backward
-                    LW = LW - MEDIUM_MO
-                    RW = RW + MEDIUM_MO
-                elif area < 8000:
-                    # Fast Forward
-                    LW = LW + FAST_MO
-                    RW = RW - FAST_MO
-                elif area < 15000:
-                    # Medium Forward
-                    LW = LW + MEDIUM_MO
-                    RW = RW - MEDIUM_MO
-                elif area < 20000:
-                    # Slow Forward
-                    LW = LW + SLOW_MO
-                    RW = RW - SLOW_MO
-
-                if xmed < 120:
-                    # Left
-                    if area < 20000:
-                        LW = LW - SLOW_RO
-                        RW = RW - SLOW_RO
-                    else:
-                        LW = LW - MEDIUM_RO
-                        RW = RW - MEDIUM_RO
-                elif xmed > 180:
-                    # Right
-                    if area < 20000:
-                        LW = LW + SLOW_RO
-                        RW = RW + SLOW_RO
-                    else:
-                        LW = LW + MEDIUM_RO
-                        RW = RW + MEDIUM_RO
+                LW, RW = ctrl.calculate(area, xmed)
 
                 # Static test
                 print('*** Manual move:', LW, RW)
