@@ -4,11 +4,8 @@ import socket
 import os
 import os.path
 
-import tensorflow as tf
 from tests import wheel, cam
 from ohmni import start as ohmni
-
-tf.get_logger().setLevel('ERROR')
 
 if os.path.exists("/dev/libcamera_stream"):
     os.remove("/dev/libcamera_stream")
