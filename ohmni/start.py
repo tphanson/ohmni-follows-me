@@ -80,7 +80,7 @@ def start(server, botshell):
             print('*** Object distances:', debug_register)
             print('*** Minimum distance:', distancemax)
 
-            if distancemax < 5:
+            if distancemax < 4:
                 prev_vector = vectormax
                 obj = objs[argmax]
 
