@@ -8,7 +8,7 @@ FAST_RO = 350
 # Speed of run
 SLOW_MO = 500
 MEDIUM_MO = 1000
-FAST_MO = 2500
+FAST_MO = 1900
 # Action zones
 AREA = [8000, 15000, 20000, 30000]
 XMED = [110, 130, 145, 155, 170, 190]
