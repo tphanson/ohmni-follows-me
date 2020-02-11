@@ -10,14 +10,6 @@ from ohmni.controller import Controller
 # Open camera:
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
-# RO: 0.00253 rad/s/unit ; unit: (1,1)
-# MOV: 0.43 mm/s/unit ; unit: (1,-1)
-SLOW_RO = 200
-MEDIUM_RO = 350
-SLOW_MO = 500
-MEDIUM_MO = 1000
-FAST_MO = 2500
-
 
 def start(server, botshell):
     inference = Inference()

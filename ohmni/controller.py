@@ -29,15 +29,15 @@ class Controller:
         elif run == 'medium':
             left_margin = XMED[1]
             right_margin = XMED[2]
-            speed = MEDIUM_MO
+            speed = MEDIUM_RO
         elif run == 'slow':
             left_margin = XMED[0]
             right_margin = XMED[3]
-            speed = FAST_MO
+            speed = FAST_RO
         else:
             left_margin = XMED[0]
             right_margin = XMED[3]
-            speed = MEDIUM_MO
+            speed = MEDIUM_RO
 
         left_wheel = 0
         right_wheel = 0
