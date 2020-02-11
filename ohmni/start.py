@@ -15,7 +15,7 @@ SLOW_RO = 150
 MEDIUM_RO = 350
 SLOW_MO = 500
 MEDIUM_MO = 1000
-FAST_MO = 1800
+FAST_MO = 2000
 
 
 def start(server, botshell):
@@ -100,7 +100,7 @@ def start(server, botshell):
                     # Medium Backward
                     LW = LW - MEDIUM_MO
                     RW = RW + MEDIUM_MO
-                elif area < 10000:
+                elif area < 8000:
                     # Fast Forward
                     LW = LW + FAST_MO
                     RW = RW - FAST_MO
