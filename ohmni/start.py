@@ -16,7 +16,6 @@ from ohmni.state import StateMachine
 def gesture(pd, img):
     cv_img = cv.resize(img, pd.input_shape)
     o, t, status, obj_img, bbox = pd.predict(cv_img)
-    print(o)
     print('Pose detection estimated time {:.4f}'.format(t/1000))
     return status, obj_img, bbox
 
