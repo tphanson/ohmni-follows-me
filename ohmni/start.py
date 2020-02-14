@@ -3,6 +3,7 @@ import cv2 as cv
 import numpy as np
 
 from utils import image, camera
+from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking
 from ohmni.controller import Controller
@@ -10,7 +11,13 @@ from ohmni.controller import Controller
 # Open camera:
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
+def gesture_activation(func):
+    def wrapper(*args, **kwargs):
+        print('Test python decorator')
+        func(*args, **kwargs)
+    return wrapper
 
+@gesture_activation
 def start(server, botshell):
     hd = HumanDetection()
     ht = HumanTracking()
