@@ -49,6 +49,7 @@ def start(server, botshell):
             botshell.sendall(b'manual_move 0 0\n')
 
         while(state == 'run' or state == 'wait'):
+            state = sm.get()
             print('chay')
 
             # while(True):
