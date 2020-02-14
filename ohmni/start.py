@@ -35,7 +35,7 @@ def start(server, botshell):
         img = image.convert_pil_to_cv(pilimg)
         state = sm.get()
 
-        while(state == 'idle'):
+        if state == 'idle':
             state = sm.get()
             print(state)
             status, obj_img, bbox = gesture(pd, img)
@@ -50,7 +50,7 @@ def start(server, botshell):
                 prev_vector = ht.predict([obj_img], [bbox])
             botshell.sendall(b'manual_move 0 0\n')
 
-        while(state == 'run' or state == 'wait'):
+        if state == 'run' or state == 'wait':
             state = sm.get()
             print('chay')
 
