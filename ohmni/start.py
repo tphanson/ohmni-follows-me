@@ -47,7 +47,7 @@ def start(server, botshell):
                 prev_vector = ht.predict([obj_img], [bbox])
             botshell.sendall(b'manual_move 0 0\n')
 
-        while(status == 'run' or status == 'wait'):
+        while(state == 'run' or state == 'wait'):
             print('chay')
 
             # while(True):
