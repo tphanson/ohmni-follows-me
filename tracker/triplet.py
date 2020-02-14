@@ -12,7 +12,7 @@ EDGE_MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                           "../tpu/ohmnilabs_features_extractor_quant_postprocess_edgetpu.tflite")
 
 
-class Inference:
+class HumanTracking:
     def __init__(self):
         self.image_shape = IMAGE_SHAPE
         self.interpreter = tflite.Interpreter(

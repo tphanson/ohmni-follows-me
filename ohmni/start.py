@@ -3,8 +3,8 @@ import cv2 as cv
 import numpy as np
 
 from utils import image, camera
-from ohmni.humandetection import HumanDetection
-from ohmni.tracker import Inference
+from detection.coco import HumanDetection
+from tracker.triplet import HumanTracking
 from ohmni.controller import Controller
 
 # Open camera:
@@ -12,8 +12,8 @@ from ohmni.controller import Controller
 
 
 def start(server, botshell):
-    inference = Inference()
     hd = HumanDetection()
+    ht = HumanTracking()
     ctrl = Controller()
 
     prev_vector = None
@@ -46,18 +46,18 @@ def start(server, botshell):
             obj_id = 0
             if len(objs) <= obj_id:
                 continue
-            box, obj_img = inference.formaliza_data(objs[obj_id], cv_img)
-            prev_vector = inference.predict([obj_img], [box])
+            box, obj_img = ht.formaliza_data(objs[obj_id], cv_img)
+            prev_vector = ht.predict([obj_img], [box])
         else:
             bboxes_batch = []
             obj_imgs_batch = []
 
             for obj in objs:
-                box, obj_img = inference.formaliza_data(obj, cv_img)
+                box, obj_img = ht.formaliza_data(obj, cv_img)
                 bboxes_batch.append(box)
                 obj_imgs_batch.append(obj_img)
 
-            vectors = inference.predict(obj_imgs_batch, bboxes_batch)
+            vectors = ht.predict(obj_imgs_batch, bboxes_batch)
             argmax = 0
             distancemax = None
             vectormax = None
