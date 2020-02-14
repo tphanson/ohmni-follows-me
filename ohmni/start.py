@@ -15,8 +15,7 @@ from ohmni.state import StateMachine
 
 def detect_gesture(pd, ht, cv_img):
     # Inference
-    _, t, status, obj_img, bbox = pd.predict(cv_img)
-    # print('Pose detection estimated time {:.4f}'.format(t/1000))
+    _, _, status, obj_img, bbox = pd.predict(cv_img)
     # Calculate result
     vector = None
     if status != 0:
@@ -110,7 +109,7 @@ def start(server, botshell):
             # Detect human
             objs = detect_human(hd, cv_img)
             if len(objs) == 0:
-                print(f'{sm.state_counter} steps to idle')
+                print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
                 sm.idle()
                 continue
@@ -138,7 +137,7 @@ def start(server, botshell):
                 # Dynamic test
                 botshell.sendall(f"manual_move {LW} {RW}\n".encode())
             else:
-                print(f'{sm.state_counter} steps to idle')
+                print('*** Manual move:', 0, 0)
                 botshell.sendall(b"manual_move 0 0\n")
                 sm.idle()
             # Calculate Frames per second (FPS)
