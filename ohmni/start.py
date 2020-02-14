@@ -85,13 +85,13 @@ def start(server, botshell):
     prev_vector = None
 
     while(True):
+        timer = cv.getTickCount()
         pilimg = camera.fetch(server)
         if pilimg is None:
             continue
         img = image.convert_pil_to_cv(pilimg)
 
         state = sm.get()
-        print("*********************: ", state)
 
         # Wait for an activation (raising hands)
         if state == 'idle':
@@ -105,24 +105,22 @@ def start(server, botshell):
                 sm.next()
         # Tracking
         if state == 'run':
-            print("======================================")
-            timer = cv.getTickCount()
-
             # Resize image
             cv_img = cv.resize(img, hd.input_shape)
             # Detect human
             objs = detect_human(hd, cv_img)
             if len(objs) == 0:
+                print(f'{sm.state_counter} steps to idle')
                 botshell.sendall(b'manual_move 0 0\n')
                 sm.next()
                 continue
             # Tracking
             distances, vectormax, distancemax, argmax = tracking(
                 ht, objs, prev_vector, cv_img)
-
+            # Show info
             print('*** Euclidean distances:', distances)
             print('*** The minimum distance:', distancemax)
-
+            # Calculate results
             if distancemax < 5:
                 # Assign global vars
                 prev_vector = vectormax
@@ -139,10 +137,9 @@ def start(server, botshell):
                 # Dynamic test
                 botshell.sendall(f"manual_move {LW} {RW}\n".encode())
             else:
-                print('*** Manual move:', 0, 0)
+                print(f'{sm.state_counter} steps to idle')
                 botshell.sendall(b"manual_move 0 0\n")
                 sm.next()
-
             # Calculate Frames per second (FPS)
             print("Total Estimated Time: ",
                   (cv.getTickCount()-timer)/cv.getTickFrequency())
