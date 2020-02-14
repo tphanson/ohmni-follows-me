@@ -39,7 +39,7 @@ def start(server, botshell):
             state = sm.get()
             print(state)
             status, obj_img, bbox = gesture(pd, img)
-            print(status)
+            print(status, bbox)
             if status != 0:
                 sm.next()
                 (xmin, ymin, xmax, ymax) = bbox
