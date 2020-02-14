@@ -36,6 +36,7 @@ def start(server, botshell):
         state = sm.get()
 
         while(state == 'idle'):
+            state = sm.get()
             status, obj_img, bbox = gesture(pd, img)
             if status != 0:
                 sm.next()
