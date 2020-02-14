@@ -51,7 +51,6 @@ class PoseDetection():
             if label == 'left wrist':
                 dx -= x
                 dy -= y
-        print('left:', dy, dx)
         if dy > self.confidence * np.abs(dx):
             return True
         else:
@@ -67,7 +66,6 @@ class PoseDetection():
             if label == 'right wrist':
                 dx -= x
                 dy -= y
-        print('right:', dy, dx)
         if dy > self.confidence * np.abs(dx):
             return True
         else:
