@@ -21,10 +21,10 @@ def detect_activation(pd, ht, img):
     vector = None
     if status != 0:
         (xmin, ymin, xmax, ymax) = bbox
-        bbox = (int(xmin*300/pd.image_shape[0]),
-                int(ymin*300/pd.image_shape[1]),
-                int(xmax*300/pd.image_shape[0]),
-                int(ymax*300/pd.image_shape[1]))
+        bbox = (int(xmin/pd.image_shape[0]),
+                int(ymin/pd.image_shape[1]),
+                int(xmax/pd.image_shape[0]),
+                int(ymax/pd.image_shape[1]))
         vector = ht.predict([obj_img], [bbox])
     return vector
 
