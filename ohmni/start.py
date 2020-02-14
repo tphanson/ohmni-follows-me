@@ -14,8 +14,9 @@ from ohmni.controller import Controller
 
 def gesture(pd, img):
     cv_img = cv.resize(img, pd.input_shape)
-    objects, time, status, obj_img, bbox = pd.predict(cv_img)
-    print(objects, time, status, obj_img, bbox)
+    _, t, status, obj_img, _ = pd.predict(cv_img)
+    print('Pose detection estimated time {:.4f}'.format(t/1000))
+    return status, obj_img
 
 
 def start(server, botshell):
@@ -37,15 +38,18 @@ def start(server, botshell):
 
         imgstart = time.time()
         img = image.convert_pil_to_cv(pilimg)
-        gesture(pd, img)
         cv_img = cv.resize(img, (300, 300))
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
+        status, activation = gesture(pd, img)
+        if status != 0:
+            print('Activated')
+
         tpustart = time.time()
         objs = hd.predict(cv_img)
         tpuend = time.time()
-        print('TPU estimated time {:.4f}'.format(tpuend-tpustart))
+        print('Human detection estimated time {:.4f}'.format(tpuend-tpustart))
 
         if len(objs) == 0:
             botshell.sendall(b"manual_move 0 0\n")
