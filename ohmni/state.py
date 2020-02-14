@@ -33,7 +33,7 @@ class StateMachine:
 
     def run(self):
         # if self.current_state != 'run':
-        ok = self.denoise.input(1, 2)
+        ok = self.denoise.input(1, 1)
         if ok is True:
             self.current_state = 'run'
 
