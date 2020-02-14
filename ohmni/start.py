@@ -91,6 +91,7 @@ def start(server, botshell):
         img = image.convert_pil_to_cv(pilimg)
 
         state = sm.get()
+        print("*********************: ", state)
 
         # Wait for an activation (raising hands)
         if state == 'idle':
@@ -103,7 +104,7 @@ def start(server, botshell):
             else:
                 sm.next()
         # Tracking
-        if state == 'run' or state == 'wait':
+        if state == 'run':
             print("======================================")
             timer = cv.getTickCount()
 
