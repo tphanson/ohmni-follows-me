@@ -102,7 +102,7 @@ def start(server, botshell):
             if prev_vector is None:
                 botshell.sendall(b'manual_move 0 0\n')
             else:
-                sm.next()
+                sm.run()
         # Tracking
         if state == 'run':
             # Resize image
@@ -112,7 +112,7 @@ def start(server, botshell):
             if len(objs) == 0:
                 print(f'{sm.state_counter} steps to idle')
                 botshell.sendall(b'manual_move 0 0\n')
-                sm.next()
+                sm.idle()
                 continue
             # Tracking
             distances, vectormax, distancemax, argmax = tracking(
@@ -122,6 +122,7 @@ def start(server, botshell):
             print('*** The minimum distance:', distancemax)
             # Calculate results
             if distancemax < 5:
+                sm.run()
                 # Assign global vars
                 prev_vector = vectormax
                 # Drive car
@@ -139,7 +140,7 @@ def start(server, botshell):
             else:
                 print(f'{sm.state_counter} steps to idle')
                 botshell.sendall(b"manual_move 0 0\n")
-                sm.next()
+                sm.idle()
             # Calculate Frames per second (FPS)
             print("Total Estimated Time: ",
                   (cv.getTickCount()-timer)/cv.getTickFrequency())

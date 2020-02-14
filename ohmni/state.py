@@ -1,31 +1,47 @@
-DEFAUT_DELAY = 1200
+from datetime import datetime
+import numpy as np
+
+
+class NoiseReduction:
+    def __init__(self):
+        self.start = None
+        self.register = np.array([])
+        self.threshold = 0.7
+
+    def get_timestamp(self):
+        return int(datetime.timestamp(datetime.now()))
+
+    def input(self, bit, seconds):
+        if self.start is None:
+            self.start = self.get_timestamp()
+        if self.get_timestamp()-self.start < seconds:
+            self.register = np.append(self.register, bit)
+            return None
+        else:
+            self.start = None
+            if np.mean(self.register) >= self.threshold:
+                return True
+            else:
+                return False
 
 
 class StateMachine:
     def __init__(self):
         self.states = ['idle', 'run']
-        self.current_index = 0
-        self.current_state = self.states[self.current_index]
-        self.state_counter = DEFAUT_DELAY
+        self.current_state = self.states[0]
+        self.denoise = NoiseReduction()
 
-    def delay(self):
-        if self.state_counter <= 0:
-            self.state_counter = DEFAUT_DELAY
-            return True
-        if self.current_state != 'run':
-            self.state_counter = DEFAUT_DELAY
-            return True
-        self.state_counter -= 1
-        return False
+    def run(self):
+        # if self.current_state != 'run':
+        ok = self.denoise.input(1, 5)
+        if ok is True:
+            self.current_state = 'run'
 
-    def next(self):
-        if self.delay():
-            self.current_index = (self.current_index+1) % 2
-            self.current_state = self.states[self.current_index]
-
-    def back(self):
-        self.current_index = (self.current_index-1) % 2
-        self.current_state = self.states[self.current_index]
+    def idle(self):
+        # if self.current_state != 'idle':
+        ok = self.denoise.input(1, 60)
+        if ok is True:
+            self.current_state = 'idle'
 
     def get(self):
         return self.current_state
