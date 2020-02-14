@@ -18,29 +18,29 @@ class PoseDetection():
         self.input_shape = (641, 481)
 
     def generate_bbox(self, marks):
-        xmin, xmax, ymin, ymax = 10000, 0, 10000, 0
+        xmin, ymin, xmax, ymax = 10000, 10000, 0, 0
         for (_, _, x, y) in marks:
             if x <= xmin:
                 xmin = int(x)
-            if x >= xmax:
-                xmax = int(x)
             if y <= ymin:
                 ymin = int(y)
+            if x >= xmax:
+                xmax = int(x)
             if y >= ymax:
                 ymax = int(y)
         xmin -= self.marin
-        xmax += self.marin
         ymin -= self.marin
+        xmax += self.marin
         ymax += self.marin
         if xmin < 0:
             xmin = 0
-        if xmax > self.image_shape[0]:
-            xmax = self.image_shape[0]
         if ymin < 0:
             ymin = 0
+        if xmax > self.image_shape[0]:
+            xmax = self.image_shape[0]
         if ymax > self.image_shape[1]:
             ymax = self.image_shape[1]
-        return (xmin, xmax, ymin, ymax)
+        return (xmin, ymin, xmax, ymax)
 
     def activate_by_left_hand(self, marks):
         dx, dy = 0, 0
@@ -112,7 +112,7 @@ class PoseDetection():
         for marks in objects:
             # Find an activation
             status, bbox = self.activate(marks)
-            (xmin, xmax, ymin, ymax) = bbox
+            (xmin, ymin, xmax, ymax) = bbox
             if status != 0:
                 obj_img = img[ymin:ymax, xmin:xmax]
                 obj_img = cv.resize(obj_img, (96, 96))
