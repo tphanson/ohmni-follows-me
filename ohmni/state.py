@@ -8,5 +8,9 @@ class StateMachine:
         self.current_index = (self.current_index+1) % 3
         self.current_state = self.states[self.current_index]
 
+    def back(self):
+        self.current_index = (self.current_index-1) % 3
+        self.current_state = self.states[self.current_index]
+
     def get(self):
         return self.current_state
