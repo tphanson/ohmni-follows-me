@@ -3,7 +3,7 @@ import cv2 as cv
 import numpy as np
 
 from utils import image, camera
-from detection.posenet import PoseDetection
+# from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking
 from ohmni.controller import Controller
