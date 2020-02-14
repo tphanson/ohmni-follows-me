@@ -36,7 +36,6 @@ def start(server, botshell):
         state = sm.get()
 
         if state == 'idle':
-            state = sm.get()
             print(state)
             status, obj_img, bbox = gesture(pd, img)
             print(status, bbox)
@@ -51,7 +50,6 @@ def start(server, botshell):
             botshell.sendall(b'manual_move 0 0\n')
 
         if state == 'run' or state == 'wait':
-            state = sm.get()
             print('chay')
 
             # while(True):
