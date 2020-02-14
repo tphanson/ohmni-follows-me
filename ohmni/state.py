@@ -39,7 +39,7 @@ class StateMachine:
 
     def idle(self):
         # if self.current_state != 'idle':
-        ok = self.denoise.input(1, 60)
+        ok = self.denoise.input(1, 20)
         if ok is True:
             self.current_state = 'idle'
 
