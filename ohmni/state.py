@@ -5,21 +5,18 @@ class StateMachine:
         self.current_state = self.states[self.current_index]
         self.state_counter = 600
 
-    def delay(self, func):
-        def wrapper(*args, **kwargs):
-            func(*args, **kwargs)
+    def delay(self):
         if self.state_counter <= 0:
-            self.state_counter = 600
-            return wrapper
+            return True
         if self.current_state != 'wait':
-            self.state_counter = 600
-            return wrapper
+            return True
         self.state_counter -= 1
+        return False
 
-    @delay
     def next(self):
-        self.current_index = (self.current_index+1) % 3
-        self.current_state = self.states[self.current_index]
+        if self.delay():
+            self.current_index = (self.current_index+1) % 3
+            self.current_state = self.states[self.current_index]
 
     def back(self):
         self.current_index = (self.current_index-1) % 3
