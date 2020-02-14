@@ -15,6 +15,7 @@ EDGE_MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 class HumanTracking:
     def __init__(self):
         self.image_shape = IMAGE_SHAPE
+        self.input_shape = IMAGE_SHAPE
         self.interpreter = tflite.Interpreter(
             model_path=EDGE_MODEL,
             experimental_delegates=[

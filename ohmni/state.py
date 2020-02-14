@@ -3,7 +3,7 @@ class StateMachine:
         self.states = ['idle', 'run', 'wait']
         self.current_index = 0
         self.current_state = self.states[self.current_index]
-        self.state_counter = 600
+        self.state_counter = 1200
 
     def delay(self):
         if self.state_counter <= 0:

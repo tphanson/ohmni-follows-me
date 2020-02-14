@@ -16,7 +16,7 @@ from ohmni.state import StateMachine
 def detect_gesture(pd, ht, cv_img):
     # Inference
     _, t, status, obj_img, bbox = pd.predict(cv_img)
-    print('Pose detection estimated time {:.4f}'.format(t/1000))
+    # print('Pose detection estimated time {:.4f}'.format(t/1000))
     # Calculate result
     vector = None
     if status != 0:
@@ -85,38 +85,30 @@ def start(server, botshell):
     prev_vector = None
 
     while(True):
-        print("======================================")
         pilimg = camera.fetch(server)
         if pilimg is None:
             continue
         img = image.convert_pil_to_cv(pilimg)
 
-        timer = cv.getTickCount()
         state = sm.get()
 
         # Wait for an activation (raising hands)
         if state == 'idle':
             # Resize image
-            imgstart = time.time()
             cv_img = cv.resize(img, pd.input_shape)
-            imgend = time.time()
-            print('(Posenet) Image estimated time {:.4f}'.format(
-                imgend-imgstart))
             # Detect gesture
             prev_vector = detect_gesture(pd, ht, cv_img)
             if prev_vector is None:
                 botshell.sendall(b'manual_move 0 0\n')
             else:
                 sm.next()
-
         # Tracking
         if state == 'run' or state == 'wait':
+            print("======================================")
+            timer = cv.getTickCount()
+
             # Resize image
-            imgstart = time.time()
-            cv_img = cv.resize(img, (300, 300))
-            imgend = time.time()
-            print('(Tracking) Image estimated time {:.4f}'.format(
-                imgend-imgstart))
+            cv_img = cv.resize(img, hd.input_shape)
             # Detect human
             objs = detect_human(hd, cv_img)
             if len(objs) == 0:
