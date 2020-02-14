@@ -3,7 +3,7 @@ import cv2 as cv
 import numpy as np
 
 from utils import image, camera
-# from detection.posenet import PoseDetection
+from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking
 from ohmni.controller import Controller
@@ -11,14 +11,15 @@ from ohmni.controller import Controller
 # Open camera:
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
-def gesture_activation(func):
-    def wrapper(*args, **kwargs):
-        print('Test python decorator')
-        func(*args, **kwargs)
-    return wrapper
 
-@gesture_activation
+def gesture(pd, img):
+    cv_img = cv.resize(img, pd.input_shape)
+    objects, time, status, obj_img, bbox = pd.predict(cv_img)
+    print(objects, time, status, obj_img, bbox)
+
+
 def start(server, botshell):
+    pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
     ctrl = Controller()
@@ -36,6 +37,7 @@ def start(server, botshell):
 
         imgstart = time.time()
         img = image.convert_pil_to_cv(pilimg)
+        gesture(pd, img)
         cv_img = cv.resize(img, (300, 300))
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
