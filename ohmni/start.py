@@ -133,9 +133,13 @@ def start(server, botshell):
                 # Assign global vars
                 prev_vector = vectormax
                 # Drive car
+                ctrlstart = time.time()
                 obj = objs[argmax]
                 LW, RW = ctrl.wheel(obj.bbox)
                 POS = ctrl.neck(obj.bbox)
+                ctrlend = time.time()
+                print('Controller estimated time {:.4f}'.format(
+                    ctrlend-ctrlstart))
                 # Static test
                 print('*** Manual move:', LW, RW)
                 print('*** Neck position:', POS)
