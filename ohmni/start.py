@@ -118,10 +118,7 @@ def start(server, botshell):
             objs = detect_human(hd, cv_img)
             if len(objs) == 0:
                 print('*** Manual move:', 0, 0)
-                botstart = time.time()
                 botshell.sendall(b'manual_move 0 0\n')
-                botend = time.time()
-                print('Bot estimated time {:.4f}'.format(botend-botstart))
                 sm.idle()
                 continue
             # Tracking
@@ -132,7 +129,10 @@ def start(server, botshell):
             print('*** The minimum distance:', distancemax)
             # Calculate results
             if distancemax < 5:
+                botstart = time.time()
                 sm.run()
+                botend = time.time()
+                print('Bot estimated time {:.4f}'.format(botend-botstart))
                 # Assign global vars
                 prev_vector = vectormax
                 # Drive car
