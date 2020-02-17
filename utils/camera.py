@@ -15,7 +15,6 @@ def fetch(server):
     imgdata = None
     framewidth = 0
     frameheight = 0
-    frameformat = 0
     framesize = 0
 
     while True:
@@ -37,7 +36,6 @@ def fetch(server):
 
                 framewidth = params[0]
                 frameheight = params[1]
-                frameformat = params[2]
                 framesize = params[3]
 
         elif state == SockState.FILLING:
