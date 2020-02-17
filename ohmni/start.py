@@ -20,7 +20,8 @@ NECK_POSITION = 500
 
 def detect_gesture(pd, ht, cv_img):
     # Inference
-    _, _, status, obj_img, bbox = pd.predict(cv_img)
+    o, _, status, obj_img, bbox = pd.predict(cv_img)
+    print(o)
     # Calculate result
     vector = None
     if status != 0:
@@ -92,8 +93,6 @@ def start(server, botshell):
         timer = cv.getTickCount()
         imgstart = time.time()
         img = camera.fetch(server)
-        print(np.array_str(img))
-        break
         if img is None:
             continue
         # img = image.convert_pil_to_cv(pilimg)
