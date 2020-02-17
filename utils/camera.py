@@ -1,6 +1,8 @@
 from PIL import Image
 from enum import Enum
 from struct import unpack
+import numpy as np
+import cv2 as cv
 
 
 class SockState(Enum):
@@ -44,8 +46,12 @@ def fetch(server):
             if len(imgdata) < framesize:
                 continue
             # imgbytes = bytes(imgdata)
-            newim = Image.frombytes(
-                "L", (framewidth, frameheight), imgdata, "raw", "L")
-            rgbim = newim.convert("RGB")
+            # newim = Image.frombytes(
+            #     "L", (framewidth, frameheight), imgbytes, "raw", "L")
+            # rgbim = newim.convert("RGB")
+            img_arr = np.asarray(imgdata, dtype=np.uint8)
+            bwim=cv.imdecode(img_arr, cv.IMREAD_GRAYSCALE)
+            print(bwim)
+            rgbim = bwim
             state = SockState.SEARCHING
             return rgbim
