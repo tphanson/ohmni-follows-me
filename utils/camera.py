@@ -46,12 +46,12 @@ def fetch(server):
             if len(imgdata) < framesize:
                 continue
             imgbytes = bytes(imgdata)
-            newim = Image.frombytes(
-                "L", (framewidth, frameheight), imgbytes, "raw", "L")
-            rgbim = newim.convert("RGB")
+            # newim = Image.frombytes(
+            #     "L", (framewidth, frameheight), imgbytes, "raw", "L")
+            # rgbim = newim.convert("RGB")
             img_arr = np.fromstring(imgbytes, np.uint8)
-            bwim = np.reshape(img_arr, (frameheight, framewidth))
-            bgrim = cv.cvtColor(bwim, cv.COLOR_GRAY2RGB)
-            cv.imwrite('bgrim.jpg', bwim)
+            gimg = np.reshape(img_arr, (frameheight, framewidth))
+            bgrimg = cv.cvtColor(bwim, cv.COLOR_GRAY2RGB)
+            cv.imwrite('bgrimg.jpg', bgrimg)
             state = SockState.SEARCHING
-            return bgrim, rgbim
+            return bgrimg
