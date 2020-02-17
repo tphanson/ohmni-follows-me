@@ -92,7 +92,7 @@ def start(server, botshell):
         timer = cv.getTickCount()
         imgstart = time.time()
         img = camera.fetch(server)
-        print(str(img))
+        print(np.array_str(img))
         break
         if img is None:
             continue
