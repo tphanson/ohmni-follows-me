@@ -45,13 +45,12 @@ def fetch(server):
             imgdata.extend(datagram)
             if len(imgdata) < framesize:
                 continue
-            # imgbytes = bytes(imgdata)
-            # newim = Image.frombytes(
-            #     "L", (framewidth, frameheight), imgbytes, "raw", "L")
-            # rgbim = newim.convert("RGB")
-            nparr = np.asarray(imgdata, dtype=np.uint8)
-            print(type(nparr))
-            rgbim = cv.imdecode(nparr, -1)
-            print(rgbim)
+            tpustart = time.time()
+            imgbytes = bytes(imgdata)
+            newim = Image.frombytes(
+                "L", (framewidth, frameheight), imgbytes, "raw", "L")
+            rgbim = newim.convert("RGB")
+            tpuend = time.time()
+            print('Convert estimated time {:.4f}'.format(tpuend-tpustart))
             state = SockState.SEARCHING
             return rgbim
