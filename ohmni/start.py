@@ -93,7 +93,9 @@ def start(server, botshell):
         pilimg = camera.fetch(server)
         if pilimg is None:
             continue
+        a = time.time()
         img = image.convert_pil_to_cv(pilimg)
+        print(time.time()-a)
 
         state = sm.get()
 
