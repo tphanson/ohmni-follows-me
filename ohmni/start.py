@@ -147,11 +147,7 @@ def start(server, botshell):
                 botshell.sendall(b'manual_move 0 0\n')
                 sm.idle()
             # Calculate Frames per second (FPS)
-            infostart = time.time()
             print("Total Estimated Time: ",
                   (cv.getTickCount()-timer)/cv.getTickFrequency())
             fps = cv.getTickFrequency() / (cv.getTickCount() - timer)
-            print("FPS: {:.1f}".format(fps))
-            print("\n\n")
-            infoend = time.time()
-            print('Info estimated time {:.4f}'.format(infoend-infostart))
+            print("FPS: {:.1f} \n\n".format(fps))
