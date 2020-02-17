@@ -45,11 +45,11 @@ def fetch(server):
             imgdata.extend(datagram)
             if len(imgdata) < framesize:
                 continue
-            # imgbytes = bytes(imgdata)
+            imgbytes = bytes(imgdata)
             # newim = Image.frombytes(
             #     "L", (framewidth, frameheight), imgbytes, "raw", "L")
             # rgbim = newim.convert("RGB")
-            img_arr = np.fromstring(imgdata, np.uint8)
+            img_arr = np.fromstring(imgbytes, np.uint8)
             print(framewidth)
             print(frameheight)
             print(img_arr.shape)
