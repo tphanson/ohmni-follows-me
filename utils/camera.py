@@ -50,11 +50,8 @@ def fetch(server):
             #     "L", (framewidth, frameheight), imgbytes, "raw", "L")
             # rgbim = newim.convert("RGB")
             img_arr = np.fromstring(imgbytes, np.uint8)
-            print(framewidth)
-            print(frameheight)
-            print(img_arr.shape)
-            bwim=cv.imdecode(img_arr, cv.IMREAD_GRAYSCALE)
-            print(bwim)
+            bwim = img_arr.reshape.imdecode(framewidth, frameheight)
+            print(bwim.shape)
             rgbim = bwim
             state = SockState.SEARCHING
             return rgbim
