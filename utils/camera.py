@@ -43,9 +43,9 @@ def fetch(server):
             imgdata.extend(datagram)
             if len(imgdata) < framesize:
                 continue
-            imgbytes = bytes(imgdata)
+            # imgbytes = bytes(imgdata)
             newim = Image.frombytes(
-                "L", (framewidth, frameheight), imgbytes, "raw", "L")
+                "L", (framewidth, frameheight), imgdata, "raw", "L")
             rgbim = newim.convert("RGB")
             state = SockState.SEARCHING
             return rgbim
