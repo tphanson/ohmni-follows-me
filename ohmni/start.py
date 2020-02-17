@@ -15,7 +15,7 @@ from ohmni.state import StateMachine
 # Ohmni global config
 NECK_ID = 3
 NECK_TIME = 10
-NECK_POSITION = 450
+NECK_POSITION = 500
 
 
 def detect_gesture(pd, ht, cv_img):
