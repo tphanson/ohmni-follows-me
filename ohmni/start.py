@@ -95,10 +95,6 @@ def start(server, botshell):
         if rbgimg is None:
             continue
         img = image.convert_pil_to_cv(rbgimg)
-        print(bgrimg)
-        print('=========================')
-        print(img)
-        break
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
