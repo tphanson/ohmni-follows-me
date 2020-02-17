@@ -137,8 +137,8 @@ def start(server, botshell):
                 print('*** Manual move:', LW, RW)
                 print('*** Neck position:', POS)
                 # Dynamic test
-                # botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
-                # botshell.sendall(f'pos {NECK_ID} {POS} {NECK_TIME}\n'.encode())
+                botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
+                botshell.sendall(f'pos {NECK_ID} {POS} {NECK_TIME}\n'.encode())
             else:
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
