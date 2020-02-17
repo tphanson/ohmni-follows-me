@@ -89,11 +89,14 @@ def start(server, botshell):
     prev_vector = None
 
     while(True):
+        imgstart = time.time()
         timer = cv.getTickCount()
         pilimg = camera.fetch(server)
         if pilimg is None:
             continue
         img = image.convert_pil_to_cv(pilimg)
+        imgend = time.time()
+        print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
         state = sm.get()
 
@@ -110,10 +113,7 @@ def start(server, botshell):
         # Tracking
         if state == 'run':
             # Resize image
-            imgstart = time.time()
             cv_img = cv.resize(img, hd.input_shape)
-            imgend = time.time()
-            print('Image estimated time {:.4f}'.format(imgend-imgstart))
             # Detect human
             objs = detect_human(hd, cv_img)
             if len(objs) == 0:
@@ -129,20 +129,13 @@ def start(server, botshell):
             print('*** The minimum distance:', distancemax)
             # Calculate results
             if distancemax < 5:
-                botstart = time.time()
                 sm.run()
-                botend = time.time()
-                print('Bot estimated time {:.4f}'.format(botend-botstart))
-                # Assign global vars
+                # Save global vars
                 prev_vector = vectormax
                 # Drive car
-                ctrlstart = time.time()
                 obj = objs[argmax]
                 LW, RW = ctrl.wheel(obj.bbox)
                 POS = ctrl.neck(obj.bbox)
-                ctrlend = time.time()
-                print('Controller estimated time {:.4f}'.format(
-                    ctrlend-ctrlstart))
                 # Static test
                 print('*** Manual move:', LW, RW)
                 print('*** Neck position:', POS)
