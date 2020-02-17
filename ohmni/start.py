@@ -100,6 +100,7 @@ def start(server, botshell):
         img = image.convert_pil_to_cv(pilimg)
         b2 = time.time()
         print('2:', b2-a2)
+        print('3:', b2-a1)
 
         state = sm.get()
 
