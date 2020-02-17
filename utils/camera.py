@@ -44,6 +44,7 @@ def fetch(server):
             if len(imgdata) < framesize:
                 continue
             imgbytes = bytes(imgdata)
+            print(imgbytes)
             newim = Image.frombytes(
                 "L", (framewidth, frameheight), imgbytes, "raw", "L")
             rgbim = newim.convert("RGB")
