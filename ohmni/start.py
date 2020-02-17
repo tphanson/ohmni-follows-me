@@ -78,7 +78,7 @@ def start(server, botshell):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
-    ctrl = Controller()
+    ctrl = Controller(hd.input_shape)
 
     sm = StateMachine()
     prev_vector = None
@@ -131,7 +131,7 @@ def start(server, botshell):
                 xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
                 print('*** AREA:', area)
                 print('*** XMED:', xmed)
-                LW, RW = ctrl.calculate(area, xmed)
+                LW, RW = ctrl.wheel(area, xmed)
                 # Static test
                 print('*** Manual move:', LW, RW)
                 # Dynamic test
