@@ -12,6 +12,11 @@ from ohmni.state import StateMachine
 # Open camera:
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
+# Ohmni global config
+NECK_ID = 3
+NECK_TIME = 200
+NECK_POSITION = 550
+
 
 def detect_gesture(pd, ht, cv_img):
     # Inference
@@ -78,7 +83,7 @@ def start(server, botshell):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
-    ctrl = Controller(hd.input_shape)
+    ctrl = Controller(hd.input_shape, NECK_POSITION)
 
     sm = StateMachine()
     prev_vector = None
@@ -126,19 +131,17 @@ def start(server, botshell):
                 prev_vector = vectormax
                 # Drive car
                 obj = objs[argmax]
-                area = (obj.bbox.xmax-obj.bbox.xmin) * \
-                    (obj.bbox.ymax-obj.bbox.ymin)
-                xmed = (obj.bbox.xmin + obj.bbox.xmax)/2
-                print('*** AREA:', area)
-                print('*** XMED:', xmed)
-                LW, RW = ctrl.wheel(area, xmed)
+                LW, RW = ctrl.wheel(obj.bbox)
+                POS = ctrl.neck(obj.bbox)
                 # Static test
                 print('*** Manual move:', LW, RW)
+                print('*** Neck position:', POS)
                 # Dynamic test
-                botshell.sendall(f"manual_move {LW} {RW}\n".encode())
+                # botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
+                botshell.sendall(f'pos {NECK_ID} {POS} {NECK_TIME}\n'.encode())
             else:
                 print('*** Manual move:', 0, 0)
-                botshell.sendall(b"manual_move 0 0\n")
+                botshell.sendall(b'manual_move 0 0\n')
                 sm.idle()
             # Calculate Frames per second (FPS)
             print("Total Estimated Time: ",
