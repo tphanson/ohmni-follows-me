@@ -20,8 +20,7 @@ NECK_POSITION = 500
 
 def detect_gesture(pd, ht, cv_img):
     # Inference
-    o, _, status, obj_img, bbox = pd.predict(cv_img)
-    print(o)
+    _, _, status, obj_img, bbox = pd.predict(cv_img)
     # Calculate result
     vector = None
     if status != 0:
