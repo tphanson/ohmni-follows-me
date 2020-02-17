@@ -45,6 +45,7 @@ def fetch(server):
             imgdata.extend(datagram)
             if len(imgdata) < framesize:
                 continue
+            print(imgdata)
             imgbytes = bytes(imgdata)
             newim = Image.frombytes(
                 "L", (framewidth, frameheight), imgbytes, "raw", "L")
