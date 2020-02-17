@@ -49,7 +49,7 @@ def fetch(server):
             # newim = Image.frombytes(
             #     "L", (framewidth, frameheight), imgbytes, "raw", "L")
             # rgbim = newim.convert("RGB")
-            nparr = np.asarray(imgbytes, dtype=np.uint8)
+            nparr = np.fromstring(imgbytes, np.uint8)
             rgbim = cv.imdecode(nparr, cv.IMREAD_COLOR)
             print(rgbim)
             state = SockState.SEARCHING
