@@ -118,7 +118,10 @@ def start(server, botshell):
             objs = detect_human(hd, cv_img)
             if len(objs) == 0:
                 print('*** Manual move:', 0, 0)
+                botstart = time.time()
                 botshell.sendall(b'manual_move 0 0\n')
+                botend = time.time()
+                print('Bot estimated time {:.4f}'.format(botend-botstart))
                 sm.idle()
                 continue
             # Tracking
@@ -151,8 +154,11 @@ def start(server, botshell):
                 botshell.sendall(b'manual_move 0 0\n')
                 sm.idle()
             # Calculate Frames per second (FPS)
+            infostart = time.time()
             print("Total Estimated Time: ",
                   (cv.getTickCount()-timer)/cv.getTickFrequency())
             fps = cv.getTickFrequency() / (cv.getTickCount() - timer)
             print("FPS: {:.1f}".format(fps))
             print("\n\n")
+            infoend = time.time()
+            print('Info estimated time {:.4f}'.format(infoend-infostart))
