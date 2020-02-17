@@ -94,7 +94,8 @@ def start(server, botshell):
         if pilimg is None:
             continue
         imgstart = time.time()
-        img = image.convert_pil_to_cv(pilimg)
+        # img = image.convert_pil_to_cv(pilimg)
+        img = pilimg
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
