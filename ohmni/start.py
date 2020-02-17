@@ -2,7 +2,7 @@ import time
 import cv2 as cv
 import numpy as np
 
-from utils import image, camera, cvcam
+from utils import image, camera
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking
@@ -88,13 +88,9 @@ def start(server, botshell):
     sm = StateMachine()
     prev_vector = None
 
-    cam = cvcam.Camera()
-    stream = cam.get_stream()
-
     while(True):
         timer = cv.getTickCount()
-        # pilimg = camera.fetch(server)
-        pilimg = stream.get()
+        pilimg = camera.fetch(server)
         if pilimg is None:
             continue
         img = image.convert_pil_to_cv(pilimg)
