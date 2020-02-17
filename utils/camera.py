@@ -51,7 +51,7 @@ def fetch(server):
             # rgbim = newim.convert("RGB")
             img_arr = np.fromstring(imgbytes, np.uint8)
             gimg = np.reshape(img_arr, (frameheight, framewidth))
-            bgrimg = cv.cvtColor(bwim, cv.COLOR_GRAY2RGB)
+            bgrimg = cv.cvtColor(gimg, cv.COLOR_GRAY2RGB)
             cv.imwrite('bgrimg.jpg', bgrimg)
             state = SockState.SEARCHING
             return bgrimg
