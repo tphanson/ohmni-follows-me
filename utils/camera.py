@@ -43,6 +43,8 @@ def fetch(server):
 
         elif state == SockState.FILLING:
             imgdata.extend(datagram)
+            print("*********************************************")
+            print(type(datagram),datagram)
             if len(imgdata) < framesize:
                 continue
             # imgbytes = bytes(imgdata)
