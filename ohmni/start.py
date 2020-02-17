@@ -89,11 +89,11 @@ def start(server, botshell):
     prev_vector = None
 
     while(True):
-        imgstart = time.time()
         timer = cv.getTickCount()
         pilimg = camera.fetch(server)
         if pilimg is None:
             continue
+        imgstart = time.time()
         img = image.convert_pil_to_cv(pilimg)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
