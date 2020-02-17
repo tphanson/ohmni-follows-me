@@ -16,7 +16,7 @@ NECK = 10
 # Action zones
 AREA = np.array([1/10, 1/6, 2/9, 1/3])
 XMED = np.array([11/30, 13/30, 14/30, 16/30, 17/30, 19/30])
-YMED = np.array([4/7, 5/7])
+YMED = np.array([4/8, 5/8])
 
 
 class Controller:
