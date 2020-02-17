@@ -91,7 +91,7 @@ def start(server, botshell):
     while(True):
         timer = cv.getTickCount()
         img = camera.fetch(server)
-        if pilimg is None:
+        if img is None:
             continue
         # img = image.convert_pil_to_cv(pilimg)
 
