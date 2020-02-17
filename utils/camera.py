@@ -1,3 +1,4 @@
+import time
 from PIL import Image
 from enum import Enum
 from struct import *
