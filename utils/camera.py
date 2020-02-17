@@ -49,7 +49,7 @@ def fetch(server):
             # newim = Image.frombytes(
             #     "L", (framewidth, frameheight), imgbytes, "raw", "L")
             # rgbim = newim.convert("RGB")
-            img_arr = np.fromstring(imgdata, dtype=np.uint8)
+            img_arr = np.fromstring(imgdata, np.uint8)
             print(framewidth)
             print(frameheight)
             print(img_arr.shape)
