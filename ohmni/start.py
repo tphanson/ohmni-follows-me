@@ -92,10 +92,11 @@ def start(server, botshell):
         timer = cv.getTickCount()
         imgstart = time.time()
         bgrimg, rbgimg = camera.fetch(server)
+        cv.imwrite('bgrimg.jpg', bgrimg)
         if rbgimg is None:
             continue
         img = image.convert_pil_to_cv(rbgimg)
-        # np.savetxt('rbgimg.txt', img)
+        cv.imwrite('img.jpg', img)
         break
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
