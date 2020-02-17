@@ -6,11 +6,11 @@ import numpy as np
 # Speed of rotation
 SLOW_RO = 100
 MEDIUM_RO = 200
-FAST_RO = 400
+FAST_RO = 350
 # Speed of run
 SLOW_MO = 700
-MEDIUM_MO = 1100
-FAST_MO = 1700
+MEDIUM_MO = 1050
+FAST_MO = 1650
 # Speed of neck
 NECK = 10
 # Action zones
@@ -118,9 +118,13 @@ class Controller:
         _, _, ymed = self.calculate(bbox)
         if ymed >= self.ymed[1]:
             self.neck_position -= NECK
-            return self.neck_position
         elif self.ymed[1] > ymed >= self.ymed[0]:
-            return self.neck_position
+            pass
         else:
             self.neck_position += NECK
-            return self.neck_position
+
+        if self.neck_position > 650:
+            self.neck_position = 650
+        if self.neck_position < 300:
+            self.neck_position = 300
+        return self.neck_position
