@@ -1,6 +1,8 @@
 from PIL import Image
 from enum import Enum
-from struct import *
+from struct import unpack
+import numpy as np
+import cv2 as cv
 
 
 class SockState(Enum):
@@ -47,5 +49,8 @@ def fetch(server):
             newim = Image.frombytes(
                 "L", (framewidth, frameheight), imgbytes, "raw", "L")
             rgbim = newim.convert("RGB")
+            img_arr = np.fromstring(imgbytes, np.uint8)
+            bwim = np.reshape(img_arr, (framewidth, frameheight))
+            bgrim = cv.cvtColor(bwim, cv.COLOR_GRAY2RGB)
             state = SockState.SEARCHING
-            return rgbim
+            return bgrim, rgbim

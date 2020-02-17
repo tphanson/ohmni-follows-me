@@ -17,6 +17,7 @@ class HumanDetection:
         self.confidence = confidence
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
+        self.input_shape = (300, 300)
 
     def load_labels(self):
         with open(LABELS, 'r', encoding='utf-8') as labels_file:
@@ -59,4 +60,3 @@ class HumanDetection:
                           ymax=int(ymax*300)))
 
         return [make(i) for i in range(count) if (scores[i] >= self.confidence and int(class_ids[i]) == 0)]
-
