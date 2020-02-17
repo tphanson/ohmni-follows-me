@@ -94,9 +94,8 @@ def start(server, botshell):
         bgrimg, rbgimg = camera.fetch(server)
         if rbgimg is None:
             continue
-        _img = image.convert_pil_to_cv(bgrimg)
         img = image.convert_pil_to_cv(rbgimg)
-        print(_img)
+        print(bgrimg)
         print('=========================')
         print(img)
         break
