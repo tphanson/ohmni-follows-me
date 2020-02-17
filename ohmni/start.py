@@ -94,7 +94,6 @@ def start(server, botshell):
         img = camera.fetch(server)
         if img is None:
             continue
-        break
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
