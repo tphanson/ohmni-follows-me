@@ -110,7 +110,10 @@ def start(server, botshell):
         # Tracking
         if state == 'run':
             # Resize image
+            imgstart = time.time()
             cv_img = cv.resize(img, hd.input_shape)
+            imgend = time.time()
+            print('Image estimated time {:.4f}'.format(imgend-imgstart))
             # Detect human
             objs = detect_human(hd, cv_img)
             if len(objs) == 0:
