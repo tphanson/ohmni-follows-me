@@ -45,11 +45,11 @@ def fetch(server):
             imgdata.extend(datagram)
             if len(imgdata) < framesize:
                 continue
-            imgbytes = bytes(imgdata)
+            # imgbytes = bytes(imgdata)
             # newim = Image.frombytes(
             #     "L", (framewidth, frameheight), imgbytes, "raw", "L")
             # rgbim = newim.convert("RGB")
-            nparr = np.fromstring(imgbytes, np.uint8)
+            nparr = np.asarray(imgdata, dtype=np.uint8)
             print(nparr)
             rgbim = cv.imdecode(nparr, cv.IMREAD_COLOR)
             print(rgbim)
