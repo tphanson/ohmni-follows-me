@@ -14,7 +14,7 @@ from ohmni.state import StateMachine
 
 # Ohmni global config
 NECK_ID = 3
-NECK_TIME = 200
+NECK_TIME = 10
 NECK_POSITION = 550
 
 
