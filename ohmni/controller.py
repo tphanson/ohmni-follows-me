@@ -23,8 +23,8 @@ class Controller:
     def __init__(self, frame_shape, neck_position):
         self.frame_shape = frame_shape
         self.area = AREA*self.frame_shape[0]*self.frame_shape[1]
-        self.xmed = XMED*self.frame_shape[0]
-        self.ymed = YMED*self.frame_shape[1]
+        self.xmed = XMED*self.frame_shape[1]
+        self.ymed = YMED*self.frame_shape[0]
         self.neck_position = neck_position
 
     def calculate(self, bbox):
