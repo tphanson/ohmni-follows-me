@@ -91,6 +91,7 @@ def start(server, botshell):
     while(True):
         timer = cv.getTickCount()
         state = sm.get_state()
+        print(state)
 
         img = camera.fetch(server)
         if img is None:
@@ -100,6 +101,8 @@ def start(server, botshell):
         if state == 'init_idle':
             print('*** Manual move:', 0, 0)
             botshell.sendall(b'manual_move 0 0\n')
+            botshell.sendall(
+                f'pos {NECK_ID} {NECK_POS} {NECK_TIME}\n'.encode())
             sm.set_state(True)
         # Wait for an activation (raising hands)
         if state == 'idle':
