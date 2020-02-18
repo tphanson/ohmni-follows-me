@@ -54,6 +54,7 @@ class StateMachine:
             self.__change_state(None)
         else:
             ok = self.denoise.input(1, 1)
+            print('run', ok)
             self.__change_state(ok)
 
     def idle(self):
