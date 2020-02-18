@@ -90,16 +90,13 @@ def start(server, botshell):
 
     while(True):
         timer = cv.getTickCount()
-        imgstart = time.time()
+        state = sm.get()
+        print(state)
+
         img = camera.fetch(server)
         if img is None:
             continue
-        imgend = time.time()
-        print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
-        state = sm.get()
-
-        print(state)
         # Stop
         if state == 'init_idle':
             print('*** Manual move:', 0, 0)
