@@ -6,7 +6,7 @@ import numpy as np
 # Speed of rotation
 SLOW_RO = 100
 MEDIUM_RO = 175
-FAST_RO = 400
+FAST_RO = 350
 # Speed of run
 SLOW_MO = 700
 MEDIUM_MO = 1100
@@ -50,9 +50,9 @@ class Controller:
             right_margin = self.xmed[5]
             speed = FAST_RO
         else:
-            left_margin = self.xmed[1]
-            right_margin = self.xmed[4]
-            speed = MEDIUM_RO
+            left_margin = self.xmed[0]
+            right_margin = self.xmed[5]
+            speed = FAST_RO
 
         left_wheel = 0
         right_wheel = 0
