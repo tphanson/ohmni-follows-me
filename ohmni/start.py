@@ -98,6 +98,7 @@ def start(server, botshell):
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
         state = sm.get()
+        print(state)
 
         # Rest head
         if state == 'init_idle':
