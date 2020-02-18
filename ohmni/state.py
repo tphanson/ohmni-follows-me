@@ -12,7 +12,7 @@ class NoiseReduction:
         self.register = np.array([])
 
     def __get_timestamp(self):
-        return int(datetime.timestamp(datetime.now()))
+        return datetime.timestamp(datetime.now())
 
     def input(self, bit, seconds):
         if self.start is None:
@@ -54,7 +54,7 @@ class StateMachine:
         if self.current_state == 'init_idle':
             self.__change_state(True)
         elif self.current_state == 'idle':
-            mean = self.denoise.input(int(next_flag), 1)
+            mean = self.denoise.input(int(next_flag), 0.5)
             self.__change_state(bool(mean >= 0.4))
         elif self.current_state == 'init_run':
             self.__change_state(True)
