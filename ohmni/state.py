@@ -27,7 +27,7 @@ class NoiseReduction:
             mean = np.mean(self.register)
             self.__reset()
             print("End ====================================", mean)
-            return mean >= self.threshold, mean
+            return mean >= self.threshold
 
 
 class StateMachine:
