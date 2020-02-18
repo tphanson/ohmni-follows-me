@@ -28,7 +28,7 @@ class NoiseReduction:
 class StateMachine:
     def __init__(self):
         self.states = ['init_idle', 'idle', 'init_run', 'run']
-        self.current_state = self.states[0]
+        self.current_state = self.states[1]
         self.denoise = NoiseReduction()
 
     def run(self):

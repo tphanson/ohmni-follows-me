@@ -99,6 +99,10 @@ def start(server, botshell):
 
         state = sm.get()
 
+        # Stop
+        if state == 'init_idle':
+            print('*** Manual move:', 0, 0)
+            botshell.sendall(b'manual_move 0 0\n')
         # Wait for an activation (raising hands)
         if state == 'idle' or state == 'init_run':
             # Resize image
@@ -106,7 +110,7 @@ def start(server, botshell):
             # Detect gesture
             prev_vector = detect_gesture(pd, ht, cv_img)
             if prev_vector is None:
-                botshell.sendall(b'manual_move 0 0\n')
+                sm.idle()
             else:
                 sm.run()
         # Tracking
@@ -116,8 +120,6 @@ def start(server, botshell):
             # Detect human
             objs = detect_human(hd, cv_img)
             if len(objs) == 0:
-                print('*** Manual move:', 0, 0)
-                botshell.sendall(b'manual_move 0 0\n')
                 sm.idle()
                 continue
             # Tracking
@@ -126,25 +128,24 @@ def start(server, botshell):
             # Show info
             print('*** Euclidean distances:', distances)
             print('*** The minimum distance:', distancemax)
-            # Calculate results
-            if distancemax < 5:
-                sm.run()
-                # Save global vars
-                prev_vector = vectormax
-                # Drive car
-                obj = objs[argmax]
-                LW, RW = ctrl.wheel(obj.bbox)
-                POS = ctrl.neck(obj.bbox)
-                # Static test
-                print('*** Manual move:', LW, RW)
-                print('*** Neck position:', POS)
-                # Dynamic test
-                botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
-                botshell.sendall(f'pos {NECK_ID} {POS} {NECK_TIME}\n'.encode())
-            else:
-                print('*** Manual move:', 0, 0)
-                botshell.sendall(b'manual_move 0 0\n')
+            # Under threshold
+            if distancemax > 5:
                 sm.idle()
+                continue
+            # Calculate results
+            sm.run()
+            prev_vector = vectormax
+            # Drive car
+            obj = objs[argmax]
+            LW, RW = ctrl.wheel(obj.bbox)
+            POS = ctrl.neck(obj.bbox)
+            # Static test
+            print('*** Manual move:', LW, RW)
+            print('*** Neck position:', POS)
+            # Dynamic test
+            botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
+            botshell.sendall(f'pos {NECK_ID} {POS} {NECK_TIME}\n'.encode())
+
             # Calculate Frames per second (FPS)
             print("Total Estimated Time: ",
                   (cv.getTickCount()-timer)/cv.getTickFrequency())
