@@ -12,11 +12,9 @@ class NoiseReduction:
         return int(datetime.timestamp(datetime.now()))
 
     def input(self, bit, seconds):
-        print("Time 1", self.start)
         if self.start is None:
             self.start = self.get_timestamp()
         if self.get_timestamp()-self.start < seconds:
-            print("Time 2", self.get_timestamp())
             self.register = np.append(self.register, bit)
             return None
         else:
@@ -36,9 +34,11 @@ class StateMachine:
 
     def __next(self):
         self.current_index = (self.current_index+1) % len(self.states)
+        self.current_state = self.states[self.current_index]
 
     def __back(self):
         self.current_index = (self.current_index-1) % len(self.states)
+        self.current_state = self.states[self.current_index]
 
     def __change_state(self, denoise_status):
         if denoise_status is True:
