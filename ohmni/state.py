@@ -15,10 +15,10 @@ class NoiseReduction:
         if self.start is None:
             self.start = self.get_timestamp()
         if self.get_timestamp()-self.start < seconds:
+            print(self.get_timestamp()-self.start)
             self.register = np.append(self.register, bit)
             return None
         else:
-            print(np.mean(self.register))
             self.start = None
             if np.mean(self.register) >= self.threshold:
                 return True
