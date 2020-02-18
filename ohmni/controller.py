@@ -5,12 +5,12 @@ import numpy as np
 
 # Speed of rotation
 SLOW_RO = 100
-MEDIUM_RO = 150
+MEDIUM_RO = 175
 FAST_RO = 350
 # Speed of run
 SLOW_MO = 700
-MEDIUM_MO = 1050
-FAST_MO = 1650
+MEDIUM_MO = 1100
+FAST_MO = 1700
 # Speed of neck
 NECK = 10
 # Action zones
