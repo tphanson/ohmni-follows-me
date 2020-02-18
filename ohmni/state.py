@@ -24,8 +24,8 @@ class NoiseReduction:
             self.register = np.append(self.register, bit)
             return None, 0
         else:
-            self.__reset()
             mean = np.mean(self.register)
+            self.__reset()
             print("End ====================================", mean)
             return mean >= self.threshold, mean
 
