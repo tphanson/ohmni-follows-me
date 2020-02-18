@@ -40,8 +40,11 @@ class StateMachine:
         print(3, self.current_state)
 
     def __back(self):
+        print(4, self.current_index)
         self.current_index = (self.current_index-1) % len(self.states)
+        print(5, self.current_index)
         self.current_state = self.states[self.current_index]
+        print(6, self.current_state)
 
     def __change_state(self, denoise_status):
         if denoise_status is True:
