@@ -125,7 +125,7 @@ def start(server, botshell):
             if len(objs) == 0:
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
-                sm.next_state(False)
+                sm.next_state(True)
                 continue
             # Tracking
             distances, vectormax, distancemax, argmax = tracking(
@@ -137,10 +137,10 @@ def start(server, botshell):
             if distancemax > 5:
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
-                sm.next_state(False)
+                sm.next_state(True)
                 continue
             # Calculate results
-            sm.next_state(True)
+            sm.next_state(False)
             prev_vector = vectormax
             # Drive car
             obj = objs[argmax]
