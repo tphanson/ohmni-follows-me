@@ -15,7 +15,7 @@ class NoiseReduction:
         if self.start is None:
             self.start = self.get_timestamp()
         if self.get_timestamp()-self.start < seconds:
-            print(self.get_timestamp()-self.start)
+            print("Time", self.get_timestamp()-self.start)
             self.register = np.append(self.register, bit)
             return None
         else:
