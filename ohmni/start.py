@@ -104,8 +104,9 @@ def start(server, botshell):
         if state == 'init_idle':
             print('*** Manual move:', 0, 0)
             botshell.sendall(b'manual_move 0 0\n')
+            sm.idle()
         # Wait for an activation (raising hands)
-        if state == 'idle' or state == 'init_run':
+        if state == 'idle':
             # Resize image
             cv_img = cv.resize(img, pd.input_shape)
             # Detect gesture
@@ -114,13 +115,18 @@ def start(server, botshell):
                 sm.idle()
             else:
                 sm.run()
+        # Run
+        if state == 'init_run':
+            sm.run()
         # Tracking
-        if state == 'run' or state == 'init_idle':
+        if state == 'run':
             # Resize image
             cv_img = cv.resize(img, hd.input_shape)
             # Detect human
             objs = detect_human(hd, cv_img)
             if len(objs) == 0:
+                print('*** Manual move:', 0, 0)
+                botshell.sendall(b'manual_move 0 0\n')
                 sm.idle()
                 continue
             # Tracking
@@ -131,6 +137,8 @@ def start(server, botshell):
             print('*** The minimum distance:', distancemax)
             # Under threshold
             if distancemax > 5:
+                print('*** Manual move:', 0, 0)
+                botshell.sendall(b'manual_move 0 0\n')
                 sm.idle()
                 continue
             # Calculate results

@@ -28,32 +28,42 @@ class NoiseReduction:
 class StateMachine:
     def __init__(self):
         self.states = ['init_idle', 'idle', 'init_run', 'run']
-        self.current_state = self.states[1]
+        self.current_index = 1
+        self.current_state = self.states[self.current_index]
         self.denoise = NoiseReduction()
+
+    def __next(self):
+        self.current_index = (self.current_index+1) % len(self.states)
+
+    def __back(self):
+        self.current_index = (self.current_index-1) % len(self.states)
+
+    def __change_state(self, denoise_status):
+        if denoise_status is True:
+            self.__next()
+        elif denoise_status is False:
+            self.__back()
+        else:
+            # No change
+            pass
 
     def run(self):
         if self.current_state == 'run':
             pass
         elif self.current_state == 'init_run':
-            ok = self.denoise.input(1, 1)
-            if ok is True:
-                self.current_state = 'run'
-            else:
-                self.current_state = 'idle'
+            self.__change_state(None)
         else:
-            self.current_state = 'init_run'
+            ok = self.denoise.input(1, 1)
+            self.__change_state(ok)
 
     def idle(self):
         if self.current_state == 'idle':
             pass
         elif self.current_state == 'init_idle':
-            ok = self.denoise.input(1, 20)
-            if ok is True:
-                self.current_state = 'idle'
-            else:
-                self.current_state = 'run'
+            self.__change_state(None)
         else:
-            self.current_state = 'init_idle'
+            ok = self.denoise.input(1, 20)
+            self.__change_state(ok)
 
     def get(self):
         return self.current_state
