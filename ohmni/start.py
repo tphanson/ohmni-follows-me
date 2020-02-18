@@ -90,7 +90,7 @@ def start(server, botshell):
 
     while(True):
         timer = cv.getTickCount()
-        state = sm.get()
+        state = sm.get_state()
 
         img = camera.fetch(server)
         if img is None:
@@ -100,20 +100,17 @@ def start(server, botshell):
         if state == 'init_idle':
             print('*** Manual move:', 0, 0)
             botshell.sendall(b'manual_move 0 0\n')
-            sm.idle()
+            sm.set_state(True)
         # Wait for an activation (raising hands)
         if state == 'idle':
             # Resize image
             cv_img = cv.resize(img, pd.input_shape)
             # Detect gesture
             prev_vector = detect_gesture(pd, ht, cv_img)
-            if prev_vector is None:
-                sm.idle()
-            else:
-                sm.run()
+            sm.set_state(prev_vector is None)
         # Run
         if state == 'init_run':
-            sm.run()
+            sm.set_state(True)
         # Tracking
         if state == 'run':
             # Resize image
@@ -123,7 +120,7 @@ def start(server, botshell):
             if len(objs) == 0:
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
-                sm.idle()
+                sm.set_state(False)
                 continue
             # Tracking
             distances, vectormax, distancemax, argmax = tracking(
@@ -135,10 +132,10 @@ def start(server, botshell):
             if distancemax > 5:
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
-                sm.idle()
+                sm.set_state(False)
                 continue
             # Calculate results
-            sm.run()
+            sm.set_state(True)
             prev_vector = vectormax
             # Drive car
             obj = objs[argmax]
