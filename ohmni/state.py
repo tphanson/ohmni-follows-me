@@ -33,27 +33,27 @@ class StateMachine:
 
     def run(self):
         if self.current_state == 'run':
-            return
-        if self.current_state == 'idle':
-            self.current_state = 'init_run'
-        else:
+            pass
+        elif self.current_state == 'init_run':
             ok = self.denoise.input(1, 1)
             if ok is True:
                 self.current_state = 'run'
             else:
                 self.current_state = 'idle'
+        else:
+            self.current_state = 'init_run'
 
     def idle(self):
         if self.current_state == 'idle':
-            return
-        if self.current_state == 'run':
-            self.current_state = 'init_idle'
-        else:
+            pass
+        elif self.current_state == 'init_idle':
             ok = self.denoise.input(1, 20)
             if ok is True:
                 self.current_state = 'idle'
             else:
                 self.current_state = 'run'
+        else:
+            self.current_state = 'init_idle'
 
     def get(self):
         return self.current_state
