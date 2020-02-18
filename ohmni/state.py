@@ -47,24 +47,36 @@ class StateMachine:
             # No change
             pass
 
+    def __throw_error(self):
+        raise ValueError('The state is undefined.')
+
     def run(self):
-        if self.current_state == 'run':
-            pass
-        elif self.current_state == 'init_run':
-            self.__change_state(None)
-        else:
+        if self.current_state == 'init_idle':
+            self.__change_state(True)
+        if self.current_state == 'idle':
             ok = self.denoise.input(1, 1)
-            print('run', ok)
             self.__change_state(ok)
+        elif self.current_state == 'init_run':
+            self.__change_state(True)
+        elif self.current_state == 'run':
+            ok = self.denoise.input(0, 20)
+            self.__change_state(ok)
+        else:
+            self.__throw_error()
 
     def idle(self):
-        if self.current_state == 'idle':
-            pass
-        elif self.current_state == 'init_idle':
-            self.__change_state(None)
-        else:
+        if self.current_state == 'init_idle':
+            self.__change_state(True)
+        elif self.current_state == 'idle':
+            ok = self.denoise.input(0, 1)
+            self.__change_state(ok)
+        elif self.current_state == 'init_run':
+            self.__change_state(True)
+        elif self.current_state == 'run':
             ok = self.denoise.input(1, 20)
             self.__change_state(ok)
+        else:
+            self.__throw_error()
 
     def get(self):
         return self.current_state
