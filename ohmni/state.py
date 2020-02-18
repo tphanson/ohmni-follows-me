@@ -42,10 +42,11 @@ class StateMachine:
 
     def __change_state(self, denoise_status):
         if denoise_status is True:
-            print('aasjdkahdjkash')
             self.__next()
+            print('True', self.current_state)
         elif denoise_status is False:
             self.__back()
+            print('False', self.current_state)
         else:
             # No change
             pass
