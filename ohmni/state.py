@@ -33,10 +33,11 @@ class StateMachine:
         self.denoise = NoiseReduction()
 
     def __next(self):
+        print(1, self.current_index)
         self.current_index = (self.current_index+1) % len(self.states)
-        print(self.current_index)
+        print(2, self.current_index)
         self.current_state = self.states[self.current_index]
-        print(self.current_state)
+        print(3, self.current_state)
 
     def __back(self):
         self.current_index = (self.current_index-1) % len(self.states)
