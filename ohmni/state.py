@@ -69,8 +69,7 @@ class StateMachine:
         elif self.current_state == 'init_run':
             self.__change_state(True)
         elif self.current_state == 'run':
-            ok = self.denoise.input(0, 20)
-            self.__change_state(ok)
+            self.__change_state(None)
         else:
             self.__throw_error()
 
@@ -78,8 +77,7 @@ class StateMachine:
         if self.current_state == 'init_idle':
             self.__change_state(True)
         elif self.current_state == 'idle':
-            ok = self.denoise.input(0, 1)
-            self.__change_state(ok)
+            self.__change_state(None)
         elif self.current_state == 'init_run':
             self.__change_state(True)
         elif self.current_state == 'run':
