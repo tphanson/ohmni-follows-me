@@ -113,6 +113,8 @@ def start(server, botshell):
             sm.set_state(prev_vector is None)
         # Run
         if state == 'init_run':
+            while(prev_vector is None):
+                prev_vector = detect_gesture(pd, ht, cv_img)
             sm.set_state(True)
         # Tracking
         if state == 'run':
