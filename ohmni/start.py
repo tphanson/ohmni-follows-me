@@ -110,7 +110,7 @@ def start(server, botshell):
             cv_img = cv.resize(img, pd.input_shape)
             # Detect gesture
             vector = detect_gesture(pd, ht, cv_img)
-            sm.set_state(vector is None)
+            sm.set_state(vector is not None)
             if vector is not None:
                 prev_vector = vector
         # Run
