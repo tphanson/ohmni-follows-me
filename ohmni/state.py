@@ -8,6 +8,10 @@ class NoiseReduction:
         self.register = np.array([])
         self.threshold = 0.7
 
+    def __reset(self):
+        self.start = None
+        self.register = np.array([])
+
     def __get_timestamp(self):
         return int(datetime.timestamp(datetime.now()))
 
@@ -20,7 +24,7 @@ class NoiseReduction:
             self.register = np.append(self.register, bit)
             return None, 0
         else:
-            self.start = None
+            self.__reset()
             mean = np.mean(self.register)
             print("End ====================================", mean)
             return mean >= self.threshold, mean
