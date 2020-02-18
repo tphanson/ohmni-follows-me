@@ -99,6 +99,7 @@ def start(server, botshell):
 
         state = sm.get()
 
+        print(state)
         # Stop
         if state == 'init_idle':
             print('*** Manual move:', 0, 0)
