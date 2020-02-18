@@ -109,10 +109,8 @@ def start(server, botshell):
             # Detect gesture
             prev_vector = detect_gesture(pd, ht, cv_img)
             if prev_vector is None:
-                print(1)
                 sm.idle()
             else:
-                print(2)
                 sm.run()
         # Run
         if state == 'init_run':
