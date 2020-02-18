@@ -19,7 +19,7 @@ class NoiseReduction:
             self.start = self.__get_timestamp()
         if self.__get_timestamp()-self.start < seconds:
             self.register = np.append(self.register, bit)
-            return None
+            return 0
         else:
             mean = np.mean(self.register)
             self.__reset()
