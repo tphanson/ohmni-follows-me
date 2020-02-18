@@ -6,7 +6,6 @@ class NoiseReduction:
     def __init__(self):
         self.start = None
         self.register = np.array([])
-        self.threshold = 0.5
 
     def __reset(self):
         self.start = None
@@ -23,9 +22,8 @@ class NoiseReduction:
             return None
         else:
             mean = np.mean(self.register)
-            print("*** Noise Reduction:", mean)
             self.__reset()
-            return bool(mean >= self.threshold)
+            return mean
 
 
 class StateMachine:
@@ -56,13 +54,13 @@ class StateMachine:
         if self.current_state == 'init_idle':
             self.__change_state(True)
         elif self.current_state == 'idle':
-            ok = self.denoise.input(int(next_flag), 1)
-            self.__change_state(ok)
+            mean = self.denoise.input(int(next_flag), 1)
+            self.__change_state(bool(mean >= 0.4))
         elif self.current_state == 'init_run':
             self.__change_state(True)
         elif self.current_state == 'run':
             ok = self.denoise.input(int(next_flag), 20)
-            self.__change_state(ok)
+            self.__change_state(bool(mean >= 0))
         else:
             self.__throw_error()
 
