@@ -100,7 +100,7 @@ def start(server, botshell):
         state = sm.get()
 
         # Wait for an activation (raising hands)
-        if state == 'init_idle' or state == 'idle':
+        if state == 'idle' or state == 'init_run':
             # Resize image
             cv_img = cv.resize(img, pd.input_shape)
             # Detect gesture
@@ -110,7 +110,7 @@ def start(server, botshell):
             else:
                 sm.run()
         # Tracking
-        if state == 'init_run' or state == 'run':
+        if state == 'run' or state == 'init_idle':
             # Resize image
             cv_img = cv.resize(img, hd.input_shape)
             # Detect human
