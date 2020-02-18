@@ -39,7 +39,9 @@ class StateMachine:
 
     def __next(self):
         self.current_index = (self.current_index+1) % len(self.states)
+        print("Next 1",  self.current_index)
         self.current_state = self.states[self.current_index]
+        print("Next 2",  self.current_state)
 
     def __back(self):
         self.current_index = (self.current_index-1) % len(self.states)
