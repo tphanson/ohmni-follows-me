@@ -48,8 +48,9 @@ class StateMachine:
         self.current_state = self.states[self.current_index]
 
     def __change_state(self, denoise_status):
-        print('__change_state', denoise_status)
+        print('__change_state', denoise_status, denoise_status is True)
         if denoise_status is True:
+            print("Vo ne ba")
             self.__next()
         else:  # No change
             pass
