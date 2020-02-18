@@ -20,9 +20,9 @@ class NoiseReduction:
             self.register = np.append(self.register, bit)
             return None, 0
         else:
-            print("End ====================================")
             self.start = None
             mean = np.mean(self.register)
+            print("End ====================================", mean)
             return mean >= self.threshold, mean
 
 
@@ -55,15 +55,15 @@ class StateMachine:
             print(1)
             self.__change_state(True)
         elif self.current_state == 'idle':
-            ok, mean = self.denoise.input(int(next_flag), 1)
-            print(2, ok, mean)
+            ok = self.denoise.input(int(next_flag), 1)
+            print(2, ok)
             self.__change_state(ok)
         elif self.current_state == 'init_run':
             print(3)
             self.__change_state(True)
         elif self.current_state == 'run':
-            ok, mean = self.denoise.input(int(next_flag), 20)
-            print(4, ok, mean)
+            ok = self.denoise.input(int(next_flag), 20)
+            print(4, ok)
             self.__change_state(ok)
         else:
             self.__throw_error()
