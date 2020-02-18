@@ -14,8 +14,8 @@ from ohmni.state import StateMachine
 
 # Ohmni global config
 NECK_ID = 3
-NECK_TIME = 10
-NECK_POSITION = 500
+NECK_TIME = 15
+NECK_POS = 500
 
 
 def detect_gesture(pd, ht, cv_img):
@@ -83,7 +83,7 @@ def start(server, botshell):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
-    ctrl = Controller(hd.input_shape, NECK_POSITION)
+    ctrl = Controller(hd.input_shape, NECK_POS)
 
     sm = StateMachine()
     prev_vector = None
@@ -91,7 +91,6 @@ def start(server, botshell):
     while(True):
         timer = cv.getTickCount()
         state = sm.get()
-        print(state)
 
         img = camera.fetch(server)
         if img is None:

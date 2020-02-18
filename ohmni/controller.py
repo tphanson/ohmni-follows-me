@@ -12,7 +12,7 @@ SLOW_MO = 700
 MEDIUM_MO = 1050
 FAST_MO = 1650
 # Speed of neck
-NECK = 10
+NECK = 4
 # Action zones
 AREA = np.array([1/10, 1/6, 2/9, 1/3])
 XMED = np.array([11/30, 13/30, 14/30, 16/30, 17/30, 19/30])

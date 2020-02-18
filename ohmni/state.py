@@ -8,13 +8,13 @@ class NoiseReduction:
         self.register = np.array([])
         self.threshold = 0.7
 
-    def get_timestamp(self):
+    def __get_timestamp(self):
         return int(datetime.timestamp(datetime.now()))
 
     def input(self, bit, seconds):
         if self.start is None:
-            self.start = self.get_timestamp()
-        if self.get_timestamp()-self.start < seconds:
+            self.start = self.__get_timestamp()
+        if self.__get_timestamp()-self.start < seconds:
             self.register = np.append(self.register, bit)
             return None
         else:
@@ -33,18 +33,12 @@ class StateMachine:
         self.denoise = NoiseReduction()
 
     def __next(self):
-        print(1, self.current_index)
         self.current_index = (self.current_index+1) % len(self.states)
-        print(2, self.current_index)
         self.current_state = self.states[self.current_index]
-        print(3, self.current_state)
 
     def __back(self):
-        print(4, self.current_index)
         self.current_index = (self.current_index-1) % len(self.states)
-        print(5, self.current_index)
         self.current_state = self.states[self.current_index]
-        print(6, self.current_state)
 
     def __change_state(self, denoise_status):
         if denoise_status is True:
@@ -63,13 +57,14 @@ class StateMachine:
     def run(self):
         if self.current_state == 'init_idle':
             self.__change_state(True)
-        if self.current_state == 'idle':
+        elif self.current_state == 'idle':
             ok = self.denoise.input(1, 1)
             self.__change_state(ok)
         elif self.current_state == 'init_run':
             self.__change_state(True)
         elif self.current_state == 'run':
-            self.__change_state(None)
+            ok = self.denoise.input(0, 1)
+            self.__change_state(ok)
         else:
             self.__throw_error()
 
@@ -77,7 +72,8 @@ class StateMachine:
         if self.current_state == 'init_idle':
             self.__change_state(True)
         elif self.current_state == 'idle':
-            self.__change_state(None)
+            ok = self.denoise.input(0, 20)
+            self.__change_state(ok)
         elif self.current_state == 'init_run':
             self.__change_state(True)
         elif self.current_state == 'run':
