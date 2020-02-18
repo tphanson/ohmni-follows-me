@@ -6,7 +6,7 @@ class NoiseReduction:
     def __init__(self):
         self.start = None
         self.register = np.array([])
-        self.threshold = 0.7
+        self.threshold = 0.5
 
     def __reset(self):
         self.start = None
@@ -51,7 +51,7 @@ class StateMachine:
     def __throw_error(self):
         raise ValueError('The state is undefined.')
 
-    def set_state(self, next_flag):
+    def next_state(self, next_flag):
         if self.current_state == 'init_idle':
             self.__change_state(True)
         elif self.current_state == 'idle':

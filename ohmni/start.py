@@ -103,19 +103,19 @@ def start(server, botshell):
             botshell.sendall(b'manual_move 0 0\n')
             botshell.sendall(
                 f'pos {NECK_ID} {NECK_POS} {NECK_TIME}\n'.encode())
-            sm.set_state(True)
+            sm.next_state(True)
         # Wait for an activation (raising hands)
         if state == 'idle':
             # Resize image
             cv_img = cv.resize(img, pd.input_shape)
             # Detect gesture
             vector = detect_gesture(pd, ht, cv_img)
-            sm.set_state(vector is not None)
+            sm.next_state(vector is not None)
             if vector is not None:
                 prev_vector = vector
         # Run
         if state == 'init_run':
-            sm.set_state(True)
+            sm.next_state(True)
         # Tracking
         if state == 'run':
             # Resize image
@@ -125,7 +125,7 @@ def start(server, botshell):
             if len(objs) == 0:
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
-                sm.set_state(False)
+                sm.next_state(False)
                 continue
             # Tracking
             distances, vectormax, distancemax, argmax = tracking(
@@ -137,10 +137,10 @@ def start(server, botshell):
             if distancemax > 5:
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
-                sm.set_state(False)
+                sm.next_state(False)
                 continue
             # Calculate results
-            sm.set_state(True)
+            sm.next_state(True)
             prev_vector = vectormax
             # Drive car
             obj = objs[argmax]
