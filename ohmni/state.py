@@ -39,7 +39,6 @@ class StateMachine:
         self.current_index = (self.current_index-1) % len(self.states)
 
     def __change_state(self, denoise_status):
-        print(denoise_status)
         if denoise_status is True:
             self.__next()
         elif denoise_status is False:
@@ -56,6 +55,7 @@ class StateMachine:
             self.__change_state(True)
         if self.current_state == 'idle':
             ok = self.denoise.input(1, 1)
+            print(ok)
             self.__change_state(ok)
         elif self.current_state == 'init_run':
             self.__change_state(True)
