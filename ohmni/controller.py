@@ -5,7 +5,7 @@ import numpy as np
 
 # Speed of rotation
 SLOW_RO = 100
-MEDIUM_RO = 200
+MEDIUM_RO = 150
 FAST_RO = 350
 # Speed of run
 SLOW_MO = 700
