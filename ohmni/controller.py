@@ -12,7 +12,8 @@ SLOW_MO = 700
 MEDIUM_MO = 1100
 FAST_MO = 1700
 # Speed of neck
-NECK = 10
+NECK_DELTA = 10
+NECK = [250, 550]
 # Action zones
 AREA = np.array([1/10, 1/6, 2/9, 1/3])
 XMED = np.array([11/30, 13/30, 14/30, 16/30, 17/30, 19/30])
@@ -117,14 +118,14 @@ class Controller:
     def neck(self, bbox):
         _, _, ymed = self.calculate(bbox)
         if ymed >= self.ymed[1]:
-            self.neck_position -= NECK
+            self.neck_position -= NECK_DELTA
         elif self.ymed[1] > ymed >= self.ymed[0]:
             pass
         else:
-            self.neck_position += NECK
+            self.neck_position += NECK_DELTA
 
-        if self.neck_position > 650:
-            self.neck_position = 650
-        if self.neck_position < 300:
-            self.neck_position = 300
+        if self.neck_position > NECK[1]:
+            self.neck_position = NECK[1]
+        if self.neck_position < NECK[0]:
+            self.neck_position = NECK[0]
         return self.neck_position
