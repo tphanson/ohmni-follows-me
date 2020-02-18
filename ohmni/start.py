@@ -91,7 +91,6 @@ def start(server, botshell):
     while(True):
         timer = cv.getTickCount()
         state = sm.get_state()
-        print(state)
 
         img = camera.fetch(server)
         if img is None:

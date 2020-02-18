@@ -23,6 +23,7 @@ class NoiseReduction:
             return None
         else:
             mean = np.mean(self.register)
+            print("*** Noise Reduction:", mean)
             self.__reset()
             return bool(mean >= self.threshold)
 
