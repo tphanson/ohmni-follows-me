@@ -49,7 +49,7 @@ class StateMachine:
 
     def __change_state(self, denoise_status):
         print('__change_state', denoise_status, denoise_status is True)
-        if denoise_status is True:
+        if denoise_status:
             print("Vo ne ba")
             self.__next()
         else:  # No change
