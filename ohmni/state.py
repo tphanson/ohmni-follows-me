@@ -59,7 +59,7 @@ class StateMachine:
         elif self.current_state == 'init_run':
             self.__change_state(True)
         elif self.current_state == 'run':
-            ok = self.denoise.input(int(next_flag), 20)
+            mean = self.denoise.input(int(next_flag), 20)
             self.__change_state(bool(mean >= 0))
         else:
             self.__throw_error()
