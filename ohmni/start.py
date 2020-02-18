@@ -89,7 +89,7 @@ def start(server, botshell):
     prev_vector = None
 
     while(True):
-        timer = cv.getTickCount()
+        fpsstart = time.time()
         state = sm.get_state()
 
         img = camera.fetch(server)
@@ -152,8 +152,8 @@ def start(server, botshell):
             botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
             botshell.sendall(f'pos {NECK_ID} {POS} {NECK_TIME}\n'.encode())
 
-            # Calculate Frames per second (FPS)
-            print("Total Estimated Time: ",
-                  (cv.getTickCount()-timer)/cv.getTickFrequency())
-            fps = cv.getTickFrequency() / (cv.getTickCount() - timer)
-            print("FPS: {:.1f} \n\n".format(fps))
+            # Calculate frames per second (FPS)
+            fpsend = time.time()
+            print('Total estimated time {:.4f}'.format(fpsend-fpsstart))
+            print("FPS: {:.1f} \n\n".format(1 / (fpsend-fpsstart)))
+
