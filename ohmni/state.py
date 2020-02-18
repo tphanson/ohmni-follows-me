@@ -16,13 +16,11 @@ class NoiseReduction:
             self.start = self.__get_timestamp()
         if self.__get_timestamp()-self.start < seconds:
             self.register = np.append(self.register, bit)
-            return None
+            return None, 0
         else:
             self.start = None
-            if np.mean(self.register) >= self.threshold:
-                return True
-            else:
-                return False
+            mean = np.mean(self.register)
+            return mean >= self.threshold, mean
 
 
 class StateMachine:
@@ -55,7 +53,7 @@ class StateMachine:
             self.__change_state(True)
         elif self.current_state == 'idle':
             ok = self.denoise.input(int(next_flag), 1)
-            print(2, ok)
+            print(2, ok, self.denoise)
             self.__change_state(ok)
         elif self.current_state == 'init_run':
             print(3)
