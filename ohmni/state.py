@@ -32,6 +32,8 @@ class StateMachine:
         self.denoise = NoiseReduction()
 
     def run(self):
+        if self.current_state == 'run':
+            return
         if self.current_state == 'idle':
             self.current_state = 'init_run'
         else:
@@ -42,6 +44,8 @@ class StateMachine:
                 self.current_state = 'idle'
 
     def idle(self):
+        if self.current_state == 'idle':
+            return
         if self.current_state == 'run':
             self.current_state = 'init_idle'
         else:
