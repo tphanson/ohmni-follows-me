@@ -52,15 +52,15 @@ class StateMachine:
             print(1)
             self.__change_state(True)
         elif self.current_state == 'idle':
-            ok = self.denoise.input(int(next_flag), 1)
-            print(2, ok, self.denoise)
+            ok, mean = self.denoise.input(int(next_flag), 1)
+            print(2, ok, mean)
             self.__change_state(ok)
         elif self.current_state == 'init_run':
             print(3)
             self.__change_state(True)
         elif self.current_state == 'run':
-            ok = self.denoise.input(int(next_flag), 20)
-            print(4, ok)
+            ok, mean = self.denoise.input(int(next_flag), 20)
+            print(4, ok, mean)
             self.__change_state(ok)
         else:
             self.__throw_error()
