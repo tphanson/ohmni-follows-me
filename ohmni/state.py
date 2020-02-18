@@ -44,11 +44,7 @@ class StateMachine:
         if denoise_status is True:
             self.__next()
             print('True', self.current_state)
-        elif denoise_status is False:
-            self.__back()
-            print('False', self.current_state)
-        else:
-            # No change
+        else:  # No change
             pass
 
     def __throw_error(self):
@@ -63,7 +59,7 @@ class StateMachine:
         elif self.current_state == 'init_run':
             self.__change_state(True)
         elif self.current_state == 'run':
-            ok = self.denoise.input(0, 1)
+            ok = self.denoise.input(0, 20)
             self.__change_state(ok)
         else:
             self.__throw_error()
@@ -72,7 +68,7 @@ class StateMachine:
         if self.current_state == 'init_idle':
             self.__change_state(True)
         elif self.current_state == 'idle':
-            ok = self.denoise.input(0, 20)
+            ok = self.denoise.input(0, 1)
             self.__change_state(ok)
         elif self.current_state == 'init_run':
             self.__change_state(True)
