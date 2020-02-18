@@ -15,7 +15,7 @@ from ohmni.state import StateMachine
 # Ohmni global config
 NECK_ID = 3
 NECK_TIME = 10
-NECK_POSITION = 500
+NECK_POS = 500
 
 
 def detect_gesture(pd, ht, cv_img):
@@ -83,7 +83,7 @@ def start(server, botshell):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
-    ctrl = Controller(hd.input_shape, NECK_POSITION)
+    ctrl = Controller(hd.input_shape, NECK_POS)
 
     sm = StateMachine()
     prev_vector = None
@@ -99,16 +99,23 @@ def start(server, botshell):
 
         state = sm.get()
 
+        # Rest head
+        if state == 'init_idle':
+            sm.idle()
+            botshell.sendall(b'manual_move 0 0\n')
+            botshell.sendall(
+                f'pos {NECK_ID} {NECK_POS} {NECK_TIME}\n'.encode())
         # Wait for an activation (raising hands)
         if state == 'idle':
             # Resize image
             cv_img = cv.resize(img, pd.input_shape)
             # Detect gesture
             prev_vector = detect_gesture(pd, ht, cv_img)
-            if prev_vector is None:
-                botshell.sendall(b'manual_move 0 0\n')
-            else:
+            if prev_vector is not None:
                 sm.run()
+        # Wake head
+        if state == 'init_run':
+            sm.run()
         # Tracking
         if state == 'run':
             # Resize image
