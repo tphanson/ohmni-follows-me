@@ -1,7 +1,7 @@
 import sys
 
 import socket
-from tests import wheel, cam
+from tests import wheel
 from ohmni import start as ohmni
 
 
