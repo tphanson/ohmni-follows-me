@@ -93,6 +93,7 @@ def start(botshell):
     while(True):
         fpsstart = time.time()
         state = sm.get_state()
+        print('Debug:', state)
 
         img = cam.fetch()
         if img is None:
