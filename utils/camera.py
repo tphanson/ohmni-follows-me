@@ -24,7 +24,7 @@ class Camera:
         if self.server is not None:
             return False
         self.server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-        self.server.settimeout(0.2)
+        self.server.settimeout(0.04)
         self.server.bind("/dev/libcamera_stream")
         os.chown("/dev/libcamera_stream", 1047, 1047)
         return True
