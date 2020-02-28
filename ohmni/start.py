@@ -113,6 +113,7 @@ def start(botshell):
                 # Detect gesture
                 vector = detect_gesture(pd, ht, cv_img)
                 # sm.next_state(vector is not None)
+                print(vector)
                 if vector is not None:
                     prev_vector = vector
                 else:
