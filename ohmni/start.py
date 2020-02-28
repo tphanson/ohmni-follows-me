@@ -117,7 +117,7 @@ def start(botshell):
                 if vector is not None:
                     prev_vector = vector
                 else:
-                    print("Detected gesture")
+                    print("No detected gesture")
             # Run
             if state == 'init_run':
                 sm.next_state(True)
