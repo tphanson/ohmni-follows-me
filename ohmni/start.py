@@ -18,9 +18,9 @@ NECK_POS = 500
 
 
 def detect_gesture(pd, ht, cv_img):
-    gesstart = time.time()
     # Inference
     _, t, status, obj_img, bbox = pd.predict(cv_img)
+    print('Gesture detection estimated time {:.4f}'.format(t))
     # Calculate result
     vector = None
     if status != 0:
@@ -31,9 +31,6 @@ def detect_gesture(pd, ht, cv_img):
                 int(xmax/pd.image_shape[0]),
                 int(ymax/pd.image_shape[1]))
         vector = ht.predict([obj_img], [bbox])
-    gesend = time.time()
-    print('Gesture detection estimated time {:.4f} {:.4f}'.format(
-        gesend-gesstart, t))
     # Return
     return vector
 
@@ -119,7 +116,7 @@ def start(botshell):
                 cv_img = cv.resize(img, pd.input_shape)
                 # Detect gesture
                 vector = detect_gesture(pd, ht, cv_img)
-                # sm.next_state(vector is not None)
+                sm.next_state(vector is not None)
                 if vector is not None:
                     prev_vector = vector
             # Run
