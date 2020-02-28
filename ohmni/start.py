@@ -64,8 +64,8 @@ def tracking(ht, objs, prev_vector, cv_img):
         obj_imgs_batch.append(obj_img)
         bboxes_batch.append(box)
     # Inference
-    print(obj_imgs_batch, bboxes_batch)
     vectors = ht.predict(obj_imgs_batch, bboxes_batch)
+    print('end')
     # Calculate results
     for index, vector in enumerate(vectors):
         v = vector - prev_vector
