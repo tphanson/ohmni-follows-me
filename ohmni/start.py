@@ -20,7 +20,7 @@ NECK_POS = 500
 def detect_gesture(pd, ht, cv_img):
     gesstart = time.time()
     # Inference
-    _, _, status, obj_img, bbox = pd.predict(cv_img)
+    _, t, status, obj_img, bbox = pd.predict(cv_img)
     # Calculate result
     vector = None
     if status != 0:
@@ -32,7 +32,8 @@ def detect_gesture(pd, ht, cv_img):
                 int(ymax/pd.image_shape[1]))
         vector = ht.predict([obj_img], [bbox])
     gesend = time.time()
-    print('Gesture detection estimated time {:.4f}'.format(gesend-gesstart))
+    print('Gesture detection estimated time {:.4f} {:.4f}'.format(
+        gesend-gesstart, t))
     # Return
     return vector
 
