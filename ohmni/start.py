@@ -46,26 +46,21 @@ def detect_human(hd, cv_img):
 
 
 def tracking(ht, objs, prev_vector, cv_img):
-    print(1)
     # Initialize returned vars
     distances = []
     vectormax = None
     distancemax = None
     argmax = 0
-    print(2)
     # Initialize registers
     obj_imgs_batch = []
     bboxes_batch = []
-    print(3)
     # Push objects to registers
     for obj in objs:
-        print('iterator')
         box, obj_img = ht.formaliza_data(obj, cv_img)
         obj_imgs_batch.append(obj_img)
         bboxes_batch.append(box)
     # Inference
     vectors = ht.predict(obj_imgs_batch, bboxes_batch)
-    print('end')
     # Calculate results
     for index, vector in enumerate(vectors):
         v = vector - prev_vector
@@ -132,7 +127,6 @@ def start(botshell):
                 # Resize image
                 cv_img = cv.resize(img, hd.input_shape)
                 # Detect human
-                print('Image shape', cv_img.shape)
                 objs = detect_human(hd, cv_img)
                 if len(objs) == 0:
                     print('*** Manual move:', 0, 0)
