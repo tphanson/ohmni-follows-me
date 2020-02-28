@@ -156,7 +156,7 @@ def start(botshell):
                         print('*** Manual move:', LW, RW)
                         print('*** Neck position:', POS)
                         # Dynamic test
-                        # botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
+                        botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
                         botshell.sendall(f'neck_angle {POS}\n'.encode())
 
         # Calculate frames per second (FPS)
