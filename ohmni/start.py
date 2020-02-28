@@ -97,65 +97,69 @@ def start(botshell):
 
         img = cam.fetch()
         if img is None:
-            continue
-
-        # Stop
-        if state == 'init_idle':
-            print('*** Manual move:', 0, 0)
-            botshell.sendall(b'manual_move 0 0\n')
-            botshell.sendall(
-                f'neck_angle {NECK_POS}\n'.encode())
-            sm.next_state(True)
-        # Wait for an activation (raising hands)
-        if state == 'idle':
-            # Resize image
-            cv_img = cv.resize(img, pd.input_shape)
-            # Detect gesture
-            vector = detect_gesture(pd, ht, cv_img)
-            sm.next_state(vector is not None)
-            if vector is not None:
-                prev_vector = vector
-        # Run
-        if state == 'init_run':
-            sm.next_state(True)
-        # Tracking
-        if state == 'run':
-            # Resize image
-            cv_img = cv.resize(img, hd.input_shape)
-            # Detect human
-            objs = detect_human(hd, cv_img)
-            if len(objs) == 0:
+            pass
+        else:
+            # Stop
+            if state == 'init_idle':
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
+                botshell.sendall(
+                    f'neck_angle {NECK_POS}\n'.encode())
                 sm.next_state(True)
-                continue
+            # Wait for an activation (raising hands)
+            if state == 'idle':
+                # Resize image
+                cv_img = cv.resize(img, pd.input_shape)
+                # Detect gesture
+                vector = detect_gesture(pd, ht, cv_img)
+                sm.next_state(vector is not None)
+                if vector is not None:
+                    prev_vector = vector
+            # Run
+            if state == 'init_run':
+                sm.next_state(True)
             # Tracking
-            distances, vectormax, distancemax, argmax = tracking(
-                ht, objs, prev_vector, cv_img)
-            # Show info
-            print('*** Euclidean distances:', distances)
-            print('*** The minimum distance:', distancemax)
-            # Under threshold
-            if distancemax > 5:
-                print('*** Manual move:', 0, 0)
-                botshell.sendall(b'manual_move 0 0\n')
-                sm.next_state(True)
-                continue
-            # Calculate results
-            sm.next_state(False)
-            prev_vector = vectormax
-            # Drive car
-            obj = objs[argmax]
-            LW, RW = ctrl.wheel(obj.bbox)
-            POS = ctrl.neck(obj.bbox)
-            # Static test
-            print('*** Manual move:', LW, RW)
-            print('*** Neck position:', POS)
-            # Dynamic test
-            botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
-            botshell.sendall(f'neck_angle {POS}\n'.encode())
+            if state == 'run':
+                # Resize image
+                cv_img = cv.resize(img, hd.input_shape)
+                # Detect human
+                objs = detect_human(hd, cv_img)
+                if len(objs) == 0:
+                    print('*** Manual move:', 0, 0)
+                    botshell.sendall(b'manual_move 0 0\n')
+                    sm.next_state(True)
+                else:
+                    # Tracking
+                    distances, vectormax, distancemax, argmax = tracking(
+                        ht, objs, prev_vector, cv_img)
+                    # Show info
+                    print('*** Euclidean distances:', distances)
+                    print('*** The minimum distance:', distancemax)
+                    # Under threshold
+                    if distancemax > 5:
+                        print('*** Manual move:', 0, 0)
+                        botshell.sendall(b'manual_move 0 0\n')
+                        sm.next_state(True)
+                    else:
+                        # Calculate results
+                        sm.next_state(False)
+                        prev_vector = vectormax
+                        # Drive car
+                        obj = objs[argmax]
+                        LW, RW = ctrl.wheel(obj.bbox)
+                        POS = ctrl.neck(obj.bbox)
+                        # Static test
+                        print('*** Manual move:', LW, RW)
+                        print('*** Neck position:', POS)
+                        # Dynamic test
+                        botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
+                        botshell.sendall(f'neck_angle {POS}\n'.encode())
 
-            # Calculate frames per second (FPS)
-            fpsend = time.time()
-            print('Total estimated time {:.4f}'.format(fpsend-fpsstart))
-            print("FPS: {:.1f} \n\n".format(1 / (fpsend-fpsstart)))
+        # Calculate frames per second (FPS)
+        fpsend = time.time()
+        delay = 0.05 - fpsend + fpsstart
+        if delay > 0:
+            time.sleep(delay)
+        fpsadjust = time.time()
+        print('Total estimated time {:.4f}'.format(fpsend-fpsstart))
+        print("FPS: {:.1f} \n\n".format(1 / (fpsadjust-fpsstart)))
