@@ -2,7 +2,8 @@ import time
 import cv2 as cv
 import numpy as np
 
-from utils import camera
+# from utils import camera
+from utils.camera import Camera
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking
@@ -13,8 +14,6 @@ from ohmni.state import StateMachine
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
 # Ohmni global config
-NECK_ID = 3
-NECK_TIME = 15
 NECK_POS = 500
 
 
@@ -79,7 +78,10 @@ def tracking(ht, objs, prev_vector, cv_img):
     return distances, vectormax, distancemax, argmax
 
 
-def start(server, botshell):
+def start(botshell):
+    cam = Camera()
+    cam.start_server()
+
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
@@ -92,7 +94,7 @@ def start(server, botshell):
         fpsstart = time.time()
         state = sm.get_state()
 
-        img = camera.fetch(server)
+        img = cam.fetch()
         if img is None:
             continue
 
@@ -101,7 +103,7 @@ def start(server, botshell):
             print('*** Manual move:', 0, 0)
             botshell.sendall(b'manual_move 0 0\n')
             botshell.sendall(
-                f'pos {NECK_ID} {NECK_POS} {NECK_TIME}\n'.encode())
+                f'neck_angle {NECK_POS}\n'.encode())
             sm.next_state(True)
         # Wait for an activation (raising hands)
         if state == 'idle':
@@ -150,10 +152,9 @@ def start(server, botshell):
             print('*** Neck position:', POS)
             # Dynamic test
             botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
-            botshell.sendall(f'pos {NECK_ID} {POS} {NECK_TIME}\n'.encode())
+            botshell.sendall(f'neck_angle {POS}\n'.encode())
 
             # Calculate frames per second (FPS)
             fpsend = time.time()
             print('Total estimated time {:.4f}'.format(fpsend-fpsstart))
             print("FPS: {:.1f} \n\n".format(1 / (fpsend-fpsstart)))
-
