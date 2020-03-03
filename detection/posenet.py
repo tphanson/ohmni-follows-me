@@ -12,7 +12,7 @@ class PoseDetection():
     def __init__(self):
         self.engine = PoseEngine(
             'tpu/posenet_mobilenet_v1_075_481_641_quant_decoder_edgetpu.tflite')
-        self.confidence = 3
+        self.confidence = 5
         self.marin = 50
         self.image_shape = (640, 480)
         self.input_shape = (641, 481)
