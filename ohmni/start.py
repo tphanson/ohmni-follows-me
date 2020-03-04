@@ -140,7 +140,7 @@ def start(botshell):
                     print('*** Euclidean distances:', distances)
                     print('*** The minimum distance:', distancemax)
                     # Under threshold
-                    if distancemax > 5:
+                    if distancemax > 4:
                         print('*** Manual move:', 0, 0)
                         botshell.sendall(b'manual_move 0 0\n')
                         sm.next_state(True)
