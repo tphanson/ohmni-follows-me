@@ -13,7 +13,7 @@ class PoseDetection():
         self.engine = PoseEngine(
             'tpu/posenet_mobilenet_v1_075_481_641_quant_decoder_edgetpu.tflite')
         self.confidence = 4
-        self.marin = 50
+        self.margin = 0
         self.image_shape = (640, 480)
         self.input_shape = (641, 481)
 
@@ -28,10 +28,10 @@ class PoseDetection():
                 xmax = int(x)
             if y >= ymax:
                 ymax = int(y)
-        xmin -= self.marin
-        ymin -= self.marin
-        xmax += self.marin
-        ymax += self.marin
+        xmin -= self.margin
+        ymin -= self.margin
+        xmax += self.margin
+        ymax += self.margin
         if xmin < 0:
             xmin = 0
         if ymin < 0:
