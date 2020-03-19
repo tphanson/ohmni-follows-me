@@ -93,7 +93,8 @@ class HumanTracking:
                     self.prev_bbox - bbox) * self.tradeoff
                 positions = np.append(positions, position)
 
-            distances = features + positions
+            # distances = features + positions
+            distances = features
             confidences = self.confidence_level(distances)
             argmax = np.argmax(confidences)
 
