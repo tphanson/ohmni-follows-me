@@ -30,7 +30,7 @@ def detect_gesture(pd, ht, cv_img):
                 int(ymin/pd.image_shape[1]),
                 int(xmax/pd.image_shape[0]),
                 int(ymax/pd.image_shape[1]))
-        vector = ht.predict([obj_img], [bbox])
+        vector = ht.predict([obj_img], [bbox], True)
     # Return
     return vector
 
@@ -45,12 +45,7 @@ def detect_human(hd, cv_img):
     return objs
 
 
-def tracking(ht, objs, prev_vector, cv_img):
-    # Initialize returned vars
-    distances = []
-    vectormax = None
-    distancemax = None
-    argmax = 0
+def tracking(ht, objs, cv_img):
     # Initialize registers
     obj_imgs_batch = []
     bboxes_batch = []
@@ -60,23 +55,7 @@ def tracking(ht, objs, prev_vector, cv_img):
         obj_imgs_batch.append(obj_img)
         bboxes_batch.append(box)
     # Inference
-    vectors = ht.predict(obj_imgs_batch, bboxes_batch)
-    # Calculate results
-    for index, vector in enumerate(vectors):
-        v = vector - prev_vector
-        d = np.linalg.norm(v, 2)
-        distances.append(d)
-        if index == 0:
-            vectormax = vector
-            distancemax = d
-            argmax = index
-            continue
-        if d < distancemax:
-            vectormax = vector
-            distancemax = d
-            argmax = index
-    # Return
-    return distances, vectormax, distancemax, argmax
+    return ht.predict(obj_imgs_batch, bboxes_batch)
 
 
 def start(botshell):
@@ -89,7 +68,6 @@ def start(botshell):
     ctrl = Controller(hd.input_shape, NECK_POS)
 
     sm = StateMachine()
-    prev_vector = None
 
     while(True):
         fpsstart = time.time()
@@ -109,6 +87,7 @@ def start(botshell):
                 botshell.sendall(b'manual_move 0 0\n')
                 botshell.sendall(
                     f'neck_angle {NECK_POS}\n'.encode())
+                ht.reset()
                 sm.next_state(True)
             # Wait for an activation (raising hands)
             if state == 'idle':
@@ -117,8 +96,6 @@ def start(botshell):
                 # Detect gesture
                 vector = detect_gesture(pd, ht, cv_img)
                 sm.next_state(vector is not None)
-                if vector is not None:
-                    prev_vector = vector
             # Run
             if state == 'init_run':
                 sm.next_state(True)
@@ -134,20 +111,16 @@ def start(botshell):
                     sm.next_state(True)
                 else:
                     # Tracking
-                    distances, vectormax, distancemax, argmax = tracking(
-                        ht, objs, prev_vector, cv_img)
-                    # Show info
-                    print('*** Euclidean distances:', distances)
-                    print('*** The minimum distance:', distancemax)
+                    confidences, argmax = tracking(ht, objs, cv_img)
+                    print('*** Confidences:', confidences)
                     # Under threshold
-                    if distancemax > 10:
+                    if confidences[argmax] > 0.7:
                         print('*** Manual move:', 0, 0)
                         botshell.sendall(b'manual_move 0 0\n')
                         sm.next_state(True)
                     else:
                         # Calculate results
                         sm.next_state(False)
-                        prev_vector = vectormax
                         # Drive car
                         obj = objs[argmax]
                         LW, RW = ctrl.wheel(obj.bbox)

@@ -14,6 +14,7 @@ EDGE_MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 class HumanTracking:
     def __init__(self):
+        self.frame_shape = (300, 300)
         self.image_shape = IMAGE_SHAPE
         self.input_shape = IMAGE_SHAPE
         self.interpreter = tflite.Interpreter(
@@ -21,13 +22,24 @@ class HumanTracking:
             experimental_delegates=[
                 tflite.load_delegate(EDGETPU_SHARED_LIB)
             ])
+        self.input_details = self.interpreter.get_input_details()
+        self.output_details = self.interpreter.get_output_details()
+        self.threshold = 10
+        self.position_scale = 10
+        self.prev_feature = None
+        self.prev_position = None
+
+    def reset(self):
+        self.prev_feature = None
+        self.prev_position = None
 
     def formaliza_data(self, obj, frame):
         xmin = 0 if obj.bbox.xmin < 0 else obj.bbox.xmin
-        xmax = 300 if obj.bbox.xmax > 300 else obj.bbox.xmax
+        xmax = self.frame_shape[0] if obj.bbox.xmax > self.frame_shape[0] else obj.bbox.xmax
         ymin = 0 if obj.bbox.ymin < 0 else obj.bbox.ymin
-        ymax = 300 if obj.bbox.ymax > 300 else obj.bbox.ymax
-        box = [xmin/300, ymin/300, xmax/300, ymax/300]
+        ymax = self.frame_shape[1] if obj.bbox.ymax > self.frame_shape[1] else obj.bbox.ymax
+        box = np.array([xmin/self.frame_shape[0], ymin/self.frame_shape[1],
+                        xmax/self.frame_shape[0], ymax/self.frame_shape[1]])
         if xmin == xmax:
             return np.zeros(self.image_shape)
         if ymin == ymax:
@@ -37,26 +49,54 @@ class HumanTracking:
         obj_img = resized_obj_img/255.0
         return box, obj_img
 
-    def predict(self, imgs, bboxes):
-        estart = time.time()
-        features = None
-        input_details = self.interpreter.get_input_details()
-        output_details = self.interpreter.get_output_details()
+    def confidence_level(self, distances):
+        deltas = (self.threshold - distances)/self.threshold
+        zeros = np.zeros(deltas.shape, dtype=np.float32)
+        logits = np.maximum(deltas, zeros)
+        logits_sum = np.sum(logits)
+        if logits_sum == 0:
+            return zeros
+        else:
+            confidences = logits/logits_sum
+            return confidences
 
-        for img in imgs:
-            img = np.array(img, dtype=np.float32)
-            self.interpreter.allocate_tensors()
-            self.interpreter.set_tensor(input_details[0]['index'], [img])
-            self.interpreter.invoke()
-            feature = self.interpreter.get_tensor(output_details[0]['index'])
-            if features is None:
-                features = feature
-            else:
-                features = np.append(features, feature, axis=0)
+    def infer(self, img):
+        img = np.array(img, dtype=np.float32)
+        self.interpreter.allocate_tensors()
+        self.interpreter.set_tensor(self.input_details[0]['index'], [img])
+        self.interpreter.invoke()
+        feature = self.interpreter.get_tensor(self.output_details[0]['index'])
+        return np.array(feature[0])
 
-        bboxes = np.array(bboxes, dtype=np.float32)
-        output = np.concatenate((features, bboxes), axis=1)
-        eend = time.time()
-        print('Extractor estimated time {:.4f}'.format(eend-estart))
+    def predict(self, imgs, bboxes, init=False):
+        if init:
+            if len(imgs) != 1 or len(bboxes) != 1:
+                raise ValueError('You must initialize one object only.')
+            encoding = self.infer(imgs[0])
+            self.prev_feature = encoding
+            self.prev_position = bboxes[0]
+            return np.array([.0]), 0
+        else:
+            estart = time.time()
+            features = np.array([])
+            positions = np.array([])
 
-        return output
+            for index, img in enumerate(imgs):
+                encoding = self.infer(img)
+                feature = np.linalg.norm(self.prev_feature - encoding)
+                features = np.append(features, feature)
+                bbox = bboxes[index]
+                position = np.linalg.norm(
+                    self.prev_position - bbox) * self.position_scale
+                positions = np.append(positions, position)
+
+            distances = features + positions
+            confidences = self.confidence_level(distances)
+            argmax = np.argmax(confidences)
+
+            eend = time.time()
+            print('Features:', features)
+            print('Positions:', positions)
+            print('Distances:', distances)
+            print('Extractor estimated time {:.4f}'.format(eend-estart))
+            return confidences, argmax
