@@ -86,6 +86,7 @@ class HumanTracking:
                 feature = np.linalg.norm(self.prev_feature - encoding)
                 features = np.append(features, feature)
                 bbox = bboxes[index]
+                print(np.linalg.norm(self.prev_position - bbox))
                 position = np.linalg.norm(
                     self.prev_position - bbox) * self.position_scale
                 positions = np.append(positions, position)
