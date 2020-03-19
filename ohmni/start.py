@@ -26,10 +26,8 @@ def detect_gesture(pd, ht, cv_img):
     if status != 0:
         (xmin, ymin, xmax, ymax) = bbox
         obj_img = obj_img/255.
-        bbox = (int(xmin/pd.image_shape[0]),
-                int(ymin/pd.image_shape[1]),
-                int(xmax/pd.image_shape[0]),
-                int(ymax/pd.image_shape[1]))
+        bbox = (xmin/pd.image_shape[0], ymin/pd.image_shape[1],
+                xmax/pd.image_shape[0], ymax/pd.image_shape[1])
         vector = ht.predict([obj_img], [bbox], True)
     # Return
     return vector
