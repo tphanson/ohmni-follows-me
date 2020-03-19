@@ -24,14 +24,15 @@ class HumanTracking:
             ])
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
-        self.threshold = 10
-        self.position_scale = 10
-        self.prev_feature = None
-        self.prev_position = None
+        self.confidence = 0.7
+        self.threshold = 8
+        self.tradeoff = 10  # Between encoding distance and bbox distance
+        self.prev_encoding = None
+        self.prev_bbox = None
 
     def reset(self):
-        self.prev_feature = None
-        self.prev_position = None
+        self.prev_encoding = None
+        self.prev_bbox = None
 
     def formaliza_data(self, obj, frame):
         xmin = 0 if obj.bbox.xmin < 0 else obj.bbox.xmin
@@ -73,22 +74,23 @@ class HumanTracking:
             if len(imgs) != 1 or len(bboxes) != 1:
                 raise ValueError('You must initialize one object only.')
             encoding = self.infer(imgs[0])
-            self.prev_feature = encoding
-            self.prev_position = bboxes[0]
+            self.prev_encoding = encoding
+            self.prev_bbox = bboxes[0]
             return np.array([.0]), 0
         else:
             estart = time.time()
+            encodings = []
             features = np.array([])
             positions = np.array([])
 
             for index, img in enumerate(imgs):
                 encoding = self.infer(img)
-                feature = np.linalg.norm(self.prev_feature - encoding)
+                encodings.append(encoding)
+                feature = np.linalg.norm(self.prev_encoding - encoding)
                 features = np.append(features, feature)
                 bbox = bboxes[index]
-                print(np.linalg.norm(self.prev_position - bbox))
                 position = np.linalg.norm(
-                    self.prev_position - bbox) * self.position_scale
+                    self.prev_bbox - bbox) * self.tradeoff
                 positions = np.append(positions, position)
 
             distances = features + positions
@@ -100,4 +102,9 @@ class HumanTracking:
             print('Positions:', positions)
             print('Distances:', distances)
             print('Extractor estimated time {:.4f}'.format(eend-estart))
-            return confidences, argmax
+            if confidences[argmax] > self.confidence:
+                self.prev_encoding = encodings[argmax]
+                self.prev_bbox = bboxes[argmax]
+                return confidences, argmax
+            else:
+                return confidences, None

@@ -114,7 +114,7 @@ def start(botshell):
                     confidences, argmax = tracking(ht, objs, cv_img)
                     print('*** Confidences:', confidences)
                     # Under threshold
-                    if confidences[argmax] > 0.7:
+                    if argmax is None:
                         print('*** Manual move:', 0, 0)
                         botshell.sendall(b'manual_move 0 0\n')
                         sm.next_state(True)
