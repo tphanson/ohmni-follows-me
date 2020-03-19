@@ -25,7 +25,7 @@ class HumanTracking:
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
         self.confidence = 0.7
-        self.threshold = 8
+        self.threshold = 12
         self.tradeoff = 10  # Between encoding distance and bbox distance
         self.prev_encoding = None
         self.prev_bbox = None
