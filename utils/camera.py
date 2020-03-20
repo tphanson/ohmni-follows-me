@@ -18,20 +18,18 @@ class Camera:
         self.itopic = '/main_cam/image_raw'
         self.otopic = '/debug/image'
         self.image = None
-        self.publisher = None
+        self.publisher = rospy.Publisher(self.otopic, Image, queue_size=10)
 
     def isAlive(self):
         return False if self.image is None else True
 
-    def callback(self, data):
-        print("Transfering data")
-        self.image = data
-        self.publisher.publish(data)
-
     def start_server(self):
+        def callback(data):
+            print("Transfering data")
+            self.image = data
+            self.publisher.publish(data)
         print("Start listening")
         rospy.Subscriber(self.itopic, Image, self.callback)
-        self.publisher = rospy.Publisher(self.otopic, Image, queue_size=1)
 
     def stop_server(self):
         pass
