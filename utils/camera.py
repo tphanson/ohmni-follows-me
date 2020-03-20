@@ -29,7 +29,8 @@ class Camera:
             self.image = data
             self.publisher.publish(data)
         print("Start listening")
-        rospy.Subscriber(self.itopic, Image, self.callback)
+        rospy.Subscriber(self.itopic, Image, callback)
+        rospy.spin()
 
     def stop_server(self):
         pass
