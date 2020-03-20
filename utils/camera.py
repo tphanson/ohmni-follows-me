@@ -23,13 +23,15 @@ class Camera:
     def isAlive(self):
         return False if self.image is None else True
 
+    def callback(self, data):
+        print("Transfering data")
+        self.image = data
+        self.publisher.publish(data)
+
     def start_server(self):
-        def callback(data):
-            print("Transfering data")
-            self.image = data
-            self.publisher.publish(data)
+        rospy.init_node('bridge', anonymous=True)
         print("Start listening")
-        rospy.Subscriber(self.itopic, Image, callback)
+        rospy.Subscriber(self.itopic, Image, self.callback)
         rospy.spin()
 
     def stop_server(self):
