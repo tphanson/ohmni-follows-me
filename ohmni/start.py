@@ -73,9 +73,10 @@ def start(botshell):
 
         imgstart = time.time()
         img = cam.fetch()
-        continue
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
+        time.sleep(0.05)
+        continue
         if img is None:
             pass
         else:
