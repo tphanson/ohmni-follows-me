@@ -24,7 +24,7 @@ class Camera:
         return False if self.image is None else True
 
     def callback(self, data):
-        rospy.loginfo("Transfering data")
+        print("Transfering data")
         self.image = data
         self.publisher.publish(data)
 
