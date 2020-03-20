@@ -18,7 +18,8 @@ class Camera:
         self.itopic = '/main_cam/image_raw'
         self.otopic = '/debug/image'
         self.image = None
-        self.publisher = rospy.Publisher(self.otopic, Image, queue_size=10)
+        self.rospy.init_node('bridge', anonymous=True)
+        self.publisher = self.rospy.Publisher(self.otopic, Image, queue_size=10)
 
     def isAlive(self):
         return False if self.image is None else True
@@ -29,10 +30,9 @@ class Camera:
         self.publisher.publish(data)
 
     def start_server(self):
-        rospy.init_node('bridge', anonymous=True)
         print("Start listening")
-        rospy.Subscriber(self.itopic, Image, self.callback)
-        rospy.spin()
+        self.rospy.Subscriber(self.itopic, Image, self.callback)
+        self.rospy.spin()
 
     def stop_server(self):
         pass
