@@ -10,9 +10,9 @@ class Camera:
         self.itopic = '/main_cam/image_raw'
         self.otopic = '/debug/image'
         self.image = None
-        # self.publisher = rospy.Publisher(self.otopic, Image, queue_size=10)
-        print('Waiting for initializing node...', rospy.is_shutdown())
-        rospy.init_node('bridge', anonymous=True)
+        self.publisher = rospy.Publisher(self.otopic, Image, queue_size=10)
+        if rospy.is_shutdown():
+            rospy.init_node('bridge', anonymous=True)
 
     def isAlive(self):
         return False if self.image is None else True
