@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import cv2 as cv
 import rospy
@@ -11,6 +12,9 @@ class Camera:
         self.image = None
         self.publisher = rospy.Publisher(self.otopic, Image, queue_size=10)
         rospy.init_node('bridge', anonymous=True)
+        while not rospy.is_shutdown():
+            print('Waiting for initializing node...')
+            time.sleep(0.1)
 
     def isAlive(self):
         return False if self.image is None else True
