@@ -3,13 +3,14 @@ import cv2 as cv
 import rospy
 from sensor_msgs.msg import Image
 
+
 class Camera:
     def __init__(self):
         self.itopic = '/main_cam/image_raw'
         self.otopic = '/debug/image'
         self.image = None
         rospy.init_node('bridge', anonymous=True)
-        self.publisher =rospy.Publisher(self.otopic, Image, queue_size=10)
+        self.publisher = rospy.Publisher(self.otopic, Image, queue_size=10)
 
     def isAlive(self):
         return False if self.image is None else True
