@@ -29,6 +29,7 @@ class Camera:
         self.publisher.publish(data)
 
     def start_server(self):
+        print("Start listening")
         rospy.Subscriber(self.itopic, Image, self.callback)
         self.publisher = rospy.Publisher(self.otopic, Image, queue_size=1)
 

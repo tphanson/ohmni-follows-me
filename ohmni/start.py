@@ -69,12 +69,12 @@ def start(botshell):
     while(True):
         fpsstart = time.time()
         state = sm.get_state()
-        print('Debug:', state)
+        # print('Debug:', state)
 
         imgstart = time.time()
         img = cam.fetch()
         imgend = time.time()
-        print('Image estimated time {:.4f}'.format(imgend-imgstart))
+        # print('Image estimated time {:.4f}'.format(imgend-imgstart))
         time.sleep(0.05)
         continue
         if img is None:
