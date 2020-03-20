@@ -1,6 +1,5 @@
 import time
 import cv2 as cv
-import numpy as np
 
 # from utils import camera
 from utils.camera import Camera
@@ -74,6 +73,7 @@ def start(botshell):
 
         imgstart = time.time()
         img = cam.fetch()
+        continue
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
         if img is None:
