@@ -1,25 +1,15 @@
-import socket
-import os
-from enum import Enum
-from struct import unpack
 import numpy as np
 import cv2 as cv
 import rospy
 from sensor_msgs.msg import Image
-
-
-class SockState(Enum):
-    SEARCHING = 1
-    FILLING = 2
-
 
 class Camera:
     def __init__(self):
         self.itopic = '/main_cam/image_raw'
         self.otopic = '/debug/image'
         self.image = None
-        self.rospy.init_node('bridge', anonymous=True)
-        self.publisher = self.rospy.Publisher(self.otopic, Image, queue_size=10)
+        rospy.init_node('bridge', anonymous=True)
+        self.publisher =rospy.Publisher(self.otopic, Image, queue_size=10)
 
     def isAlive(self):
         return False if self.image is None else True
@@ -31,8 +21,8 @@ class Camera:
 
     def start_server(self):
         print("Start listening")
-        self.rospy.Subscriber(self.itopic, Image, self.callback)
-        self.rospy.spin()
+        rospy.Subscriber(self.itopic, Image, self.callback)
+        rospy.spin()
 
     def stop_server(self):
         pass
