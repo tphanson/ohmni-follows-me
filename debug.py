@@ -20,11 +20,12 @@ def stringToRGB(base64_string):
 def callback(msg):
     print('=======================================')
     for key in ['encoding', 'height', 'header', 'step', 'width', 'is_bigendian']:
-        print(key, msg[key])
+        print("***", key, msg[key])
     print("Image time", datetime.fromtimestamp(msg['header']['stamp']['secs']))
     print("Current time", datetime.now())
     img = stringToRGB(msg['data'])
     print(img.shape)
+
 
 client = roslibpy.Ros(host='localhost', port=9090)
 client.run()
