@@ -70,7 +70,10 @@ def start(botshell):
         state = sm.get_state()
         print('Debug:', state)
 
+        imgstart = time.time()
         img = rosimg.get()
+        imgend = time.time()
+        print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
         if img is None:
             pass
