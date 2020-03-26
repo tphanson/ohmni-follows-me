@@ -3,6 +3,7 @@ import roslibpy
 import numpy as np
 import base64
 import cv2 as cv
+from datetime import datetime
 
 
 class ROSImage:
@@ -18,7 +19,7 @@ class ROSImage:
         self.listener = roslibpy.Topic(
             self.client, self.in_topic, self.data_type)
 
-    def convert_base64_to_image(self, base64_string):
+    def __convert_base64_to_np(self, base64_string):
         start = time.time()
         imgdata = base64.b64decode(base64_string)
         img = np.fromstring(imgdata, dtype=np.uint8)
@@ -28,11 +29,17 @@ class ROSImage:
         print('Converting image estimated time {:.4f}'.format(end-start))
         return img
 
+    def ros2np(self, msg):
+        print("Image time", datetime.fromtimestamp(
+            msg['header']['stamp']['secs']))
+        print("Current time", datetime.now())
+        self.image = self.__convert_base64_to_np(msg['data'])
+
     def isAlive(self):
         return self.client.is_connected
 
     def __callback(self, msg):
-        self.image = self.convert_base64_to_image(msg['data'])
+        self.image = self.ros2np(msg)
 
     def start(self):
         print("Start listening")
