@@ -1,0 +1,41 @@
+import time
+import roslibpy
+import cv2 as cv
+import base64
+import numpy as np
+from datetime import datetime
+
+
+def stringToRGB(base64_string):
+    start = time.time()
+    imgdata = base64.b64decode(base64_string)
+    img = np.fromstring(imgdata, dtype=np.uint8)
+    img = img.reshape((480, 640, 3))
+    img = cv.cvtColor(img, cv.COLOR_RGB2BGR)
+    end = time.time()
+    print('Image estimated time {:.4f}'.format(end-start))
+    return img
+
+
+def callback(msg):
+    print('=======================================')
+    for key in ['encoding', 'height', 'header', 'step', 'width', 'is_bigendian']:
+        print(key, msg[key])
+    print("Image time", datetime.fromtimestamp(msg['header']['stamp']['secs']))
+    print("Current time", datetime.now())
+    img = stringToRGB(msg['data'])
+    cv.imshow("image", img)
+    cv.waitKey(100)
+
+
+client = roslibpy.Ros(host='192.168.0.104', port=9090)
+client.run()
+
+listener = roslibpy.Topic(client, '/ohmnicam/image', 'sensor_msgs/Image')
+listener.subscribe(callback)
+
+try:
+    while True:
+        pass
+except KeyboardInterrupt:
+    client.terminate()
