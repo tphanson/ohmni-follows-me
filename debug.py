@@ -19,12 +19,12 @@ def stringToRGB(base64_string):
 
 def callback(msg):
     print('=======================================')
-    for key in ['encoding', 'height', 'header', 'step', 'width', 'is_bigendian']:
-        print("***", key, msg[key])
+    # for key in ['encoding', 'height', 'header', 'step', 'width', 'is_bigendian']:
+    #     print("***", key, msg[key])
     print("Image time", datetime.fromtimestamp(msg['header']['stamp']['secs']))
-    print("Current time", datetime.now())
-    img = stringToRGB(msg['data'])
-    print(img.shape)
+    # print("Current time", datetime.now())
+    # img = stringToRGB(msg['data'])
+    # print(img.shape)
 
 
 client = roslibpy.Ros(host='localhost', port=9090)
@@ -34,9 +34,9 @@ listener = roslibpy.Topic(
     client,
     '/main_cam/image_raw',
     'sensor_msgs/Image',
-    throttle_rate=500,
-    queue_size=1,
-    queue_length=1,
+    # throttle_rate=500,
+    # queue_size=1,
+    # queue_length=1,
 )
 listener.subscribe(callback)
 
