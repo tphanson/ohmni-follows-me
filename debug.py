@@ -24,11 +24,9 @@ def callback(msg):
     print("Image time", datetime.fromtimestamp(msg['header']['stamp']['secs']))
     print("Current time", datetime.now())
     img = stringToRGB(msg['data'])
-    cv.imshow("image", img)
-    cv.waitKey(100)
+    print(img.shape)
 
-
-client = roslibpy.Ros(host='192.168.0.104', port=9090)
+client = roslibpy.Ros(host='localhost', port=9090)
 client.run()
 
 listener = roslibpy.Topic(client, '/main_cam/image_raw', 'sensor_msgs/Image')
