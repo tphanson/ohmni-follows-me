@@ -29,17 +29,14 @@ class ROSImage:
         print('Converting image estimated time {:.4f}'.format(end-start))
         return img
 
-    def ros2np(self, msg):
-        print("Image time", datetime.fromtimestamp(
-            msg['header']['stamp']['secs']))
-        print("Current time", datetime.now())
-        self.image = self.__convert_base64_to_np(msg['data'])
-
     def isAlive(self):
         return self.client.is_connected
 
     def __callback(self, msg):
-        self.image = self.ros2np(msg)
+        print("Image time", datetime.fromtimestamp(
+            msg['header']['stamp']['secs']))
+        print("Current time", datetime.now())
+        self.image = self.__convert_base64_to_np(msg['data'])
 
     def start(self):
         print("Start listening")
