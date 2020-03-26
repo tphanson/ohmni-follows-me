@@ -31,7 +31,7 @@ def callback(msg):
 client = roslibpy.Ros(host='192.168.0.104', port=9090)
 client.run()
 
-listener = roslibpy.Topic(client, '/ohmnicam/image', 'sensor_msgs/Image')
+listener = roslibpy.Topic(client, '/main_cam/image_raw', 'sensor_msgs/Image')
 listener.subscribe(callback)
 
 try:
