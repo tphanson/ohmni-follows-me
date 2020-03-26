@@ -35,7 +35,7 @@ listener = roslibpy.Topic(
     '/main_cam/image_raw',
     'sensor_msgs/Image',
     queue_size=1,
-    queue_length=1
+    queue_length=0
 )
 listener.subscribe(callback)
 
