@@ -8,8 +8,7 @@ from datetime import datetime
 
 def compressed_to_cv(msg):
     start = time.time()
-    data = msg['data']
-    # data = base64.b64decode(msg['data'])
+    data = base64.b64decode(msg['data'])
     img = np.fromstring(data, dtype=np.uint8)
     print(img.shape)
     # img = img.reshape((480, 640, 3))
