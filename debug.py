@@ -39,7 +39,7 @@ listener = roslibpy.Topic(
     client,
     '/main_cam/image_raw',
     'sensor_msgs/Image',
-    throttle_rate=50,
+    throttle_rate=500,
     queue_size=1,
     # queue_length=1,
 )
