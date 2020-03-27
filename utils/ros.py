@@ -10,14 +10,17 @@ class ROSImage:
     def __init__(self):
         self.in_topic = '/main_cam/image_raw/compressed'
         self.out_topic = '/ofm/image'
-        self.data_type = 'sensor_msgs/CompressedImage'
+        self.in_data_type = 'sensor_msgs/CompressedImage'
+        self.out_data_type = 'sensor_msgs/String'
         self.image = None
+        self.buffer = None
 
         self.client = roslibpy.Ros(host='localhost', port=9090)
-        self.talker = roslibpy.Topic(
-            self.client, self.out_topic, self.data_type)
         self.listener = roslibpy.Topic(
-            self.client, self.in_topic, self.data_type,
+            self.client, self.in_topic, self.in_data_type,
+            throttle_rate=70, queue_size=1)
+        self.talker = roslibpy.Topic(
+            self.client, self.out_topic, self.out_data_type,
             throttle_rate=70, queue_size=1)
 
     def __compressed_to_cv(self, msg):
@@ -30,6 +33,11 @@ class ROSImage:
         return self.client.is_connected
 
     def __callback(self, msg):
+        stamp = msg['header']['stamp']
+        img_time = float(str(stamp['secs'])+'.'+str(stamp['nsecs']))
+        self.buffer = "Image time" + \
+            str(datetime.fromtimestamp(img_time)) + \
+            "Current time" + str(datetime.now())
         self.image = self.__compressed_to_cv(msg)
 
     def start(self):
