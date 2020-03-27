@@ -1,4 +1,3 @@
-import time
 import roslibpy
 import numpy as np
 import base64
