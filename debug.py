@@ -19,13 +19,16 @@ def stringToRGB(base64_string):
 
 def callback(msg):
     print('=======================================')
+    print(msg.keys())
+    # for key in ['encoding', 'height', 'header', 'step', 'width', 'is_bigendian']:
+    #     print("***", key, msg[key])
     start = time.time()
     stamp = msg['header']['stamp']
     img_time = float(str(stamp['secs'])+'.'+str(stamp['nsecs']))
     print("Image time", datetime.fromtimestamp(img_time))
     print("Current time", datetime.now())
-    img = stringToRGB(msg['data'])
-    print(img.shape)
+    # img = stringToRGB(msg['data'])
+    # print(img.shape)
     end = time.time()
     print('Callback estimated time {:.4f}'.format(end-start))
 
@@ -38,7 +41,7 @@ listener = roslibpy.Topic(
     '/main_cam/image_raw/compressed',
     'sensor_msgs/CompressedImage',
     throttle_rate=70,
-    queue_size=1,
+    queue_size=1
 )
 listener.subscribe(callback)
 
