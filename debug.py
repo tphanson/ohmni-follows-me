@@ -19,9 +19,8 @@ def stringToRGB(base64_string):
 
 def callback(msg):
     print('=======================================')
-    print(msg.keys())
-    # for key in ['encoding', 'height', 'header', 'step', 'width', 'is_bigendian']:
-    #     print("***", key, msg[key])
+    for key in ['header', 'data', 'format']:
+        print("***", key, msg[key])
     start = time.time()
     stamp = msg['header']['stamp']
     img_time = float(str(stamp['secs'])+'.'+str(stamp['nsecs']))
