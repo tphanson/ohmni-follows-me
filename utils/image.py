@@ -34,7 +34,7 @@ def draw_objs(img, objs):
         color = colorize(obj.id)
         bbox = obj.bbox
         img = cv.rectangle(img, (bbox.xmin, bbox.ymin), (bbox.xmax, bbox.ymax),
-                           color, thickness=2)
+                           (255, 0, 0), thickness=2)
         # draw.text((bbox.xmin + 10, bbox.ymin + 10),
         #           'id: %d\nlabel: %s\nscore: %.2f' % (
         #               obj.id, obj.label, obj.score),
