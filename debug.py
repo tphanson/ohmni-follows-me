@@ -20,7 +20,7 @@ def compressed_to_cv(msg):
 
 def callback(msg):
     print('=======================================')
-    for key in ['header', 'data', 'format']:
+    for key in ['header', 'format']:
         print("***", key, msg[key])
     start = time.time()
     stamp = msg['header']['stamp']
