@@ -2,6 +2,7 @@ import time
 import cv2 as cv
 
 from utils.ros import ROSImage
+from utils import image
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking
@@ -70,7 +71,7 @@ def start(botshell):
         state = sm.get_state()
         print('Debug:', state)
 
-        img = rosimg.get()
+        header, img = rosimg.get()
 
         if img is None:
             pass
@@ -97,6 +98,7 @@ def start(botshell):
             if state == 'run':
                 # Resize image
                 cv_img = cv.resize(img, hd.input_shape)
+                pil_img = image.convert_cv_to_pil(cv_img)
                 # Detect human
                 objs = detect_human(hd, cv_img)
                 if len(objs) == 0:
@@ -125,6 +127,10 @@ def start(botshell):
                         # Dynamic test
                         botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
                         botshell.sendall(f'neck_angle {POS}\n'.encode())
+                        # Draw bounding box of tracking objective
+                        img.draw_objs(pil_img, [obj])
+                        drawed_cv_img = image.convert_pil_to_cv(pil_img)
+                        rosimg.pus(header, drawed_cv_img)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
