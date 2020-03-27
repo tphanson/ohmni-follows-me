@@ -21,8 +21,10 @@ def callback(msg):
     print('=======================================')
     # for key in ['encoding', 'height', 'header', 'step', 'width', 'is_bigendian']:
     #     print("***", key, msg[key])
-    print("Image time", datetime.fromtimestamp(msg['header']['stamp']['secs']))
-    # print("Current time", datetime.now())
+    stamp = msg['header']['stamp']['secs']
+    img_time = float(stamp['secs']+'.'+stamp['nsecs'])
+    print("Image time", datetime.fromtimestamp(img_time))
+    print("Current time", datetime.now())
     # img = stringToRGB(msg['data'])
     # print(img.shape)
 
