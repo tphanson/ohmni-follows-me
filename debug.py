@@ -22,7 +22,7 @@ def callback(msg):
     # for key in ['encoding', 'height', 'header', 'step', 'width', 'is_bigendian']:
     #     print("***", key, msg[key])
     start = time.time()
-    stamp = msg['header']['stamp']['secs']
+    stamp = msg['header']['stamp']
     img_time = float(str(stamp['secs'])+'.'+str(stamp['nsecs']))
     print("Image time", datetime.fromtimestamp(img_time))
     print("Current time", datetime.now())
