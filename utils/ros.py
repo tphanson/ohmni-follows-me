@@ -8,35 +8,29 @@ from datetime import datetime
 
 class ROSImage:
     def __init__(self):
-        self.in_topic = '/main_cam/image_raw'
+        self.in_topic = '/main_cam/image_raw/compressed'
         self.out_topic = '/ofm/image'
-        self.data_type = 'sensor_msgs/Image'
+        self.data_type = 'sensor_msgs/CompressedImage'
         self.image = None
 
         self.client = roslibpy.Ros(host='localhost', port=9090)
         self.talker = roslibpy.Topic(
-            self.client, self.out_topic, self.data_type, queue_size=10)
+            self.client, self.out_topic, self.data_type)
         self.listener = roslibpy.Topic(
-            self.client, self.in_topic, self.data_type)
+            self.client, self.in_topic, self.data_type,
+            throttle_rate=70, queue_size=1)
 
-    def __convert_base64_to_np(self, base64_string):
-        start = time.time()
-        imgdata = base64.b64decode(base64_string)
-        img = np.fromstring(imgdata, dtype=np.uint8)
-        img = img.reshape((480, 640, 3))
-        img = cv.cvtColor(img, cv.COLOR_RGB2BGR)
-        end = time.time()
-        print('Converting image estimated time {:.4f}'.format(end-start))
+    def __compressed_to_cv(self, msg):
+        data = base64.b64decode(msg['data'])
+        img = np.fromstring(data, dtype=np.uint8)
+        img = cv.imdecode(img, cv.IMREAD_COLOR)
         return img
 
     def isAlive(self):
         return self.client.is_connected
 
     def __callback(self, msg):
-        print("Image time", datetime.fromtimestamp(
-            msg['header']['stamp']['secs']))
-        print("Current time", datetime.now())
-        self.image = self.__convert_base64_to_np(msg['data'])
+        self.image = self.__compressed_to_cv(msg)
 
     def start(self):
         print("Start listening")

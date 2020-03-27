@@ -11,9 +11,6 @@ def compressed_to_cv(msg):
     data = base64.b64decode(msg['data'])
     img = np.fromstring(data, dtype=np.uint8)
     img = cv.imdecode(img, cv.IMREAD_COLOR)
-    print(img)
-    # img = img.reshape((480, 640, 3))
-    # img = cv.cvtColor(img, cv.COLOR_RGB2BGR)
     end = time.time()
     print('Image estimated time {:.4f}'.format(end-start))
     return img
@@ -21,20 +18,17 @@ def compressed_to_cv(msg):
 
 def callback(msg):
     print('=======================================')
-    for key in ['header', 'data', 'format']:
-        print("***", key, msg[key])
     start = time.time()
     stamp = msg['header']['stamp']
     img_time = float(str(stamp['secs'])+'.'+str(stamp['nsecs']))
     print("Image time", datetime.fromtimestamp(img_time))
     print("Current time", datetime.now())
     img = compressed_to_cv(msg)
-    # print(img.shape)
     end = time.time()
     print('Callback estimated time {:.4f}'.format(end-start))
 
 
-client = roslibpy.Ros(host='localhost', port=9090)
+client = roslibpy.Ros(host='192.168.0.100', port=9090)
 client.run()
 
 listener = roslibpy.Topic(
