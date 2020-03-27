@@ -21,12 +21,15 @@ def callback(msg):
     print('=======================================')
     # for key in ['encoding', 'height', 'header', 'step', 'width', 'is_bigendian']:
     #     print("***", key, msg[key])
+    start = time.time()
     stamp = msg['header']['stamp']['secs']
     img_time = float(stamp['secs']+'.'+stamp['nsecs'])
     print("Image time", datetime.fromtimestamp(img_time))
     print("Current time", datetime.now())
     # img = stringToRGB(msg['data'])
     # print(img.shape)
+    end = time.time()
+    print('Callback estimated time {:.4f}'.format(end-start))
 
 
 client = roslibpy.Ros(host='localhost', port=9090)
