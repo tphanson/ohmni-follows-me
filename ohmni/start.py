@@ -128,9 +128,13 @@ def start(botshell):
                         botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
                         botshell.sendall(f'neck_angle {POS}\n'.encode())
                         # Draw bounding box of tracking objective
+                        drawstart = time.time()
                         image.draw_objs(pil_img, [obj])
                         drawed_cv_img = image.convert_pil_to_cv(pil_img)
                         rosimg.push(header, drawed_cv_img)
+                        drawend = time.time()
+                        print('Draw estimated time {:.4f}'.format(
+                            drawend-drawstart))
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
