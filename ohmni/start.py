@@ -98,7 +98,6 @@ def start(botshell):
             if state == 'run':
                 # Resize image
                 cv_img = cv.resize(img, hd.input_shape)
-                pil_img = image.convert_cv_to_pil(cv_img)
                 # Detect human
                 objs = detect_human(hd, cv_img)
                 if len(objs) == 0:
@@ -129,9 +128,8 @@ def start(botshell):
                         botshell.sendall(f'neck_angle {POS}\n'.encode())
                         # Draw bounding box of tracking objective
                         drawstart = time.time()
-                        image.draw_objs(pil_img, [obj])
-                        drawed_cv_img = image.convert_pil_to_cv(pil_img)
-                        rosimg.push(header, drawed_cv_img)
+                        cv_img = image.draw_objs(cv_img, [obj])
+                        rosimg.push(header, cv_img)
                         drawend = time.time()
                         print('Draw estimated time {:.4f}'.format(
                             drawend-drawstart))

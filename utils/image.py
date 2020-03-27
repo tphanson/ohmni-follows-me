@@ -30,27 +30,27 @@ def colorize(number):
 
 
 def draw_objs(img, objs):
-    draw = ImageDraw.Draw(img)
     for obj in objs:
         color = colorize(obj.id)
         bbox = obj.bbox
-        draw.rectangle([(bbox.xmin, bbox.ymin), (bbox.xmax, bbox.ymax)],
-                       outline=color)
-        draw.text((bbox.xmin + 10, bbox.ymin + 10),
-                  'id: %d\nlabel: %s\nscore: %.2f' % (
-                      obj.id, obj.label, obj.score),
-                  fill=color)
+        img = cv.rectangle(img, (bbox.xmin, bbox.ymin), (bbox.xmax, bbox.ymax),
+                       color, thickness = 2)
+        # draw.text((bbox.xmin + 10, bbox.ymin + 10),
+        #           'id: %d\nlabel: %s\nscore: %.2f' % (
+        #               obj.id, obj.label, obj.score),
+        #           fill=color)
+    return img
 
 
 def draw_box(img, bbox):
-    draw = ImageDraw.Draw(img)
+    draw=ImageDraw.Draw(img)
     for box in bbox:
         draw.rectangle([(box[0], box[1]), (box[2], box[3])],
-                       outline='red')
+                       outline = 'red')
 
 
 def draw_point(img, point, color):
-    draw = ImageDraw.Draw(img)
-    (x, y) = point
+    draw=ImageDraw.Draw(img)
+    (x, y)=point
     draw.rectangle([(x-2, y-2), (x+2, y+2)],
                    outline=color, fill=color)
