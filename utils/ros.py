@@ -13,7 +13,7 @@ class ROSImage:
         self.header = None
         self.image = None
 
-        self.client = roslibpy.Ros(host='192.168.0.100', port=9090)
+        self.client = roslibpy.Ros(host='localhost', port=9090)
         self.listener = roslibpy.Topic(
             self.client, self.in_topic, self.in_data_type,
             throttle_rate=70, queue_size=1)
