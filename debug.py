@@ -37,8 +37,8 @@ client.run()
 
 listener = roslibpy.Topic(
     client,
-    '/main_cam/image_raw',
-    'sensor_msgs/Image',
+    '/main_cam/image_raw/compressed',
+    'sensor_msgs/CompressedImage',
     throttle_rate=500,
     queue_size=1,
     # queue_length=1,
