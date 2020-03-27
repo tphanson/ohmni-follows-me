@@ -11,7 +11,7 @@ class ROSImage:
         self.in_topic = '/main_cam/image_raw/compressed'
         self.out_topic = '/ofm/image'
         self.in_data_type = 'sensor_msgs/CompressedImage'
-        self.out_data_type = 'sensor_msgs/String'
+        self.out_data_type = 'std_msgs/String'
         self.image = None
         self.buffer = None
 
