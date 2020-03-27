@@ -23,7 +23,7 @@ def callback(msg):
     #     print("***", key, msg[key])
     start = time.time()
     stamp = msg['header']['stamp']['secs']
-    img_time = float(stamp['secs']+'.'+stamp['nsecs'])
+    img_time = float(str(stamp['secs'])+'.'+str(stamp['nsecs']))
     print("Image time", datetime.fromtimestamp(img_time))
     print("Current time", datetime.now())
     # img = stringToRGB(msg['data'])
