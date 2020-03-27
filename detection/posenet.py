@@ -1,7 +1,7 @@
 import numpy as np
-import cv2 as cv
 
 from utils.pose_engine import PoseEngine
+from utils import image
 
 # 'nose','left eye','right eye','left ear','right ear',
 # 'left shoulder','right shoulder','left elbow','right elbow','left wrist','right wrist',
@@ -115,5 +115,5 @@ class PoseDetection():
             (xmin, ymin, xmax, ymax) = bbox
             if status != 0:
                 obj_img = img[ymin:ymax, xmin:xmax]
-                obj_img = cv.resize(obj_img, (96, 96))
+                obj_img = image.resize(obj_img, (96, 96))
         return objects, inference_time, status, obj_img, bbox

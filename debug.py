@@ -70,9 +70,6 @@ if __name__ == "__main__":
         while True:
             header, img = ros.get()
             if img is not None:
-                pilimg = image.convert_cv_to_pil(img)
-                image.draw_point(pilimg, (10,10), "#ff0000")
-                img = image.convert_pil_to_cv(pilimg)
                 # cv.imshow("debug", img)
                 # cv.waitKey(10)
                 ros.push(header, img)

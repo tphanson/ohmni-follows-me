@@ -4,7 +4,7 @@ import os
 import time
 import tflite_runtime.interpreter as tflite
 import numpy as np
-import cv2 as cv
+from utils import image
 
 IMAGE_SHAPE = (96, 96)
 EDGETPU_SHARED_LIB = 'libedgetpu.so.1'
@@ -46,7 +46,7 @@ class HumanTracking:
         if ymin == ymax:
             return np.zeros(self.image_shape)
         cropped_obj_img = frame[ymin:ymax, xmin:xmax]
-        resized_obj_img = cv.resize(cropped_obj_img, self.image_shape)
+        resized_obj_img = image.resize(cropped_obj_img, self.image_shape)
         obj_img = resized_obj_img/255.0
         return box, obj_img
 

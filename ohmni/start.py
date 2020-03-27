@@ -1,6 +1,4 @@
 import time
-import cv2 as cv
-
 from utils.ros import ROSImage
 from utils import image
 from detection.posenet import PoseDetection
@@ -87,7 +85,7 @@ def start(botshell):
             # Wait for an activation (raising hands)
             if state == 'idle':
                 # Resize image
-                cv_img = cv.resize(img, pd.input_shape)
+                cv_img = image.resize(img, pd.input_shape)
                 # Detect gesture
                 vector = detect_gesture(pd, ht, cv_img)
                 sm.next_state(vector is not None)
@@ -97,7 +95,7 @@ def start(botshell):
             # Tracking
             if state == 'run':
                 # Resize image
-                cv_img = cv.resize(img, hd.input_shape)
+                cv_img = image.resize(img, hd.input_shape)
                 # Detect human
                 objs = detect_human(hd, cv_img)
                 if len(objs) == 0:
