@@ -10,7 +10,7 @@ def compressed_to_cv(msg):
     start = time.time()
     data = base64.b64decode(msg['data'])
     img = np.fromstring(data, dtype=np.uint8)
-    print(img.shape)
+    print(img)
     # img = img.reshape((480, 640, 3))
     # img = cv.cvtColor(img, cv.COLOR_RGB2BGR)
     end = time.time()
