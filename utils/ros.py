@@ -39,6 +39,7 @@ class ROSImage:
             str(datetime.fromtimestamp(img_time)) + \
             "Current time" + str(datetime.now())
         self.image = self.__compressed_to_cv(msg)
+        self.push()
 
     def start(self):
         print("Start listening")
@@ -52,4 +53,4 @@ class ROSImage:
         return self.image
 
     def push(self):
-        pass
+        self.talker.publish(roslibpy.Message({'data': self.buffer}))
