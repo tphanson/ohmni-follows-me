@@ -2,6 +2,7 @@ import roslibpy
 import numpy as np
 import base64
 import cv2 as cv
+import threading
 
 
 class ROSImage:
@@ -56,3 +57,8 @@ class ROSImage:
     def push(self, _header, _img):
         msg = self.gen_compressed_img(_header, _img)
         self.talker.publish(roslibpy.Message(msg))
+
+    def apush(self, _header, _img):
+        t = threading.Thread(target=self.push, args=(
+            _header, _img,), daemon=True)
+        t.start()

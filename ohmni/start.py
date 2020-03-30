@@ -127,7 +127,7 @@ def start(botshell):
                         # Draw bounding box of tracking objective
                         drawstart = time.time()
                         cv_img = image.draw_objs(cv_img, [obj])
-                        # rosimg.push(header, cv_img)
+                        rosimg.apush(header, cv_img)
                         drawend = time.time()
                         print('Draw estimated time {:.4f}'.format(
                             drawend-drawstart))
