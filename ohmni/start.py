@@ -32,16 +32,16 @@ def detect_gesture(pd, ht, cv_img):
 
 def detect_human(hd, cv_img):
     # Inference
-    tpustart = time.time()
+    start_time = time.time()
     objs = hd.predict(cv_img)
-    tpuend = time.time()
-    print('Human detection estimated time {:.4f}'.format(tpuend-tpustart))
+    print('Human detection estimated time {:.4f}'.format(time.time()-start_time))
     # Return
     return objs
 
 
 def tracking(ht, objs, cv_img):
     # Initialize registers
+    start_time = time.time()
     obj_imgs_batch = []
     bboxes_batch = []
     # Push objects to registers
@@ -49,6 +49,7 @@ def tracking(ht, objs, cv_img):
         box, obj_img = ht.formaliza_data(obj, cv_img)
         obj_imgs_batch.append(obj_img)
         bboxes_batch.append(box)
+    print('Tracking estimated time {:.4f}'.format(time.time()-start_time))
     # Inference
     return ht.predict(obj_imgs_batch, bboxes_batch)
 
@@ -108,10 +109,7 @@ def start(botshell):
 
                 else:
                     # Tracking
-                    debugstart = time.time()
                     confidences, argmax = tracking(ht, objs, cv_img)
-                    print('Debug 2 estimated time {:.4f}'.format(
-                        time.time()-debugstart))
                     print('*** Confidences:', confidences)
                     # Under threshold
                     if argmax is None:
