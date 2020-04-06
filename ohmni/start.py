@@ -47,8 +47,11 @@ def tracking(ht, objs, cv_img):
     # Push objects to registers
     for obj in objs:
         box, obj_img = ht.formaliza_data(obj, cv_img)
+        print('1 estimated time {:.4f}'.format(time.time()-start_time))
         obj_imgs_batch.append(obj_img)
+        print('2 estimated time {:.4f}'.format(time.time()-start_time))
         bboxes_batch.append(box)
+        print('3 estimated time {:.4f}'.format(time.time()-start_time))
     print('Tracking estimated time {:.4f}'.format(time.time()-start_time))
     # Inference
     return ht.predict(obj_imgs_batch, bboxes_batch)
