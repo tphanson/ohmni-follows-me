@@ -97,16 +97,16 @@ class HumanTracking:
 
             distances = features + positions
             confidences = self.confidence_level(distances)
-            argmax = np.argmax(confidences)
+            _argmax = np.argmax(confidences)
+            argmax = None
+            if confidences[_argmax] > self.confidence:
+                self.prev_encoding = encodings[_argmax]
+                self.prev_bbox = bboxes[_argmax]
+                argmax = _argmax
 
             eend = time.time()
             print('Features:', features)
             print('Positions:', positions)
             print('Distances:', distances)
             print('Extractor estimated time {:.4f}'.format(eend-estart))
-            if confidences[argmax] > self.confidence:
-                self.prev_encoding = encodings[argmax]
-                self.prev_bbox = bboxes[argmax]
-                return confidences, argmax
-            else:
-                return confidences, None
+            return confidences, argmax
