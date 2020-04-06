@@ -69,7 +69,11 @@ def start(botshell):
         state = sm.get_state()
         print('Debug:', state)
 
+        debugstart = time.time()
         header, img = rosimg.get()
+        debugend = time.time()
+        print('Debug estimated time {:.4f}'.format(
+            debugend-debugstart))
 
         if img is None:
             pass
@@ -112,16 +116,12 @@ def start(botshell):
                         botshell.sendall(b'manual_move 0 0\n')
                         sm.next_state(True)
                     else:
-                        ctrlstart = time.time()
                         # Calculate results
                         sm.next_state(False)
                         # Drive car
                         obj = objs[argmax]
                         LW, RW = ctrl.wheel(obj.bbox)
                         POS = ctrl.neck(obj.bbox)
-                        ctrlend = time.time()
-                        print('Controller estimated time {:.4f}'.format(
-                            ctrlend-ctrlstart))
                         # Static test
                         print('*** Manual move:', LW, RW)
                         print('*** Neck position:', POS)
