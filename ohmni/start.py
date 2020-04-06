@@ -164,8 +164,7 @@ def start(botshell):
                         rosimg.apush(header, cv_img)
 
                     print('Milstone 7 {:.4f}'.format(
-                        time.time()-fpsstart))[obj])
-                        rosimg.apush(header, cv_img)
+                        time.time()-fpsstart))
 
                 print('Milstone 8 {:.4f}'.format(
                     time.time()-fpsstart))
