@@ -25,7 +25,7 @@ class HumanTracking:
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
         self.confidence = 0.7
-        self.threshold = 10
+        self.threshold = 8
         self.tradeoff = 10  # Between encoding distance and bbox distance
         self.prev_encoding = None
         self.prev_bbox = None
@@ -83,12 +83,14 @@ class HumanTracking:
             features = np.array([])
             positions = np.array([])
 
-            for index, img in enumerate(imgs):
+            for index, bbox in enumerate(bboxes):
+                # Appreance
+                img = imgs[index]
                 encoding = self.infer(img)
                 encodings.append(encoding)
                 feature = np.linalg.norm(self.prev_encoding - encoding)
                 features = np.append(features, feature)
-                bbox = bboxes[index]
+                # Position
                 position = np.linalg.norm(
                     self.prev_bbox - bbox) * self.tradeoff
                 positions = np.append(positions, position)
