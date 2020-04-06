@@ -126,12 +126,16 @@ def start(botshell):
                     botshell.sendall(b'manual_move 0 0\n')
                     sm.next_state(True)
 
-                    print('Milstone 5 {:.4f}'.format(
-                        time.time()-fpsstart))
+                print('Milstone 5 {:.4f}'.format(
+                    time.time()-fpsstart))
 
-                else:
+                if len(objs) != 0:
                     # Tracking
+                    debugstart = time.time()
                     confidences, argmax = tracking(ht, objs, cv_img)
+                    debugend = time.time()
+                    print('Debug estimated time {:.4f}'.format(
+                        debugend-debugstart))
                     print('*** Confidences:', confidences)
                     # Under threshold
                     if argmax is None:
@@ -139,10 +143,10 @@ def start(botshell):
                         botshell.sendall(b'manual_move 0 0\n')
                         sm.next_state(True)
 
-                        print('Milstone 6 {:.4f}'.format(
-                            time.time()-fpsstart))
+                    print('Milstone 6 {:.4f}'.format(
+                        time.time()-fpsstart))
 
-                    else:
+                    if argmax is not None:
                         # Calculate results
                         sm.next_state(False)
                         # Drive car
@@ -159,14 +163,21 @@ def start(botshell):
                         cv_img = image.draw_objs(cv_img, [obj])
                         rosimg.apush(header, cv_img)
 
-            print('Milstone 7 {:.4f}'.format(
+                    print('Milstone 7 {:.4f}'.format(
+                        time.time()-fpsstart))[obj])
+                        rosimg.apush(header, cv_img)
+
+                print('Milstone 8 {:.4f}'.format(
+                    time.time()-fpsstart))
+
+            print('Milstone 9 {:.4f}'.format(
                 time.time()-fpsstart))
 
         # Calculate frames per second (FPS)
-        fpsend = time.time()
-        delay = 0.05 - fpsend + fpsstart
+        fpsend=time.time()
+        delay=0.05 - fpsend + fpsstart
         if delay > 0:
             time.sleep(delay)
-        fpsadjust = time.time()
+        fpsadjust=time.time()
         print('Total estimated time {:.4f}'.format(fpsend-fpsstart))
         print("FPS: {:.1f} \n\n".format(1 / (fpsadjust-fpsstart)))
