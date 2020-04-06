@@ -100,7 +100,10 @@ def start(botshell):
                 # Resize image
                 cv_img = image.resize(img, hd.input_shape)
                 # Detect human
+                debugstart = time.time()
                 objs = detect_human(hd, cv_img)
+                print('Debug 1 estimated time {:.4f}'.format(
+                    time.time()-debugstart))
                 if len(objs) == 0:
                     print('*** Manual move:', 0, 0)
                     botshell.sendall(b'manual_move 0 0\n')
@@ -110,9 +113,8 @@ def start(botshell):
                     # Tracking
                     debugstart = time.time()
                     confidences, argmax = tracking(ht, objs, cv_img)
-                    debugend = time.time()
-                    print('Debug estimated time {:.4f}'.format(
-                        debugend-debugstart))
+                    print('Debug 2 estimated time {:.4f}'.format(
+                        time.time()-debugstart))
                     print('*** Confidences:', confidences)
                     # Under threshold
                     if argmax is None:
