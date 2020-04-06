@@ -69,15 +69,18 @@ def start(botshell):
         state = sm.get_state()
         print('Debug:', state)
 
-        debugstart = time.time()
         header, img = rosimg.get()
-        debugend = time.time()
-        print('Debug estimated time {:.4f}'.format(
-            debugend-debugstart))
+
+        print('Milstone 0 {:.4f}'.format(
+            time.time()-fpsstart))
 
         if img is None:
             pass
         else:
+
+            print('Milstone 1 {:.4f}'.format(
+                time.time()-fpsstart))
+
             # Stop
             if state == 'init_idle':
                 print('*** Manual move:', 0, 0)
@@ -86,6 +89,10 @@ def start(botshell):
                     f'neck_angle {NECK_POS}\n'.encode())
                 ht.reset()
                 sm.next_state(True)
+
+                print('Milstone 2 {:.4f}'.format(
+                    time.time()-fpsstart))
+
             # Wait for an activation (raising hands)
             if state == 'idle':
                 # Resize image
@@ -93,9 +100,17 @@ def start(botshell):
                 # Detect gesture
                 vector = detect_gesture(pd, ht, cv_img)
                 sm.next_state(vector is not None)
+
+                print('Milstone 3 {:.4f}'.format(
+                    time.time()-fpsstart))
+
             # Run
             if state == 'init_run':
                 sm.next_state(True)
+
+                print('Milstone 4 {:.4f}'.format(
+                    time.time()-fpsstart))
+
             # Tracking
             if state == 'run':
                 # Resize image
@@ -106,6 +121,10 @@ def start(botshell):
                     print('*** Manual move:', 0, 0)
                     botshell.sendall(b'manual_move 0 0\n')
                     sm.next_state(True)
+
+                    print('Milstone 5 {:.4f}'.format(
+                        time.time()-fpsstart))
+
                 else:
                     # Tracking
                     confidences, argmax = tracking(ht, objs, cv_img)
@@ -115,6 +134,10 @@ def start(botshell):
                         print('*** Manual move:', 0, 0)
                         botshell.sendall(b'manual_move 0 0\n')
                         sm.next_state(True)
+
+                        print('Milstone 6 {:.4f}'.format(
+                            time.time()-fpsstart))
+
                     else:
                         # Calculate results
                         sm.next_state(False)
@@ -135,6 +158,9 @@ def start(botshell):
                         drawend = time.time()
                         print('Draw estimated time {:.4f}'.format(
                             drawend-drawstart))
+
+                        print('Milstone 7 {:.4f}'.format(
+                            time.time()-fpsstart))
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
