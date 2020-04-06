@@ -71,16 +71,9 @@ def start(botshell):
 
         header, img = rosimg.get()
 
-        print('Milstone 0 {:.4f}'.format(
-            time.time()-fpsstart))
-
         if img is None:
             pass
         else:
-
-            print('Milstone 1 {:.4f}'.format(
-                time.time()-fpsstart))
-
             # Stop
             if state == 'init_idle':
                 print('*** Manual move:', 0, 0)
@@ -90,9 +83,6 @@ def start(botshell):
                 ht.reset()
                 sm.next_state(True)
 
-            print('Milstone 2 {:.4f}'.format(
-                time.time()-fpsstart))
-
             # Wait for an activation (raising hands)
             if state == 'idle':
                 # Resize image
@@ -101,24 +91,14 @@ def start(botshell):
                 vector = detect_gesture(pd, ht, cv_img)
                 sm.next_state(vector is not None)
 
-            print('Milstone 3 {:.4f}'.format(
-                time.time()-fpsstart))
-
             # Run
             if state == 'init_run':
                 sm.next_state(True)
 
-            print('Milstone 4 {:.4f}'.format(
-                time.time()-fpsstart))
-
             # Tracking
             if state == 'run':
                 # Resize image
-                drawstart = time.time()
                 cv_img = image.resize(img, hd.input_shape)
-                drawend = time.time()
-                print('Draw estimated time {:.4f}'.format(
-                    drawend-drawstart))
                 # Detect human
                 objs = detect_human(hd, cv_img)
                 if len(objs) == 0:
@@ -126,10 +106,7 @@ def start(botshell):
                     botshell.sendall(b'manual_move 0 0\n')
                     sm.next_state(True)
 
-                print('Milstone 5 {:.4f}'.format(
-                    time.time()-fpsstart))
-
-                if len(objs) != 0:
+                else:
                     # Tracking
                     debugstart = time.time()
                     confidences, argmax = tracking(ht, objs, cv_img)
@@ -142,11 +119,7 @@ def start(botshell):
                         print('*** Manual move:', 0, 0)
                         botshell.sendall(b'manual_move 0 0\n')
                         sm.next_state(True)
-
-                    print('Milstone 6 {:.4f}'.format(
-                        time.time()-fpsstart))
-
-                    if argmax is not None:
+                    else:
                         # Calculate results
                         sm.next_state(False)
                         # Drive car
@@ -162,15 +135,6 @@ def start(botshell):
                         # Draw bounding box of tracking objective
                         cv_img = image.draw_objs(cv_img, [obj])
                         rosimg.apush(header, cv_img)
-
-                    print('Milstone 7 {:.4f}'.format(
-                        time.time()-fpsstart))
-
-                print('Milstone 8 {:.4f}'.format(
-                    time.time()-fpsstart))
-
-            print('Milstone 9 {:.4f}'.format(
-                time.time()-fpsstart))
 
         # Calculate frames per second (FPS)
         fpsend=time.time()
