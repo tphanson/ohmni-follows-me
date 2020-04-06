@@ -90,8 +90,8 @@ def start(botshell):
                 ht.reset()
                 sm.next_state(True)
 
-                print('Milstone 2 {:.4f}'.format(
-                    time.time()-fpsstart))
+            print('Milstone 2 {:.4f}'.format(
+                time.time()-fpsstart))
 
             # Wait for an activation (raising hands)
             if state == 'idle':
@@ -101,15 +101,15 @@ def start(botshell):
                 vector = detect_gesture(pd, ht, cv_img)
                 sm.next_state(vector is not None)
 
-                print('Milstone 3 {:.4f}'.format(
-                    time.time()-fpsstart))
+            print('Milstone 3 {:.4f}'.format(
+                time.time()-fpsstart))
 
             # Run
             if state == 'init_run':
                 sm.next_state(True)
 
-                print('Milstone 4 {:.4f}'.format(
-                    time.time()-fpsstart))
+            print('Milstone 4 {:.4f}'.format(
+                time.time()-fpsstart))
 
             # Tracking
             if state == 'run':
@@ -159,8 +159,8 @@ def start(botshell):
                         cv_img = image.draw_objs(cv_img, [obj])
                         rosimg.apush(header, cv_img)
 
-                        print('Milstone 7 {:.4f}'.format(
-                            time.time()-fpsstart))
+            print('Milstone 7 {:.4f}'.format(
+                time.time()-fpsstart))
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
