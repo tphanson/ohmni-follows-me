@@ -114,7 +114,11 @@ def start(botshell):
             # Tracking
             if state == 'run':
                 # Resize image
+                drawstart = time.time()
                 cv_img = image.resize(img, hd.input_shape)
+                drawend = time.time()
+                print('Draw estimated time {:.4f}'.format(
+                    drawend-drawstart))
                 # Detect human
                 objs = detect_human(hd, cv_img)
                 if len(objs) == 0:
@@ -152,12 +156,8 @@ def start(botshell):
                         botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
                         botshell.sendall(f'neck_angle {POS}\n'.encode())
                         # Draw bounding box of tracking objective
-                        drawstart = time.time()
                         cv_img = image.draw_objs(cv_img, [obj])
                         rosimg.apush(header, cv_img)
-                        drawend = time.time()
-                        print('Draw estimated time {:.4f}'.format(
-                            drawend-drawstart))
 
                         print('Milstone 7 {:.4f}'.format(
                             time.time()-fpsstart))
