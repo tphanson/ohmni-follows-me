@@ -1,9 +1,10 @@
 import time
+import numpy as np
 from utils.ros import ROSImage
 from utils import image
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
-from tracker.triplet import HumanTracking
+from tracker.triplet import HumanTracking, formaliza_data
 from ohmni.controller import Controller
 from ohmni.state import StateMachine
 
@@ -14,47 +15,49 @@ from ohmni.state import StateMachine
 NECK_POS = 500
 
 
-def detect_gesture(pd, ht, cv_img):
+def detect_gesture(pd, tracker, img):
     # Inference
-    _, t, status, obj_img, bbox = pd.predict(cv_img)
+    _, t, status, box = pd.predict(img)
     print('Gesture detection estimated time {:.4f}'.format(t))
     # Calculate result
     vector = None
     if status != 0:
-        (xmin, ymin, xmax, ymax) = bbox
-        obj_img = obj_img/255.
-        bbox = (xmin/pd.image_shape[0], ymin/pd.image_shape[1],
-                xmax/pd.image_shape[0], ymax/pd.image_shape[1])
-        vector = ht.predict([obj_img], [bbox], True)
+        height, width, _ = img.shape
+        xmin, ymin = int(box[0]*width), int(box[1]*height)
+        xmax, ymax = int(box[2]*width), int(box[3]*height)
+        box = np.array([xmin, ymin, xmax, ymax])
+        obj_img = image.crop(img, box)
+        obj_img = image.resize(obj_img, tracker.input_shape)
+        obj_img = np.array(obj_img/127.5 - 1, dtype=np.float32)
+        vector = tracker.set_anchor(obj_img, box)
     # Return
     return vector
 
 
-def detect_human(hd, cv_img):
+def detect_human(hd, img):
     # Inference
     start_time = time.time()
-    objs = hd.predict(cv_img)
-    print('Human detection estimated time {:.4f}'.format(time.time()-start_time))
+    objs = hd.predict(img)
+    print('Human detection estimated time {:.4f}'.format(
+        time.time()-start_time))
     # Return
     return objs
 
 
-def tracking(ht, objs, cv_img):
+def tracking(tracker, objs, img):
     # Initialize registers
     start_time = time.time()
     obj_imgs_batch = []
     bboxes_batch = []
     # Push objects to registers
     for obj in objs:
-        box, obj_img = ht.formaliza_data(obj, cv_img)
-        print('1 estimated time {:.4f}'.format(time.time()-start_time))
+        obj_img, box = formaliza_data(obj, img)
         obj_imgs_batch.append(obj_img)
-        print('2 estimated time {:.4f}'.format(time.time()-start_time))
         bboxes_batch.append(box)
-        print('3 estimated time {:.4f}'.format(time.time()-start_time))
     print('Tracking estimated time {:.4f}'.format(time.time()-start_time))
     # Inference
-    return ht.predict(obj_imgs_batch, bboxes_batch)
+    confidences, argmax = tracker.predict(obj_imgs_batch, bboxes_batch)
+    return confidences, argmax, bboxes_batch[argmax]
 
 
 def start(botshell):
@@ -89,10 +92,8 @@ def start(botshell):
 
             # Wait for an activation (raising hands)
             if state == 'idle':
-                # Resize image
-                cv_img = image.resize(img, pd.input_shape)
                 # Detect gesture
-                vector = detect_gesture(pd, ht, cv_img)
+                vector = detect_gesture(pd, ht, img)
                 sm.next_state(vector is not None)
 
             # Run
@@ -101,10 +102,8 @@ def start(botshell):
 
             # Tracking
             if state == 'run':
-                # Resize image
-                cv_img = image.resize(img, hd.input_shape)
                 # Detect human
-                objs = detect_human(hd, cv_img)
+                objs = detect_human(hd, img)
                 if len(objs) == 0:
                     print('*** Manual move:', 0, 0)
                     botshell.sendall(b'manual_move 0 0\n')
@@ -112,7 +111,7 @@ def start(botshell):
 
                 else:
                     # Tracking
-                    confidences, argmax = tracking(ht, objs, cv_img)
+                    confidences, argmax, box = tracking(ht, objs, img)
                     print('*** Confidences:', confidences)
                     # Under threshold
                     if argmax is None:
@@ -123,9 +122,8 @@ def start(botshell):
                         # Calculate results
                         sm.next_state(False)
                         # Drive car
-                        obj = objs[argmax]
-                        LW, RW = ctrl.wheel(obj.bbox)
-                        POS = ctrl.neck(obj.bbox)
+                        LW, RW = ctrl.wheel(box)
+                        POS = ctrl.neck(box)
                         # Static test
                         print('*** Manual move:', LW, RW)
                         print('*** Neck position:', POS)
@@ -133,14 +131,14 @@ def start(botshell):
                         botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
                         botshell.sendall(f'neck_angle {POS}\n'.encode())
                         # Draw bounding box of tracking objective
-                        cv_img = image.draw_objs(cv_img, [obj])
-                        rosimg.apush(header, cv_img)
+                        img = image.draw_box(img, box)
+                        rosimg.apush(header, img)
 
         # Calculate frames per second (FPS)
-        fpsend=time.time()
-        delay=0.05 - fpsend + fpsstart
+        fpsend = time.time()
+        delay = 0.05 - fpsend + fpsstart
         if delay > 0:
             time.sleep(delay)
-        fpsadjust=time.time()
+        fpsadjust = time.time()
         print('Total estimated time {:.4f}'.format(fpsend-fpsstart))
         print("FPS: {:.1f} \n\n".format(1 / (fpsadjust-fpsstart)))

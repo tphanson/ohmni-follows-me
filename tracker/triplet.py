@@ -4,18 +4,45 @@ import os
 import time
 import tflite_runtime.interpreter as tflite
 import numpy as np
-from utils import image
+import cv2 as cv
 
-IMAGE_SHAPE = (96, 96)
+IMAGE_SHAPE = (160, 160)
 EDGETPU_SHARED_LIB = 'libedgetpu.so.1'
 EDGE_MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                           "../tpu/ohmnilabs_features_extractor_quant_postprocess_edgetpu.tflite")
 
 
+def formaliza_data(obj, frame):
+    (height, width, _) = frame.shape
+
+    xmin = int(obj[-4]*width)
+    xmin = 0 if xmin < 0 else xmin
+    xmin = width if xmin > width else xmin
+
+    ymin = int(obj[-3]*height)
+    ymin = 0 if ymin < 0 else ymin
+    ymin = height if ymin > height else ymin
+
+    xmax = int(obj[-2]*width)
+    xmax = 0 if xmax < 0 else xmax
+    xmax = width if xmax > width else xmax
+
+    ymax = int(obj[-1]*height)
+    ymax = 0 if ymax < 0 else ymax
+    ymax = height if ymax > height else ymax
+
+    box = np.array([xmin, ymin, xmax, ymax], dtype=np.int32)
+    if xmin >= xmax or ymin >= ymax:
+        return np.zeros(IMAGE_SHAPE), box
+
+    cropped_obj_img = frame[ymin:ymax, xmin:xmax]
+    resized_obj_img = cv.resize(cropped_obj_img, IMAGE_SHAPE)
+    obj_img = np.array(resized_obj_img/127.5 - 1, dtype=np.float32)
+    return obj_img, box
+
+
 class HumanTracking:
     def __init__(self):
-        self.frame_shape = (300, 300)
-        self.image_shape = IMAGE_SHAPE
         self.input_shape = IMAGE_SHAPE
         self.interpreter = tflite.Interpreter(
             model_path=EDGE_MODEL,
@@ -25,8 +52,7 @@ class HumanTracking:
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
         self.confidence = 0.7
-        self.threshold = 8
-        self.tradeoff = 10  # Between encoding distance and bbox distance
+        self.threshold = 35
         self.prev_encoding = None
         self.prev_bbox = None
 
@@ -34,79 +60,74 @@ class HumanTracking:
         self.prev_encoding = None
         self.prev_bbox = None
 
-    def formaliza_data(self, obj, frame):
-        xmin = 0 if obj.bbox.xmin < 0 else obj.bbox.xmin
-        xmax = self.frame_shape[0] if obj.bbox.xmax > self.frame_shape[0] else obj.bbox.xmax
-        ymin = 0 if obj.bbox.ymin < 0 else obj.bbox.ymin
-        ymax = self.frame_shape[1] if obj.bbox.ymax > self.frame_shape[1] else obj.bbox.ymax
-        box = np.array([xmin/self.frame_shape[0], ymin/self.frame_shape[1],
-                        xmax/self.frame_shape[0], ymax/self.frame_shape[1]])
-        if xmin == xmax:
-            return np.zeros(self.image_shape)
-        if ymin == ymax:
-            return np.zeros(self.image_shape)
-        cropped_obj_img = frame[ymin:ymax, xmin:xmax]
-        resized_obj_img = image.resize(cropped_obj_img, self.image_shape)
-        obj_img = resized_obj_img/255.0
-        return box, obj_img
+    def __area(self, box):
+        return max(0, box[3]-box[1]+1)*max(0, box[2]-box[0]+1)
 
-    def confidence_level(self, distances):
+    def __confidence_level(self, distances):
+        if len(distances) == 0:
+            return np.array([]), None
         deltas = (self.threshold - distances)/self.threshold
         zeros = np.zeros(deltas.shape, dtype=np.float32)
         logits = np.maximum(deltas, zeros)
         logits_sum = np.sum(logits)
         if logits_sum == 0:
-            return zeros
+            return zeros, None
         else:
             confidences = logits/logits_sum
-            return confidences
+            return confidences, np.argmax(confidences)
+
+    def iou(self, anchor_box, predicted_box):
+        xmin = max(anchor_box[0], predicted_box[0])
+        ymin = max(anchor_box[1], predicted_box[1])
+        xmax = min(anchor_box[2], predicted_box[2])
+        ymax = min(anchor_box[3], predicted_box[3])
+        inter_box = np.array([xmin, ymin, xmax, ymax])
+        inter_area = self.__area(inter_box)
+        anchor_area = self.__area(anchor_box)
+        predicted_area = self.__area(predicted_box)
+        return inter_area/float(anchor_area+predicted_area-inter_area)
 
     def infer(self, img):
-        img = np.array(img, dtype=np.float32)
         self.interpreter.allocate_tensors()
         self.interpreter.set_tensor(self.input_details[0]['index'], [img])
         self.interpreter.invoke()
         feature = self.interpreter.get_tensor(self.output_details[0]['index'])
-        return np.array(feature[0])
+        return np.array(feature[0], dtype=np.float32)
 
-    def predict(self, imgs, bboxes, init=False):
-        if init:
-            if len(imgs) != 1 or len(bboxes) != 1:
-                raise ValueError('You must initialize one object only.')
-            encoding = self.infer(imgs[0])
-            self.prev_encoding = encoding
-            self.prev_bbox = bboxes[0]
-            return np.array([.0]), 0
-        else:
-            estart = time.time()
-            encodings = []
-            features = np.array([])
-            positions = np.array([])
+    def set_anchor(self, img, bbox):
+        encoding = self.infer(img)
+        self.prev_encoding = encoding
+        self.prev_bbox = bbox
+        return np.array([.0]), 0
 
-            for index, bbox in enumerate(bboxes):
-                # Appreance
+    def predict(self, imgs, bboxes):
+        estart = time.time()
+
+        differentials = np.array([])
+        indice = []
+        encodings = []
+        ious = []
+        for index, box in enumerate(bboxes):
+            iou = self.iou(self.prev_bbox, box)
+            ious.append(iou)
+            if iou > 0.5:
                 img = imgs[index]
                 encoding = self.infer(img)
+                differential = np.linalg.norm(
+                    self.prev_encoding - encoding)
+
+                differentials = np.append(differentials, differential)
+                indice.append(index)
                 encodings.append(encoding)
-                feature = np.linalg.norm(self.prev_encoding - encoding)
-                features = np.append(features, feature)
-                # Position
-                position = np.linalg.norm(
-                    self.prev_bbox - bbox) * self.tradeoff
-                positions = np.append(positions, position)
 
-            distances = features + positions
-            confidences = self.confidence_level(distances)
-            _argmax = np.argmax(confidences)
-            argmax = None
-            if confidences[_argmax] > self.confidence:
-                self.prev_encoding = encodings[_argmax]
-                self.prev_bbox = bboxes[_argmax]
-                argmax = _argmax
+        print('Differentials:', differentials)
 
-            eend = time.time()
-            print('Features:', features)
-            print('Positions:', positions)
-            print('Distances:', distances)
-            print('Extractor estimated time {:.4f}'.format(eend-estart))
-            return confidences, argmax
+        confidences, argmax = self.__confidence_level(differentials)
+        index = indice[argmax] if argmax is not None else None
+
+        eend = time.time()
+        print('Extractor estimated time {:.4f}'.format(eend-estart))
+        if argmax is not None and confidences[argmax] > self.confidence:
+            self.prev_encoding = encodings[argmax]
+            self.prev_bbox = bboxes[index]
+        return confidences, index

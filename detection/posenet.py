@@ -1,7 +1,7 @@
 import numpy as np
 
 from utils.pose_engine import PoseEngine
-from utils import image
+import cv2 as cv
 
 # 'nose','left eye','right eye','left ear','right ear',
 # 'left shoulder','right shoulder','left elbow','right elbow','left wrist','right wrist',
@@ -13,34 +13,23 @@ class PoseDetection():
         self.engine = PoseEngine(
             'tpu/posenet_mobilenet_v1_075_481_641_quant_decoder_edgetpu.tflite')
         self.confidence = 4
-        self.margin = 0
         self.image_shape = (640, 480)
         self.input_shape = (641, 481)
 
     def generate_bbox(self, marks):
-        xmin, ymin, xmax, ymax = 10000, 10000, 0, 0
+        xmin, ymin, xmax, ymax = self.image_shape[0], self.image_shape[1], 0, 0
         for (_, _, x, y) in marks:
-            if x <= xmin:
-                xmin = int(x)
-            if y <= ymin:
-                ymin = int(y)
-            if x >= xmax:
-                xmax = int(x)
-            if y >= ymax:
-                ymax = int(y)
-        xmin -= self.margin
-        ymin -= self.margin
-        xmax += self.margin
-        ymax += self.margin
-        if xmin < 0:
-            xmin = 0
-        if ymin < 0:
-            ymin = 0
-        if xmax > self.image_shape[0]:
-            xmax = self.image_shape[0]
-        if ymax > self.image_shape[1]:
-            ymax = self.image_shape[1]
-        return (xmin, ymin, xmax, ymax)
+            xmin = min(int(x), xmin)
+            ymin = min(int(y), ymin)
+            xmax = max(int(x), xmax)
+            ymax = max(int(y), ymax)
+        box = np.array([
+            xmin/self.input_shape[0],
+            ymin/self.input_shape[1],
+            xmax/self.input_shape[0],
+            ymax/self.input_shape[1]],
+            dtype=np.float32)
+        return box
 
     def activate_by_left_hand(self, marks):
         dx, dy = 0, 0
@@ -73,22 +62,18 @@ class PoseDetection():
 
     def activate(self, marks):
         if self.activate_by_left_hand(marks) and self.activate_by_right_hand(marks):
-            bbox = self.generate_bbox(marks)
-            return 2, bbox
+            box = self.generate_bbox(marks)
+            return 2, box
         elif self.activate_by_left_hand(marks):
-            bbox = self.generate_bbox(marks)
-            return 1, bbox
+            box = self.generate_bbox(marks)
+            return 1, box
         elif self.activate_by_right_hand(marks):
-            bbox = self.generate_bbox(marks)
-            return 1, bbox
+            box = self.generate_bbox(marks)
+            return 1, box
         else:
-            return 0, (0, 0, 0, 0)
+            return 0, np.array([0., 0., 0., 0.], dtype=np.float32)
 
     def inference(self, img):
-        if img.shape[0] != self.input_shape[1] or img.shape[1] != self.input_shape[0]:
-            raise ValueError(
-                'Input shape is not correct. Refer pose.input_shape for details.')
-
         poses, inference_time = self.engine.DetectPosesInImage(img)
         objects = []
         for pose in poses:
@@ -104,16 +89,12 @@ class PoseDetection():
         return objects, inference_time
 
     def predict(self, img):
+        img = cv.resize(img, self.input_shape)
         objects, inference_time = self.inference(img)
 
         status = 0
-        obj_img = None
-        bbox = None
+        box = None
         for marks in objects:
             # Find an activation
-            status, bbox = self.activate(marks)
-            (xmin, ymin, xmax, ymax) = bbox
-            if status != 0:
-                obj_img = img[ymin:ymax, xmin:xmax]
-                obj_img = image.resize(obj_img, (96, 96))
-        return objects, inference_time, status, obj_img, bbox
+            status, box = self.activate(marks)
+        return objects, inference_time, status, box
