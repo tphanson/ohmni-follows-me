@@ -70,7 +70,7 @@ def start(botshell):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
-    ctrl = Controller(hd.input_shape, NECK_POS)
+    ctrl = Controller((480, 640), NECK_POS)
 
     sm = StateMachine()
 
@@ -82,7 +82,6 @@ def start(botshell):
         header, img = rosimg.get()
 
         if img is not None:
-            print(img.shape)
             # Stop
             if state == 'init_idle':
                 print('*** Manual move:', 0, 0)
