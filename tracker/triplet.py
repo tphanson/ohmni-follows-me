@@ -83,7 +83,7 @@ class HumanTracking:
 
     def infer(self, img):
         self.interpreter.allocate_tensors()
-        self.interpreter.set_tensor(self.input_details[0]['index'], [img])
+        self.interpreter.set_tensor(self.input_details[0]['index'], [list(img)])
         self.interpreter.invoke()
         feature = self.interpreter.get_tensor(self.output_details[0]['index'])
         return np.array(feature[0], dtype=np.float32)
