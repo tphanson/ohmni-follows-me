@@ -20,19 +20,14 @@ def formaliza_data(obj, frame):
     ymin = min(height, max(0, int(obj[-3]*height)))
     xmax = min(width, max(0, int(obj[-2]*width)))
     ymax = min(height, max(0, int(obj[-1]*height)))
-    print("1", time.time()-start)
 
     box = [xmin, ymin, xmax, ymax]
     if xmin >= xmax or ymin >= ymax:
         return np.zeros(IMAGE_SHAPE), box
-    print("2", time.time()-start)
 
     cropped_obj_img = frame[ymin:ymax, xmin:xmax]
-    print("3", time.time()-start)
     resized_obj_img = cv.resize(cropped_obj_img, IMAGE_SHAPE)
-    print("4", time.time()-start)
     obj_img = np.array(resized_obj_img/127.5 - 1, dtype=np.float32)
-    print("5", time.time()-start)
     return obj_img, box
 
 
@@ -83,9 +78,11 @@ class HumanTracking:
 
     def infer(self, img):
         self.interpreter.allocate_tensors()
-        self.interpreter.set_tensor(self.input_details[0]['index'], [list(img)])
+        self.interpreter.set_tensor(
+            self.input_details[0]['index'], [list(img)])
         self.interpreter.invoke()
         feature = self.interpreter.get_tensor(self.output_details[0]['index'])
+        print(type(feature[0]))
         return np.array(feature[0], dtype=np.float32)
 
     def set_anchor(self, img, bbox):
