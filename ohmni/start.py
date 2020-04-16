@@ -1,7 +1,6 @@
 import time
 import numpy as np
-from utils.ros import ROSImage
-from utils import image
+from utils import image, camera
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking, formaliza_data
@@ -63,10 +62,7 @@ def tracking(tracker, objs, img):
     return bboxes_batch[argmax]
 
 
-def start(botshell):
-    rosimg = ROSImage()
-    rosimg.start()
-
+def start(server, botshell):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
@@ -75,62 +71,67 @@ def start(botshell):
     sm = StateMachine()
 
     while(True):
+        pilimg = camera.fetch(server)
+        if pilimg is None:
+            time.sleep(0.05)
+            continue
+
         fpsstart = time.time()
         state = sm.get_state()
         print('Debug:', state)
 
-        header, img = rosimg.get()
+        imgstart = time.time()
+        img = np.asarray(pilimg)
+        img = image.resize(img, (480, 640))
+        imgend = time.time()
+        print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
-        if img is not None:
-            # Stop
-            if state == 'init_idle':
+        # Stop
+        if state == 'init_idle':
+            print('*** Manual move:', 0, 0)
+            botshell.sendall(b'manual_move 0 0\n')
+            botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
+            ht.reset()
+            sm.next_state(True)
+
+        # Wait for an activation (raising hands)
+        if state == 'idle':
+            # Detect gesture
+            ok = detect_gesture(pd, ht, img)
+            sm.next_state(ok)
+
+        # Run
+        if state == 'init_run':
+            sm.next_state(True)
+
+        # Tracking
+        if state == 'run':
+            # Detect human
+            objs = detect_human(hd, img)
+            if len(objs) == 0:
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
-                botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
-                ht.reset()
                 sm.next_state(True)
-
-            # Wait for an activation (raising hands)
-            if state == 'idle':
-                # Detect gesture
-                ok = detect_gesture(pd, ht, img)
-                sm.next_state(ok)
-
-            # Run
-            if state == 'init_run':
-                sm.next_state(True)
-
-            # Tracking
-            if state == 'run':
-                # Detect human
-                objs = detect_human(hd, img)
-                if len(objs) == 0:
+            else:
+                # Tracking
+                box = tracking(ht, objs, img)
+                # Under threshold
+                if box is None:
                     print('*** Manual move:', 0, 0)
                     botshell.sendall(b'manual_move 0 0\n')
                     sm.next_state(True)
                 else:
-                    # Tracking
-                    box = tracking(ht, objs, img)
-                    # Under threshold
-                    if box is None:
-                        print('*** Manual move:', 0, 0)
-                        botshell.sendall(b'manual_move 0 0\n')
-                        sm.next_state(True)
-                    else:
-                        # Calculate results
-                        sm.next_state(False)
-                        # Drive car
-                        LW, RW = ctrl.wheel(box)
-                        POS = ctrl.neck(box)
-                        # Static test
-                        print('*** Manual move:', LW, RW)
-                        print('*** Neck position:', POS)
-                        # Dynamic test
-                        botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
-                        botshell.sendall(f'neck_angle {POS}\n'.encode())
-                        # Draw bounding box of tracking objective
-                        img = image.draw_box(img, box)
-                        rosimg.apush(header, img)
+                    # Calculate results
+                    sm.next_state(False)
+                    # Drive car
+                    LW, RW = ctrl.wheel(box)
+                    POS = ctrl.neck(box)
+                    # Static test
+                    print('*** Manual move:', LW, RW)
+                    print('*** Neck position:', POS)
+                    # Dynamic test
+                    botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
+                    botshell.sendall(f'neck_angle {POS}\n'.encode())
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
