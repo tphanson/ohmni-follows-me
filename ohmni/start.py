@@ -82,7 +82,9 @@ def start(server, botshell):
 
         imgstart = time.time()
         img = np.asarray(pilimg)
+        print(img.shape)
         img = image.resize(img, (480, 640))
+        print(img.shape)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
