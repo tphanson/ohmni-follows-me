@@ -25,7 +25,7 @@ class ROSImage:
         buffer = base64.b64decode(_msg['data'])
         _img = np.fromstring(buffer, dtype=np.uint8)
         _img = cv.imdecode(_img, cv.IMREAD_COLOR)
-        return _msg['header'], np.array(_img, dtype=np.float32)
+        return _msg['header'], _img
 
     def __callback(self, _msg):
         self.header, self.image = self.__compressed_to_cv(_msg)
