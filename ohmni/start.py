@@ -80,9 +80,9 @@ def start(botshell):
         print('Debug:', state)
 
         header, img = rosimg.get()
-        print(img.shape)
 
         if img is not None:
+            print(img.shape)
             # Stop
             if state == 'init_idle':
                 print('*** Manual move:', 0, 0)
