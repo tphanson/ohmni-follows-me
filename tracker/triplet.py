@@ -82,7 +82,7 @@ class HumanTracking:
             self.input_details[0]['index'], [list(img)])
         self.interpreter.invoke()
         feature = self.interpreter.get_tensor(self.output_details[0]['index'])
-        print(type(feature[0]))
+        print(feature[0].dtype)
         return np.array(feature[0], dtype=np.float32)
 
     def set_anchor(self, img, bbox):
