@@ -13,23 +13,13 @@ EDGE_MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 
 def formaliza_data(obj, frame):
+    start = time.time()
     (height, width, _) = frame.shape
 
-    xmin = int(obj[-4]*width)
-    xmin = 0 if xmin < 0 else xmin
-    xmin = width if xmin > width else xmin
-
-    ymin = int(obj[-3]*height)
-    ymin = 0 if ymin < 0 else ymin
-    ymin = height if ymin > height else ymin
-
-    xmax = int(obj[-2]*width)
-    xmax = 0 if xmax < 0 else xmax
-    xmax = width if xmax > width else xmax
-
-    ymax = int(obj[-1]*height)
-    ymax = 0 if ymax < 0 else ymax
-    ymax = height if ymax > height else ymax
+    xmin = min(width, max(0, int(obj[-4]*width)))
+    ymin = min(height, max(0, int(obj[-3]*height)))
+    xmax = min(width, max(0, int(obj[-2]*width)))
+    ymax = min(height, max(0, int(obj[-1]*height)))
 
     box = np.array([xmin, ymin, xmax, ymax], dtype=np.int32)
     if xmin >= xmax or ymin >= ymax:
@@ -38,11 +28,13 @@ def formaliza_data(obj, frame):
     cropped_obj_img = frame[ymin:ymax, xmin:xmax]
     resized_obj_img = cv.resize(cropped_obj_img, IMAGE_SHAPE)
     obj_img = np.array(resized_obj_img/127.5 - 1, dtype=np.float32)
+    end = time.time()
+    print("==========", end-start)
     return obj_img, box
 
 
 class HumanTracking:
-    def __init__(self):
+    def __init__(self, confidence=0.7, threshold=35):
         self.input_shape = IMAGE_SHAPE
         self.interpreter = tflite.Interpreter(
             model_path=EDGE_MODEL,
@@ -51,8 +43,8 @@ class HumanTracking:
             ])
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
-        self.confidence = 0.7
-        self.threshold = 35
+        self.confidence = confidence
+        self.threshold = threshold
         self.prev_encoding = None
         self.prev_bbox = None
 
@@ -81,8 +73,7 @@ class HumanTracking:
         ymin = max(anchor_box[1], predicted_box[1])
         xmax = min(anchor_box[2], predicted_box[2])
         ymax = min(anchor_box[3], predicted_box[3])
-        inter_box = np.array([xmin, ymin, xmax, ymax])
-        inter_area = self.__area(inter_box)
+        inter_area = self.__area([xmin, ymin, xmax, ymax])
         anchor_area = self.__area(anchor_box)
         predicted_area = self.__area(predicted_box)
         return inter_area/float(anchor_area+predicted_area-inter_area)
@@ -106,10 +97,8 @@ class HumanTracking:
         differentials = np.array([])
         indice = []
         encodings = []
-        ious = []
         for index, box in enumerate(bboxes):
             iou = self.iou(self.prev_bbox, box)
-            ious.append(iou)
             if iou > 0.5:
                 img = imgs[index]
                 encoding = self.infer(img)
