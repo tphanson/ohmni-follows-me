@@ -1,6 +1,7 @@
 import os
 import tflite_runtime.interpreter as tflite
 import cv2 as cv
+import time
 
 EDGETPU_SHARED_LIB = 'libedgetpu.so.1'
 LABELS = os.path.join(os.path.dirname(
@@ -32,7 +33,9 @@ class HumanDetection:
             return {int(index): label.strip() for index, label in pairs}
 
     def predict(self, img):
+        start = time.time()
         img = cv.resize(img, self.input_shape)
+        print("============", time.time()-start)
         self.interpreter.allocate_tensors()
         self.interpreter.set_tensor(self.input_details[0]['index'], [img])
         self.interpreter.invoke()
