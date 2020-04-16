@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
 import time
 import tflite_runtime.interpreter as tflite
@@ -13,7 +11,6 @@ EDGE_MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 
 def formaliza_data(obj, frame):
-    start = time.time()
     (height, width, _) = frame.shape
 
     xmin = min(width, max(0, int(obj[-4]*width)))
@@ -57,7 +54,7 @@ class HumanTracking:
         if len(distances) == 0:
             return np.array([]), None
         deltas = (self.threshold - np.array(distances))/self.threshold
-        zeros = np.zeros(deltas.shape)
+        zeros = np.zeros(deltas.shape, dtype=np.float32)
         logits = np.maximum(deltas, zeros)
         logits_sum = np.sum(logits)
         if logits_sum == 0:
