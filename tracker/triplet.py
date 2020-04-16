@@ -98,7 +98,7 @@ class HumanTracking:
         encoding = self.infer(img)
         self.prev_encoding = encoding
         self.prev_bbox = bbox
-        return np.array([.0]), 0
+        return True
 
     def predict(self, imgs, bboxes):
         estart = time.time()

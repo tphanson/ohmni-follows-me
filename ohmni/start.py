@@ -20,7 +20,7 @@ def detect_gesture(pd, tracker, img):
     _, t, status, box = pd.predict(img)
     print('Gesture detection estimated time {:.4f}'.format(t))
     # Calculate result
-    vector = None
+    ok = False
     if status != 0:
         height, width, _ = img.shape
         xmin, ymin = int(box[0]*width), int(box[1]*height)
@@ -29,9 +29,9 @@ def detect_gesture(pd, tracker, img):
         obj_img = image.crop(img, box)
         obj_img = image.resize(obj_img, tracker.input_shape)
         obj_img = np.array(obj_img/127.5 - 1, dtype=np.float32)
-        vector = tracker.set_anchor(obj_img, box)
+        ok = tracker.set_anchor(obj_img, box)
     # Return
-    return vector
+    return ok
 
 
 def detect_human(hd, img):
@@ -47,17 +47,20 @@ def detect_human(hd, img):
 def tracking(tracker, objs, img):
     # Initialize registers
     start_time = time.time()
-    obj_imgs_batch = []
+    imgs_batch = []
     bboxes_batch = []
     # Push objects to registers
     for obj in objs:
         obj_img, box = formaliza_data(obj, img)
-        obj_imgs_batch.append(obj_img)
+        imgs_batch.append(obj_img)
         bboxes_batch.append(box)
     print('Tracking estimated time {:.4f}'.format(time.time()-start_time))
     # Inference
-    confidences, argmax = tracker.predict(obj_imgs_batch, bboxes_batch)
-    return confidences, argmax, bboxes_batch[argmax]
+    confidences, argmax = tracker.predict(imgs_batch, bboxes_batch)
+    print('*** Confidences:', confidences)
+    if argmax is None:
+        return None
+    return bboxes_batch[argmax]
 
 
 def start(botshell):
@@ -78,23 +81,20 @@ def start(botshell):
 
         header, img = rosimg.get()
 
-        if img is None:
-            pass
-        else:
+        if img is not None:
             # Stop
             if state == 'init_idle':
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
-                botshell.sendall(
-                    f'neck_angle {NECK_POS}\n'.encode())
+                botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
                 ht.reset()
                 sm.next_state(True)
 
             # Wait for an activation (raising hands)
             if state == 'idle':
                 # Detect gesture
-                vector = detect_gesture(pd, ht, img)
-                sm.next_state(vector is not None)
+                ok = detect_gesture(pd, ht, img)
+                sm.next_state(ok)
 
             # Run
             if state == 'init_run':
@@ -108,13 +108,11 @@ def start(botshell):
                     print('*** Manual move:', 0, 0)
                     botshell.sendall(b'manual_move 0 0\n')
                     sm.next_state(True)
-
                 else:
                     # Tracking
-                    confidences, argmax, box = tracking(ht, objs, img)
-                    print('*** Confidences:', confidences)
+                    box = tracking(ht, objs, img)
                     # Under threshold
-                    if argmax is None:
+                    if box is None:
                         print('*** Manual move:', 0, 0)
                         botshell.sendall(b'manual_move 0 0\n')
                         sm.next_state(True)
