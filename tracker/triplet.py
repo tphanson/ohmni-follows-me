@@ -82,8 +82,7 @@ class HumanTracking:
             self.input_details[0]['index'], [list(img)])
         self.interpreter.invoke()
         feature = self.interpreter.get_tensor(self.output_details[0]['index'])
-        print(feature[0].dtype)
-        return np.array(feature[0], dtype=np.float32)
+        return feature[0]
 
     def set_anchor(self, img, bbox):
         encoding = self.infer(img)
@@ -94,7 +93,7 @@ class HumanTracking:
     def predict(self, imgs, bboxes):
         estart = time.time()
 
-        differentials = np.array([])
+        differentials = []
         indice = []
         encodings = []
         for index, box in enumerate(bboxes):
@@ -102,10 +101,9 @@ class HumanTracking:
             if iou > 0.5:
                 img = imgs[index]
                 encoding = self.infer(img)
-                differential = np.linalg.norm(
-                    self.prev_encoding - encoding)
+                differential = np.linalg.norm(self.prev_encoding - encoding)
 
-                differentials = np.append(differentials, differential)
+                differentials.append(differential)
                 indice.append(index)
                 encodings.append(encoding)
 
