@@ -56,8 +56,8 @@ class HumanTracking:
     def __confidence_level(self, distances):
         if len(distances) == 0:
             return np.array([]), None
-        deltas = (self.threshold - distances)/self.threshold
-        zeros = np.zeros(deltas.shape, dtype=np.float32)
+        deltas = (self.threshold - np.array(distances))/self.threshold
+        zeros = np.zeros(deltas.shape)
         logits = np.maximum(deltas, zeros)
         logits_sum = np.sum(logits)
         if logits_sum == 0:
@@ -93,7 +93,7 @@ class HumanTracking:
     def predict(self, imgs, bboxes):
         estart = time.time()
 
-        differentials = np.array([])
+        differentials = []
         indice = []
         encodings = []
         for index, box in enumerate(bboxes):
@@ -103,7 +103,7 @@ class HumanTracking:
                 encoding = self.infer(img)
                 differential = np.linalg.norm(self.prev_encoding - encoding)
 
-                differentials = np.append(differentials, differential)
+                differentials.append(differential)
                 indice.append(index)
                 encodings.append(encoding)
 
