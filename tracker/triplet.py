@@ -31,7 +31,7 @@ def formaliza_data(obj, frame):
     print("3", time.time()-start)
     resized_obj_img = cv.resize(cropped_obj_img, IMAGE_SHAPE)
     print("4", time.time()-start)
-    obj_img = np.array(resized_obj_img/127.5 - 1, dtype=np.float32)
+    obj_img = resized_obj_img/127.5 - 1
     print("5", time.time()-start)
     return obj_img, box
 
