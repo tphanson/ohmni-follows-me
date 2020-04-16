@@ -56,7 +56,7 @@ class HumanTracking:
     def __confidence_level(self, distances):
         if len(distances) == 0:
             return np.array([]), None
-        deltas = (self.threshold - distances)/self.threshold
+        deltas = (self.threshold - np.array(distances))/self.threshold
         zeros = np.zeros(deltas.shape, dtype=np.float32)
         logits = np.maximum(deltas, zeros)
         logits_sum = np.sum(logits)
