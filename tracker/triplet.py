@@ -15,25 +15,24 @@ EDGE_MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 def formaliza_data(obj, frame):
     start = time.time()
     (height, width, _) = frame.shape
-    print("1", time.time()-start)
 
     xmin = min(width, max(0, int(obj[-4]*width)))
     ymin = min(height, max(0, int(obj[-3]*height)))
     xmax = min(width, max(0, int(obj[-2]*width)))
     ymax = min(height, max(0, int(obj[-1]*height)))
-    print("2", time.time()-start)
+    print("1", time.time()-start)
 
-    box = np.array([xmin, ymin, xmax, ymax], dtype=np.int32)
+    box = [xmin, ymin, xmax, ymax]
     if xmin >= xmax or ymin >= ymax:
         return np.zeros(IMAGE_SHAPE), box
-    print("3", time.time()-start)
+    print("2", time.time()-start)
 
     cropped_obj_img = frame[ymin:ymax, xmin:xmax]
-    print("4", time.time()-start)
+    print("3", time.time()-start)
     resized_obj_img = cv.resize(cropped_obj_img, IMAGE_SHAPE)
-    print("5", time.time()-start)
+    print("4", time.time()-start)
     obj_img = np.array(resized_obj_img/127.5 - 1, dtype=np.float32)
-    print("6", time.time()-start)
+    print("5", time.time()-start)
     return obj_img, box
 
 
