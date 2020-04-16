@@ -66,7 +66,7 @@ def start(server, botshell):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
-    ctrl = Controller((480, 640), NECK_POS)
+    ctrl = Controller((1024, 1280), NECK_POS)
 
     sm = StateMachine()
 
@@ -82,9 +82,6 @@ def start(server, botshell):
 
         imgstart = time.time()
         img = np.asarray(pilimg)
-        print(img.shape)
-        img = image.resize(img, (480, 640))
-        print(img.shape)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
