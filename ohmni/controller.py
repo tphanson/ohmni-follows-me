@@ -29,9 +29,10 @@ class Controller:
         self.neck_position = neck_position
 
     def calculate(self, bbox):
-        area = (bbox.xmax-bbox.xmin) * (bbox.ymax-bbox.ymin)
-        xmed = (bbox.xmin + bbox.xmax)/2
-        ymed = (bbox.ymin + bbox.ymax)/2
+        [xmin, ymin, xmax, ymax] = bbox
+        area = (xmax-xmin) * (ymax-ymin)
+        xmed = (xmin + xmax)/2
+        ymed = (ymin + ymax)/2
         return area, xmed, ymed
 
     def rotate(self, xmed, run):
