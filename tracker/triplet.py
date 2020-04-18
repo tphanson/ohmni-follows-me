@@ -29,7 +29,7 @@ def formaliza_data(obj, frame):
 
 
 class HumanTracking:
-    def __init__(self, confidence=0.7, threshold=50):
+    def __init__(self, confidence=0.7, threshold=100):
         self.input_shape = IMAGE_SHAPE
         self.interpreter = tflite.Interpreter(
             model_path=EDGE_MODEL,
