@@ -95,7 +95,7 @@ class HumanTracking:
         encodings = []
         for index, box in enumerate(bboxes):
             iou = self.iou(self.prev_bbox, box)
-            if iou > 0.5:
+            if iou > 0.1:
                 img = imgs[index]
                 encoding = self.infer(img)
                 differential = np.linalg.norm(self.prev_encoding - encoding)
