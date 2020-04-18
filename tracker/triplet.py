@@ -29,7 +29,7 @@ def formaliza_data(obj, frame):
 
 
 class HumanTracking:
-    def __init__(self, confidence=0.7, threshold=100):
+    def __init__(self, confidence=0.7, threshold=35):
         self.input_shape = IMAGE_SHAPE
         self.interpreter = tflite.Interpreter(
             model_path=EDGE_MODEL,
@@ -95,7 +95,7 @@ class HumanTracking:
         encodings = []
         for index, box in enumerate(bboxes):
             iou = self.iou(self.prev_bbox, box)
-            if iou > 0.1:
+            if iou > 0.5:
                 img = imgs[index]
                 encoding = self.infer(img)
                 differential = np.linalg.norm(self.prev_encoding - encoding)
