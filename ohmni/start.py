@@ -122,7 +122,7 @@ def start(botshell):
                         # Detect gesture
                         obj_img = image.crop(img, box)
                         ok = detect_gesture(pd, ht, obj_img, 'deactivate')
-                        sm.next_state(ok)
+                        print("==================", ok)
                         # Calculate results
                         sm.next_state(False)
                         # Drive car
