@@ -122,7 +122,7 @@ class PoseEngine(BasicEngine):
 
     def ParseOutput(self, output):
         inference_time, output = output
-        outputs = [output[i:j] for i, j in zip(self._output_offsets, self._output_offsets[1:])]
+        outputs = [output[int(i):int(j)] for i, j in zip(self._output_offsets, self._output_offsets[1:])]
 
         keypoints = outputs[0].reshape(-1, len(KEYPOINTS), 2)
         keypoint_scores = outputs[1].reshape(-1, len(KEYPOINTS))
