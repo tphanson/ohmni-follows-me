@@ -20,7 +20,8 @@ def detect_gesture(pd, tracker, img):
     print('Gesture detection estimated time {:.4f}'.format(t))
     # Calculate result
     ok = False
-    if status != 0:
+    # 0: None, 1: lefthand, 2: righthand, 3: both hands
+    if status != 0 and status != 3:
         height, width, _ = img.shape
         xmin, ymin = int(box[0]*width), int(box[1]*height)
         xmax, ymax = int(box[2]*width), int(box[3]*height)
@@ -59,7 +60,7 @@ def tracking(tracker, objs, img):
     print('*** Confidences:', confidences)
     if argmax is None:
         return None
-    return bboxes_batch[argmax]
+    return imgs_batch[argmax], bboxes_batch[argmax]
 
 
 def start(server, botshell):
@@ -113,13 +114,16 @@ def start(server, botshell):
                 sm.next_state(True)
             else:
                 # Tracking
-                box = tracking(ht, objs, img)
+                obj_img, box = tracking(ht, objs, img)
                 # Under threshold
                 if box is None:
                     print('*** Manual move:', 0, 0)
                     botshell.sendall(b'manual_move 0 0\n')
                     sm.next_state(True)
                 else:
+                    # Detect gesture
+                    ok = detect_gesture(pd, ht, img)
+                    print('Gesture:', ok)
                     # Calculate results
                     sm.next_state(False)
                     # Drive car
