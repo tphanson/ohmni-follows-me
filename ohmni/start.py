@@ -73,7 +73,7 @@ def start(server, botshell):
 
     sm = StateMachine()
 
-    while(True):
+    while True:
         pilimg = camera.fetch(server)
         if pilimg is None:
             time.sleep(0.05)
@@ -127,7 +127,8 @@ def start(server, botshell):
                     obj_img = image.crop(img, box)
                     ok = detect_gesture(pd, ht, obj_img, 'deactivate')
                     print('Gesture:', ok)
-                    if(ok) return
+                    if ok:
+                        return ok
                     # Calculate results
                     sm.next_state(False)
                     # Drive car
