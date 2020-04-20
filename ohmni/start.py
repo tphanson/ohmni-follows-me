@@ -17,7 +17,8 @@ NECK_POS = 500
 
 def detect_gesture(pd, tracker, img, action='activate'):
     # Inference
-    _, t, status, box = pd.predict(img)
+    objs, t, status, box = pd.predict(img)
+    print("***", objs)
     print('Gesture detection estimated time {:.4f}'.format(t))
     # Calculate result
     ok = False
