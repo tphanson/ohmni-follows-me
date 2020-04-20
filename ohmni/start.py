@@ -94,26 +94,33 @@ def start(server, botshell):
             botshell.sendall(b'manual_move 0 0\n')
             botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
             ht.reset()
-            sm.next_state(True)
+            sm.next_state(True, 0.5)
 
         # Wait for an activation (raising hands)
         if state == 'idle':
             # Detect gesture
             ok = detect_gesture(pd, ht, img, 'activate')
-            sm.next_state(ok)
+            sm.next_state(ok, 0.5)
 
         # Run
         if state == 'init_run':
-            sm.next_state(True)
+            sm.next_state(True, 0.5)
 
         # Tracking
         if state == 'run':
+            # Detect gesture
+            ok = detect_gesture(pd, ht, img, 'deactivate')
             # Detect human
             objs = detect_human(hd, img)
-            if len(objs) == 0:
+            # Handle state
+            if ok:
                 print('*** Manual move:', 0, 0)
                 botshell.sendall(b'manual_move 0 0\n')
-                sm.next_state(True)
+                sm.next_state(True, 0.5)
+            elif len(objs) == 0:
+                print('*** Manual move:', 0, 0)
+                botshell.sendall(b'manual_move 0 0\n')
+                sm.next_state(True, 5)
             else:
                 # Tracking
                 box = tracking(ht, objs, img)
@@ -121,11 +128,8 @@ def start(server, botshell):
                 if box is None:
                     print('*** Manual move:', 0, 0)
                     botshell.sendall(b'manual_move 0 0\n')
-                    sm.next_state(True)
+                    sm.next_state(True, 5)
                 else:
-                    # Detect gesture
-                    ok = detect_gesture(pd, ht, img, 'deactivate')
-                    print("=================", ok)
                     # Calculate results
                     sm.next_state(False)
                     # Drive car
