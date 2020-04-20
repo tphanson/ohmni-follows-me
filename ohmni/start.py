@@ -123,6 +123,9 @@ def start(server, botshell):
                     botshell.sendall(b'manual_move 0 0\n')
                     sm.next_state(True)
                 else:
+                    # Detect gesture
+                    ok = detect_gesture(pd, ht, img, 'deactivate')
+                    print("=================", ok)
                     # Calculate results
                     sm.next_state(False)
                     # Drive car
