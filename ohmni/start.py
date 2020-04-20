@@ -62,7 +62,7 @@ def tracking(tracker, objs, img):
     print('*** Confidences:', confidences)
     if argmax is None:
         return None
-    return imgs_batch[argmax], bboxes_batch[argmax]
+    return bboxes_batch[argmax]
 
 
 def start(server, botshell):
@@ -116,7 +116,7 @@ def start(server, botshell):
                 sm.next_state(True)
             else:
                 # Tracking
-                obj_img, box = tracking(ht, objs, img)
+                box = tracking(ht, objs, img)
                 # Under threshold
                 if box is None:
                     print('*** Manual move:', 0, 0)
@@ -124,6 +124,7 @@ def start(server, botshell):
                     sm.next_state(True)
                 else:
                     # Detect gesture
+                    obj_img = image.crop(img, box)
                     ok = detect_gesture(pd, ht, obj_img, 'deactivate')
                     print('Gesture:', ok)
                     # Calculate results
