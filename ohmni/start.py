@@ -122,6 +122,7 @@ def start(botshell):
                     else:
                         # Detect gesture
                         obj_img = image.crop(img, box)
+                        obj_img = image.resize(obj_img, pd.image_shape)
                         ok = detect_gesture(pd, ht, obj_img, 'deactivate')
                         print("==================", ok)
                         # Calculate results
@@ -137,7 +138,7 @@ def start(botshell):
                         botshell.sendall(f'neck_angle {POS}\n'.encode())
                         # Draw bounding box of tracking objective
                         img = image.draw_box(img, box)
-                        rosimg.apush(header, img)
+                        rosimg.apush(header, obj_img)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
