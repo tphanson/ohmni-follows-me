@@ -125,6 +125,7 @@ def start(server, botshell):
                 else:
                     # Detect gesture
                     obj_img = image.crop(img, box)
+                    print(obj_img)
                     ok = detect_gesture(pd, ht, obj_img, 'deactivate')
                     if ok:
                         print('Gesture:', ok)
