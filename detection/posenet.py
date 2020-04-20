@@ -12,7 +12,7 @@ class PoseDetection():
     def __init__(self):
         self.engine = PoseEngine(
             'tpu/posenet_mobilenet_v1_075_481_641_quant_decoder_edgetpu.tflite')
-        self.confidence = 4
+        self.raising_confidence = 4
         self.image_shape = (640, 480)
         self.input_shape = (641, 481)
 
@@ -31,7 +31,7 @@ class PoseDetection():
             dtype=np.float32)
         return box
 
-    def activate_by_left_hand(self, marks):
+    def raise_left_hand(self, marks):
         dx, dy = 0, 0
         for (label, _, x, y) in marks:
             if label == 'left elbow':
@@ -40,12 +40,9 @@ class PoseDetection():
             if label == 'left wrist':
                 dx -= x
                 dy -= y
-        if dy > self.confidence * np.abs(dx):
-            return True
-        else:
-            return False
+        return True if dy/abs(dx) > self.raising_confidence else False
 
-    def activate_by_right_hand(self, marks):
+    def raise_right_hand(self, marks):
         dx = 0
         dy = 0
         for (label, _, x, y) in marks:
@@ -55,19 +52,16 @@ class PoseDetection():
             if label == 'right wrist':
                 dx -= x
                 dy -= y
-        if dy > self.confidence * np.abs(dx):
-            return True
-        else:
-            return False
+        return True if dy/abs(dx) > self.raising_confidence else False
 
     def activate(self, marks):
-        if self.activate_by_left_hand(marks) and self.activate_by_right_hand(marks):
+        if self.raise_left_hand(marks) and self.raise_right_hand(marks):
+            box = self.generate_bbox(marks)
+            return 3, box
+        elif self.raise_left_hand(marks):
             box = self.generate_bbox(marks)
             return 2, box
-        elif self.activate_by_left_hand(marks):
-            box = self.generate_bbox(marks)
-            return 1, box
-        elif self.activate_by_right_hand(marks):
+        elif self.raise_right_hand(marks):
             box = self.generate_bbox(marks)
             return 1, box
         else:

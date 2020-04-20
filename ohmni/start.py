@@ -3,7 +3,7 @@ import numpy as np
 from utils import image, camera
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
-from tracker.triplet import HumanTracking, formaliza_data
+from tracker.triplet import HumanTracking, formalize_data
 from ohmni.controller import Controller
 from ohmni.state import StateMachine
 
@@ -50,7 +50,7 @@ def tracking(tracker, objs, img):
     bboxes_batch = []
     # Push objects to registers
     for obj in objs:
-        obj_img, box = formaliza_data(obj, img)
+        obj_img, box = formalize_data(obj, img)
         imgs_batch.append(obj_img)
         bboxes_batch.append(box)
     print('Tracking estimated time {:.4f}'.format(time.time()-start_time))
