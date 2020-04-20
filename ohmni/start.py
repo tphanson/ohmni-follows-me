@@ -18,7 +18,6 @@ NECK_POS = 500
 def detect_gesture(pd, tracker, img, action='activate'):
     # Inference
     objs, t, status, box = pd.predict(img)
-    print("***", objs)
     print('Gesture detection estimated time {:.4f}'.format(t))
     # Calculate result
     ok = False
@@ -120,11 +119,6 @@ def start(botshell):
                         botshell.sendall(b'manual_move 0 0\n')
                         sm.next_state(True)
                     else:
-                        # Detect gesture
-                        obj_img = image.crop(img, box)
-                        obj_img = image.resize(obj_img, pd.image_shape)
-                        ok = detect_gesture(pd, ht, obj_img, 'deactivate')
-                        print("==================", ok)
                         # Calculate results
                         sm.next_state(False)
                         # Drive car
@@ -138,7 +132,7 @@ def start(botshell):
                         botshell.sendall(f'neck_angle {POS}\n'.encode())
                         # Draw bounding box of tracking objective
                         img = image.draw_box(img, box)
-                        rosimg.apush(header, obj_img)
+                        rosimg.apush(header, img)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
