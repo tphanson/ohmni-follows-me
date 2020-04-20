@@ -14,14 +14,14 @@ from ohmni.state import StateMachine
 NECK_POS = 500
 
 
-def detect_gesture(pd, tracker, img):
+def detect_gesture(pd, tracker, img, action='activate'):
     # Inference
     _, t, status, box = pd.predict(img)
     print('Gesture detection estimated time {:.4f}'.format(t))
     # Calculate result
     ok = False
     # 0: None, 1: lefthand, 2: righthand, 3: both hands
-    if status != 0 and status != 3:
+    if action == 'activate' and status != 0 and status != 3:
         height, width, _ = img.shape
         xmin, ymin = int(box[0]*width), int(box[1]*height)
         xmax, ymax = int(box[2]*width), int(box[3]*height)
@@ -30,6 +30,8 @@ def detect_gesture(pd, tracker, img):
         obj_img = image.resize(obj_img, tracker.input_shape)
         obj_img = np.array(obj_img/127.5 - 1, dtype=np.float32)
         ok = tracker.set_anchor(obj_img, box)
+    if action == 'deactivate' and status == 3:
+        ok = True
     # Return
     return ok
 
@@ -97,7 +99,7 @@ def start(server, botshell):
         # Wait for an activation (raising hands)
         if state == 'idle':
             # Detect gesture
-            ok = detect_gesture(pd, ht, img)
+            ok = detect_gesture(pd, ht, img, 'activate')
             sm.next_state(ok)
 
         # Run
@@ -122,7 +124,7 @@ def start(server, botshell):
                     sm.next_state(True)
                 else:
                     # Detect gesture
-                    ok = detect_gesture(pd, ht, img)
+                    ok = detect_gesture(pd, ht, obj_img, 'deactivate')
                     print('Gesture:', ok)
                     # Calculate results
                     sm.next_state(False)
