@@ -21,7 +21,7 @@ def detect_gesture(pd, tracker, img, action='activate'):
     # Calculate result
     ok = False
     # 0: None, 1: lefthand, 2: righthand, 3: both hands
-    if action == 'activate' and status != 0 and status != 3:
+    if action == 'activate' and status == 1 and status == 2:
         height, width, _ = img.shape
         xmin, ymin = int(box[0]*width), int(box[1]*height)
         xmax, ymax = int(box[2]*width), int(box[3]*height)
@@ -127,6 +127,7 @@ def start(server, botshell):
                     obj_img = image.crop(img, box)
                     ok = detect_gesture(pd, ht, obj_img, 'deactivate')
                     print('Gesture:', ok)
+                    if(ok) return
                     # Calculate results
                     sm.next_state(False)
                     # Drive car
