@@ -17,7 +17,7 @@ NECK_POS = 500
 def detect_gesture(pd, tracker, img, action='activate'):
     # Inference
     _, t, status, box = pd.predict(img)
-    print('Gesture detection estimated time {:.4f}'.format(t))
+    print('Gesture detection estimated time {:.4f}'.format(t/1000))
     # Calculate result
     ok = False
     # 0: None, 1: lefthand, 2: righthand, 3: both hands
@@ -110,7 +110,6 @@ def start(server, botshell):
         if state == 'run':
             # Detect gesture
             ok = detect_gesture(pd, ht, img, 'deactivate')
-            print("===================", ok)
             # Detect human
             objs = detect_human(hd, img)
             # Handle state
