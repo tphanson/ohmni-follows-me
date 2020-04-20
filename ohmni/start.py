@@ -123,13 +123,6 @@ def start(server, botshell):
                     botshell.sendall(b'manual_move 0 0\n')
                     sm.next_state(True)
                 else:
-                    # Detect gesture
-                    obj_img = image.crop(img, box)
-                    print(obj_img)
-                    ok = detect_gesture(pd, ht, obj_img, 'deactivate')
-                    if ok:
-                        print('Gesture:', ok)
-                        return ok
                     # Calculate results
                     sm.next_state(False)
                     # Drive car
