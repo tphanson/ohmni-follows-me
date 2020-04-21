@@ -231,4 +231,4 @@ class Say:
         self.botshell.sendall(b'say ready\n')
 
     def wait(self):
-        self.botshell.sendall(b'say waiting\n')
+        self.botshell.sendall(b'say ok I am waiting for you\n')
