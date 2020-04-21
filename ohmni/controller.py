@@ -147,7 +147,7 @@ class Estimation:
         # Calculate y
         [xmin, _, xmax, _] = box
         width = xmax - xmin
-        y = BETA*(self.frame_shape[1]/2 - xmed)/width
+        y = (self.frame_shape[1]/2 - xmed)*BETA/width
         return x, y
 
 
