@@ -141,7 +141,7 @@ class Estimation:
         area, xmed, _ = self.calculate(box)
         distance = RATIO*self.frame_shape[0]*self.frame_shape[1] / area
         print('*** Debug:', area, xmed, distance)
-        if 1 > distance:
+        if 1.5 > distance:
             sys.exit()
         return 0, 0
 
