@@ -172,18 +172,16 @@ class Autonomy:
         # Static test
         print('*** Autonomy move:', x, y)
         print('*** Neck position:', pos)
-        if x < 1:
-            sys.exit()
         # Dynamic test
-        # self.botshell.sendall(f'follow_me {x} {y}\n'.encode())
-        # self.botshell.sendall(f'neck_angle {pos}\n'.encode())
+        self.botshell.sendall(f'follow_me {x} {y}\n'.encode())
+        self.botshell.sendall(f'neck_angle {pos}\n'.encode())
 
     def wait(self):
         print('*** Autonomy move:', 0, 0)
         self.botshell.sendall(b'follow_me 0 0\n')
 
 
-class Controller:
+class Heteronomy:
     def __init__(self, frame_shape, botshell):
         self.frame_shape = frame_shape
         self.botshell = botshell

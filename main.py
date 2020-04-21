@@ -25,7 +25,9 @@ if __name__ == "__main__":
 
     elif sys.argv[1] == '--ohmni':
         if sys.argv[2] == 'start':
-            ohmni.start(server, botshell)
+            ohmni.start(server, botshell, False)
+        if sys.argv[2] == 'autonomy':
+            ohmni.start(server, botshell, True)
 
     else:
         print("Error: Invalid option!")

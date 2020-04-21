@@ -4,7 +4,7 @@ from utils import image, camera
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking, formalize_data
-from ohmni.controller import Controller, Autonomy
+from ohmni.controller import Heteronomy, Autonomy
 from ohmni.state import StateMachine
 
 # Open camera:
@@ -44,6 +44,8 @@ def detect_human(hd, img):
 
 
 def tracking(tracker, objs, img):
+    if objs is None or len(objs) == 0:
+        return None
     # Initialize registers
     start_time = time.time()
     imgs_batch = []
@@ -62,13 +64,14 @@ def tracking(tracker, objs, img):
     return bboxes_batch[argmax]
 
 
-def start(server, botshell):
+def start(server, botshell, autonomy=False):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
 
+    htnm = Heteronomy((1024, 1280), botshell)
     atnm = Autonomy((1024, 1280), botshell)
-    ctrl = Controller((1024, 1280), botshell)
+    ctrl = atnm if autonomy else htnm
     ctrl.start()
 
     sm = StateMachine()
@@ -114,22 +117,16 @@ def start(server, botshell):
             if ok:
                 ctrl.wait()
                 sm.next_state(True, 0.5)
-            elif len(objs) == 0:
-                ctrl.wait()
-                sm.next_state(True, 5)
             else:
                 # Tracking
                 box = tracking(ht, objs, img)
-                # Under threshold
                 if box is None:
                     ctrl.wait()
                     sm.next_state(True, 5)
                 else:
-                    # Calculate results
-                    sm.next_state(False)
                     # Drive car
+                    sm.next_state(False)
                     ctrl.goto(box)
-                    atnm.goto(box)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
