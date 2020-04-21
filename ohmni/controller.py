@@ -172,6 +172,8 @@ class Autonomy:
         # Static test
         print('*** Autonomy move:', x, y)
         print('*** Neck position:', pos)
+        if x < 1:
+            sys.exit()
         # Dynamic test
         # self.botshell.sendall(f'follow_me {x} {y}\n'.encode())
         # self.botshell.sendall(f'neck_angle {pos}\n'.encode())
