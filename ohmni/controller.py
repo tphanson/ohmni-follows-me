@@ -6,6 +6,8 @@ import numpy as np
 
 # ALPHA = meter * pixel^2, pixel^2 = scaled box area
 ALPHA = 0.2
+# BETA = average human shoulder length (meter)
+BETA = 0.4
 
 # Ohmni global config
 NECK_POS = 500
@@ -139,12 +141,14 @@ class Estimation:
         return self.neck_position
 
     def pose(self, box):
+        # Calculate x
         area, xmed, _ = self.calculate(box)
-        distance = ALPHA/(area/(self.frame_shape[0]*self.frame_shape[1]))
-        print('*** Debug:', area, xmed, distance)
-        if 1.5 > distance:
-            sys.exit()
-        return 0, 0
+        x = ALPHA/(area/(self.frame_shape[0]*self.frame_shape[1]))
+        # Calculate y
+        [xmin, _, xmax, _] = box
+        width = xmax - xmin
+        y = BETA*(self.frame_shape[1]/2 - xmed)/width
+        return x, y
 
 
 class Autonomy:
@@ -166,8 +170,8 @@ class Autonomy:
         x, y = self.estimation.pose(box)
         pos = self.estimation.neck(box)
         # Static test
-        # print('*** Autonomy move:', x, y)
-        # print('*** Neck position:', pos)
+        print('*** Autonomy move:', x, y)
+        print('*** Neck position:', pos)
         # Dynamic test
         # self.botshell.sendall(f'follow_me {x} {y}\n'.encode())
         # self.botshell.sendall(f'neck_angle {pos}\n'.encode())
