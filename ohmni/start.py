@@ -10,9 +10,6 @@ from ohmni.state import StateMachine
 # Open camera:
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
-# Ohmni global config
-NECK_POS = 500
-
 
 def detect_gesture(pd, tracker, img, action='activate'):
     # Inference
@@ -69,7 +66,9 @@ def start(server, botshell):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking()
-    ctrl = Controller((1024, 1280), NECK_POS)
+
+    ctrl = Controller((1024, 1280), botshell)
+    ctrl.start()
 
     sm = StateMachine()
 
@@ -90,9 +89,7 @@ def start(server, botshell):
 
         # Stop
         if state == 'init_idle':
-            print('*** Manual move:', 0, 0)
-            botshell.sendall(b'manual_move 0 0\n')
-            botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
+            ctrl.stop()
             ht.reset()
             sm.next_state(True, 0.5)
 
@@ -114,33 +111,23 @@ def start(server, botshell):
             objs = detect_human(hd, img)
             # Handle state
             if ok:
-                print('*** Manual move:', 0, 0)
-                botshell.sendall(b'manual_move 0 0\n')
+                ctrl.wait()
                 sm.next_state(True, 0.5)
             elif len(objs) == 0:
-                print('*** Manual move:', 0, 0)
-                botshell.sendall(b'manual_move 0 0\n')
+                ctrl.wait()
                 sm.next_state(True, 5)
             else:
                 # Tracking
                 box = tracking(ht, objs, img)
                 # Under threshold
                 if box is None:
-                    print('*** Manual move:', 0, 0)
-                    botshell.sendall(b'manual_move 0 0\n')
+                    ctrl.wait()
                     sm.next_state(True, 5)
                 else:
                     # Calculate results
                     sm.next_state(False)
                     # Drive car
-                    LW, RW = ctrl.wheel(box)
-                    POS = ctrl.neck(box)
-                    # Static test
-                    print('*** Manual move:', LW, RW)
-                    print('*** Neck position:', POS)
-                    # Dynamic test
-                    botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
-                    botshell.sendall(f'neck_angle {POS}\n'.encode())
+                    ctrl.goto(box)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
@@ -149,4 +136,7 @@ def start(server, botshell):
             time.sleep(delay)
         fpsadjust = time.time()
         print('Total estimated time {:.4f}'.format(fpsend-fpsstart))
-        print("FPS: {:.1f} \n\n".format(1 / (fpsadjust-fpsstart)))
+        print('FPS: {:.1f} \n\n'.format(1 / (fpsadjust-fpsstart)))
+
+    ctrl.stop()
+    print('Stopped OFM.')
