@@ -228,7 +228,7 @@ class Say:
         self.botshell = botshell
 
     def ready(self):
-        self.botshell.sendall(b'say ready\n')
+        self.botshell.sendall(b'say I\'m ready\n')
 
     def wait(self):
         self.botshell.sendall(b'say ok I\'m waiting for you\n')
