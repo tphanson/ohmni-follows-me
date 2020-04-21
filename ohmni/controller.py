@@ -1,7 +1,10 @@
+import sys
 import numpy as np
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
+# Ratio between the real distance and a virtual area in frame: 0.145843506
+RATIO = 0.145843506
 
 # Ohmni global config
 NECK_POS = 500
@@ -137,6 +140,8 @@ class Estimation:
     def pose(self, box):
         area, xmed, _ = self.calculate(box)
         print('*** Debug:', area, xmed)
+        if area > RATIO*self.frame_shape[0]*self.frame_shape[1]:
+            sys.exit()
         return 0, 0
 
 
