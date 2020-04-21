@@ -4,7 +4,7 @@ import numpy as np
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
 # ALPHA = meter * pixel^2, pixel^2 = scaled box area, ALPHA = 0.2558441162
-ALPHA = 0.2558441162
+ALPHA = 0.1558441162
 
 # Ohmni global config
 NECK_POS = 500
