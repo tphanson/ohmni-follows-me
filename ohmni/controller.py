@@ -180,6 +180,12 @@ class Autonomy:
         print('*** Autonomy move:', 0, 0)
         self.botshell.sendall(b'follow_me 0 0\n')
 
+    def rest(self):
+        print('*** Autonomy move:', 0, 0)
+        print('*** Autonomy position:', NECK_POS)
+        self.botshell.sendall(b'follow_me 0 0\n')
+        self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
+
 
 class Heteronomy:
     def __init__(self, frame_shape, botshell):
@@ -209,3 +215,20 @@ class Heteronomy:
     def wait(self):
         print('*** Manual move:', 0, 0)
         self.botshell.sendall(b'manual_move 0 0\n')
+
+    def rest(self):
+        print('*** Manual move:', 0, 0)
+        print('*** Neck position:', NECK_POS)
+        self.botshell.sendall(b'manual_move 0 0\n')
+        self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
+
+
+class Say:
+    def __init__(self, botshell):
+        self.botshell = botshell
+
+    def ready(self):
+        self.botshell.sendall(b'say ready\n')
+
+    def wait(self):
+        self.botshell.sendall(b'say waiting\n')

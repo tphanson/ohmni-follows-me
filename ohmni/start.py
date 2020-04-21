@@ -4,7 +4,7 @@ from utils import image, camera
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking, formalize_data
-from ohmni.controller import Heteronomy, Autonomy
+from ohmni.controller import Say, Heteronomy, Autonomy
 from ohmni.state import StateMachine
 
 # Open camera:
@@ -69,6 +69,7 @@ def start(server, botshell, autonomy=False):
     hd = HumanDetection()
     ht = HumanTracking()
 
+    say = Say()
     htnm = Heteronomy((1024, 1280), botshell)
     atnm = Autonomy((1024, 1280), botshell)
     ctrl = atnm if autonomy else htnm
@@ -93,7 +94,8 @@ def start(server, botshell, autonomy=False):
 
         # Stop
         if state == 'init_idle':
-            ctrl.stop()
+            say.wait()
+            ctrl.rest()
             ht.reset()
             sm.next_state(True, 0.5)
 
@@ -105,6 +107,7 @@ def start(server, botshell, autonomy=False):
 
         # Run
         if state == 'init_run':
+            say.ready()
             sm.next_state(True, 0.5)
 
         # Tracking
