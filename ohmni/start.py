@@ -4,7 +4,7 @@ from utils import image, camera
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking, formalize_data
-from ohmni.controller import Controller
+from ohmni.controller import Controller, Autonomy
 from ohmni.state import StateMachine
 
 # Open camera:
@@ -67,6 +67,7 @@ def start(server, botshell):
     hd = HumanDetection()
     ht = HumanTracking()
 
+    atnm = Autonomy((1024, 1280), botshell)
     ctrl = Controller((1024, 1280), botshell)
     ctrl.start()
 
@@ -128,6 +129,7 @@ def start(server, botshell):
                     sm.next_state(False)
                     # Drive car
                     ctrl.goto(box)
+                    atnm.goto(box)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
