@@ -69,7 +69,7 @@ def start(server, botshell, autonomy=False):
     hd = HumanDetection()
     ht = HumanTracking()
 
-    say = Say()
+    say = Say(botshell)
     htnm = Heteronomy((1024, 1280), botshell)
     atnm = Autonomy((1024, 1280), botshell)
     ctrl = atnm if autonomy else htnm
