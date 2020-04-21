@@ -139,8 +139,9 @@ class Estimation:
 
     def pose(self, box):
         area, xmed, _ = self.calculate(box)
-        print('*** Debug:', area, xmed)
-        if area > RATIO*self.frame_shape[0]*self.frame_shape[1]:
+        distance = RATIO*self.frame_shape[0]*self.frame_shape[1] / area
+        print('*** Debug:', area, xmed, distance)
+        if 1 > distance:
             sys.exit()
         return 0, 0
 
