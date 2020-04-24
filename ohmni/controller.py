@@ -1,4 +1,3 @@
-import sys
 import numpy as np
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
@@ -158,7 +157,6 @@ class Autonomy:
 
     def start(self):
         print('*** Start autonomy move')
-        self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
         self.botshell.sendall(b'start_autonomy\n')
 
     def stop(self):
@@ -182,7 +180,7 @@ class Autonomy:
 
     def rest(self):
         print('*** Autonomy move:', 0, 0)
-        print('*** Autonomy position:', NECK_POS)
+        print('*** Neck position:', NECK_POS)
         self.botshell.sendall(b'follow_me 0 0\n')
         self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
 
@@ -194,7 +192,6 @@ class Heteronomy:
         self.estimation = Estimation(frame_shape)
 
     def start(self):
-        self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
         print('*** Start manual move')
 
     def stop(self):
