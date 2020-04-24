@@ -158,6 +158,7 @@ class Autonomy:
 
     def start(self):
         print('*** Start autonomy move')
+        self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
         self.botshell.sendall(b'start_autonomy\n')
 
     def stop(self):
@@ -193,6 +194,7 @@ class Heteronomy:
         self.estimation = Estimation(frame_shape)
 
     def start(self):
+        self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
         print('*** Start manual move')
 
     def stop(self):
