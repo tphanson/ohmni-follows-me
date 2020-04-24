@@ -158,11 +158,11 @@ class Autonomy:
 
     def start(self):
         print('*** Start autonomy move')
-        self.botshell.sendall(b'start_autonomy')
+        self.botshell.sendall(b'start_autonomy\n')
 
     def stop(self):
         print('*** Stop autonomy move')
-        self.botshell.sendall(b'stop_autonomy')
+        self.botshell.sendall(b'stop_autonomy\n')
 
     def goto(self, box):
         # Estimate controller params
@@ -172,17 +172,17 @@ class Autonomy:
         print('*** Autonomy move:', x, y)
         print('*** Neck position:', pos)
         # Dynamic test
-        self.botshell.sendall(f'follow_me {x} {y}'.encode())
+        self.botshell.sendall(f'follow_me {x} {y}\n'.encode())
         self.botshell.sendall(f'neck_angle {pos}\n'.encode())
 
     def wait(self):
         print('*** Autonomy move:', 0, 0)
-        self.botshell.sendall(b'follow_me 0 0')
+        self.botshell.sendall(b'follow_me 0 0\n')
 
     def rest(self):
         print('*** Autonomy move:', 0, 0)
         print('*** Autonomy position:', NECK_POS)
-        self.botshell.sendall(b'follow_me 0 0')
+        self.botshell.sendall(b'follow_me 0 0\n')
         self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
 
 
