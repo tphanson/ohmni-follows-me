@@ -40,7 +40,7 @@ class PoseDetection():
             if label == 'left wrist':
                 dx -= x
                 dy -= y
-        return True if dy/abs(dx) > self.raising_confidence else False
+        return True if dy/(abs(dx)+1) > self.raising_confidence else False
 
     def raise_right_hand(self, marks):
         dx = 0
@@ -52,7 +52,7 @@ class PoseDetection():
             if label == 'right wrist':
                 dx -= x
                 dy -= y
-        return True if dy/abs(dx) > self.raising_confidence else False
+        return True if dy/(abs(dx)+1) > self.raising_confidence else False
 
     def activate(self, marks):
         if self.raise_left_hand(marks) and self.raise_right_hand(marks):
