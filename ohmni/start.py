@@ -75,6 +75,9 @@ def start(server, botshell, autonomy=False):
     ctrl = atnm if autonomy else htnm
     ctrl.start()
 
+    # Wait for autonomy process starting
+    time.sleep(5)
+
     sm = StateMachine()
 
     while True:
