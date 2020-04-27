@@ -145,7 +145,7 @@ class Estimation:
         x = ALPHA/(area/(self.frame_shape[0]*self.frame_shape[1]))
         # Calculate y
         [xmin, _, xmax, _] = box
-        y = (self.frame_shape[1]/2 - xmed)*BETA/(xmax - xmin)
+        y = (xmed - self.frame_shape[1]/2)*BETA/(xmax - xmin)
         return x, y
 
 
