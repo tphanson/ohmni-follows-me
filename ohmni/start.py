@@ -116,7 +116,7 @@ def start(server, botshell, autonomy=False):
         # Tracking
         if state == 'run':
             # Detect gesture
-            ok = detect_gesture(pd, ht, img, 'deactivate')
+            # ok = detect_gesture(pd, ht, img, 'deactivate')
             # Detect human
             objs = detect_human(hd, img)
             # Handle state
