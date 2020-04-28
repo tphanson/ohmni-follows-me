@@ -167,7 +167,7 @@ class Autonomy:
     def goto(self, box):
         # Estimate controller params
         x, y = self.estimation.pose(box)
-        t = int(time.time())
+        t = int(time.time()*1000)
         pos = self.estimation.neck(box)
         # Static test
         print('*** Autonomy move:', x, y)
@@ -177,12 +177,12 @@ class Autonomy:
         self.botshell.sendall(f'neck_angle {pos}\n'.encode())
 
     def wait(self):
-        t = int(time.time())
+        t = int(time.time()*1000)
         print('*** Autonomy move:', 0, 0)
         self.botshell.sendall(f'follow_me 0 0 {t}\n'.encode())
 
     def rest(self):
-        t = int(time.time())
+        t = int(time.time()*1000)
         print('*** Autonomy move:', 1, 0)
         print('*** Neck position:', NECK_POS)
         self.botshell.sendall(f'follow_me 1 0 {t}\n'.encode())
