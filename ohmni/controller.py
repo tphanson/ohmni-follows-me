@@ -4,7 +4,7 @@ import numpy as np
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
 
 # ALPHA = meter * pixel^2, pixel^2 = scaled box area
-ALPHA = 0.15
+ALPHA = 0.2
 # BETA = average human shoulder length (meter)
 BETA = 0.4
 
