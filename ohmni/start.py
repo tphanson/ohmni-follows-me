@@ -128,7 +128,7 @@ def start(server, botshell, autonomy=False):
                 box = tracking(ht, objs, img)
                 if box is None:
                     ctrl.wait()
-                    sm.next_state(True, 5)
+                    sm.next_state(True, 10)
                 else:
                     # Drive car
                     sm.next_state(False)

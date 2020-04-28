@@ -179,9 +179,9 @@ class Autonomy:
         self.botshell.sendall(b'follow_me 0 0\n')
 
     def rest(self):
-        print('*** Autonomy move:', 1.01, 0)
+        print('*** Autonomy move:', 1, 0)
         print('*** Neck position:', NECK_POS)
-        self.botshell.sendall(b'follow_me 1.01 0\n')
+        self.botshell.sendall(b'follow_me 1 0\n')
         self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
 
 
