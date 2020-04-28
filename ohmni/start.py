@@ -120,7 +120,7 @@ def start(server, botshell, autonomy=False):
             # Detect human
             objs = detect_human(hd, img)
             # Handle state
-            if ok:
+            if False:
                 ctrl.wait()
                 sm.next_state(True, 0.5)
             else:
