@@ -170,7 +170,7 @@ class Autonomy:
         t = int(time.time()*1000)
         pos = self.estimation.neck(box)
         # Static test
-        print('*** Autonomy move:', x, y)
+        print('*** Autonomy move:', x, y, t)
         print('*** Neck position:', pos)
         # Dynamic test
         self.botshell.sendall(f'follow_me {x} {y} {t}\n'.encode())
@@ -178,12 +178,12 @@ class Autonomy:
 
     def wait(self):
         t = int(time.time()*1000)
-        print('*** Autonomy move:', 0, 0)
+        print('*** Autonomy move:', 0, 0, t)
         self.botshell.sendall(f'follow_me 0 0 {t}\n'.encode())
 
     def rest(self):
         t = int(time.time()*1000)
-        print('*** Autonomy move:', 1, 0)
+        print('*** Autonomy move:', 1, 0, t)
         print('*** Neck position:', NECK_POS)
         self.botshell.sendall(f'follow_me 1 0 {t}\n'.encode())
         self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
