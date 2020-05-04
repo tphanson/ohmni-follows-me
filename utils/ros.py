@@ -76,5 +76,5 @@ class ROSImage:
 
     def apush(self, _header, _img):
         t = threading.Thread(target=self.push, args=(
-            __header, _img), daemon=True)
+            _header, _img), daemon=True)
         t.start()
