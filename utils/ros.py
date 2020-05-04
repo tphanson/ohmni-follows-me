@@ -71,7 +71,7 @@ class ROSImage:
 
     def push(self, _header, _img):
         __header = self.__header()
-        msg = self.gen_compressed_img(__header, _img)
+        msg = self.gen_compressed_img(_header, _img)
         self.talker.publish(roslibpy.Message(msg))
 
     def apush(self, _header, _img):
