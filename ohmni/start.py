@@ -82,6 +82,7 @@ def start(botshell):
         print('Debug:', state)
 
         header, img = rosimg.get()
+        print(header)
 
         if img is not None:
             # Stop
