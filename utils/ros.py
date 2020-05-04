@@ -32,12 +32,20 @@ class ROSImage:
         self.header, self.image = self.__compressed_to_cv(_msg)
         self.apush(self.header, self.image)
 
+    def __header(self):
+        _time = time.time()
+        return {
+            'stamp': {'secs': int(_time), 'nsecs': int(_time % 1*10**9)},
+            'frame_id': 'ofm',
+            'seq': None
+        }
+
     def gen_compressed_img(self, _header, _img):
         _, buffer = cv.imencode('.jpeg', _img)
         _data = base64.b64encode(buffer)
-        _time = time.time()
-        _header = {'stamp': {'secs': int(_time), 'nsecs': int(
-            _time % 1*10**9)}, 'frame_id': 'ofm', 'seq': None}
+        print(_header)
+        _header = self.__header()
+        print(_header)
         return {
             'header': _header,
             'data': _data.decode('utf-8'),
