@@ -14,6 +14,7 @@ class ROSImage:
         self.out_data_type = 'sensor_msgs/CompressedImage'
         self.header = None
         self.image = None
+        self.seq = 0
 
         self.client = roslibpy.Ros(host='localhost', port=9090)
         self.listener = roslibpy.Topic(
@@ -33,21 +34,17 @@ class ROSImage:
 
     def __header(self):
         _time = time.time()
+        self.seq += 1
         return {
-            'stamp': {'secs': None, 'nsecs': None},
-            'frame_id': None,
-            'seq': None
+            'stamp': {'secs': int(_time), 'nsecs': int(_time % 1*10**9)},
+            'frame_id': 'ofm',
+            'seq': self.seq
         }
-        # return {
-        #     'stamp': {'secs': int(_time), 'nsecs': int(_time % 1*10**9)},
-        #     'frame_id': 'ofm',
-        #     'seq': None
-        # }
 
     def gen_compressed_img(self, _header, _img):
         _, buffer = cv.imencode('.jpeg', _img)
         _data = base64.b64encode(buffer)
-        __header = self.__header()
+        _header = self.__header()
         return {
             'header': _header,
             'data': _data.decode('utf-8'),
