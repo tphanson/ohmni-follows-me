@@ -35,17 +35,22 @@ class ROSImage:
     def __header(self):
         _time = time.time()
         return {
-            'stamp': {'secs': int(_time), 'nsecs': int(_time % 1*10**9)},
-            'frame_id': 'ofm',
+            'stamp': {'secs': None, 'nsecs': None},
+            'frame_id': None,
             'seq': None
         }
+        # return {
+        #     'stamp': {'secs': int(_time), 'nsecs': int(_time % 1*10**9)},
+        #     'frame_id': 'ofm',
+        #     'seq': None
+        # }
 
     def gen_compressed_img(self, _header, _img):
         _, buffer = cv.imencode('.jpeg', _img)
         _data = base64.b64encode(buffer)
         print(_header)
-        # _header = self.__header()
-        # print(_header)
+        __header = self.__header()
+        print(_header == __header)
         return {
             'header': _header,
             'data': _data.decode('utf-8'),
