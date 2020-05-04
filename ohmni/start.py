@@ -132,9 +132,9 @@ def start(botshell):
                         botshell.sendall(f'neck_angle {POS}\n'.encode())
                         # Draw bounding box of tracking objective
                         img = image.draw_box(img, box)
-            
+
             # Publish ROS topic
-            # rosimg.apush(header, img)
+            rosimg.push(header, img)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
