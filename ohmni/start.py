@@ -65,8 +65,8 @@ def tracking(tracker, objs, img):
 
 
 def start(server, botshell, autonomy=False):
-    rosimg = ros.ROSImage()
-    rosimg.client.run()
+    # rosimg = ros.ROSImage()
+    # rosimg.client.run()
 
     pd = PoseDetection()
     hd = HumanDetection()
@@ -138,10 +138,10 @@ def start(server, botshell, autonomy=False):
                     sm.next_state(False)
                     ctrl.goto(box)
                     # Draw bounding box of tracking objective
-                    img = image.draw_box(img, box)
+                    # img = image.draw_box(img, box)
 
         # Publish ROS topic
-        rosimg.apush(img)
+        # rosimg.apush(img)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
