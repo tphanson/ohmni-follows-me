@@ -35,7 +35,7 @@ class ROSImage:
         _, buffer = cv.imencode('.jpeg', _img)
         _data = base64.b64encode(buffer)
         return {
-            'header': _header,
+            'header': None,
             'data': _data.decode('utf-8'),
             'format': 'rgb8; jpeg compressed bgr8'
         }
