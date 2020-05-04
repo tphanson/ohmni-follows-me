@@ -128,7 +128,7 @@ def start(botshell):
                         print('*** Manual move:', LW, RW)
                         print('*** Neck position:', POS)
                         # Dynamic test
-                        botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
+                        # botshell.sendall(f'manual_move {LW} {RW}\n'.encode())
                         botshell.sendall(f'neck_angle {POS}\n'.encode())
                         # Draw bounding box of tracking objective
                         img = image.draw_box(img, box)
