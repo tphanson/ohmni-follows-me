@@ -48,11 +48,8 @@ class ROSImage:
     def gen_compressed_img(self, _header, _img):
         _, buffer = cv.imencode('.jpeg', _img)
         _data = base64.b64encode(buffer)
-        print(_header)
-        __header = self.__header()
-        print(_header == __header)
         return {
-            'header': __header,
+            'header': _header,
             'data': _data.decode('utf-8'),
             'format': 'rgb8; jpeg compressed bgr8'
         }
@@ -77,6 +74,7 @@ class ROSImage:
         self.talker.publish(roslibpy.Message(msg))
 
     def apush(self, _header, _img):
+        __header = self.__header()
         t = threading.Thread(target=self.push, args=(
-            _header, _img,), daemon=True)
+            __header, _img,), daemon=True)
         t.start()
