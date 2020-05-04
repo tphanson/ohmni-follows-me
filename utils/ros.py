@@ -52,7 +52,7 @@ class ROSImage:
         __header = self.__header()
         print(_header == __header)
         return {
-            'header': _header,
+            'header': __header,
             'data': _data.decode('utf-8'),
             'format': 'rgb8; jpeg compressed bgr8'
         }
