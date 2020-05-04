@@ -29,7 +29,7 @@ class ROSImage:
 
     def __callback(self, _msg):
         self.header, self.image = self.__compressed_to_cv(_msg)
-        self.rosimg.apush(self.header, self.img)
+        self.apush(self.header, self.image)
 
     def gen_compressed_img(self, _header, _img):
         _, buffer = cv.imencode('.jpeg', _img)
