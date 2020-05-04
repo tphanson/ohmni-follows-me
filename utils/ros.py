@@ -34,7 +34,9 @@ class ROSImage:
     def gen_compressed_img(self, _header, _img):
         _, buffer = cv.imencode('.jpeg', _img)
         _data = base64.b64encode(buffer)
+        print(type(_header))
         _header = {'stamp': {'secs': None, 'nsecs': None}, 'frame_id': None, 'seq': None}
+        print(type(_header))
         return {
             'header': _header,
             'data': _data.decode('utf-8'),
