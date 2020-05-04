@@ -70,11 +70,11 @@ class ROSImage:
         return self.header, self.image
 
     def push(self, _header, _img):
+        __header = self.__header()
         msg = self.gen_compressed_img(_header, _img)
         self.talker.publish(roslibpy.Message(msg))
 
     def apush(self, _header, _img):
-        __header = self.__header()
         t = threading.Thread(target=self.push, args=(
-            __header, _img,), daemon=True)
+            __header, _img), daemon=True)
         t.start()
