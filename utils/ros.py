@@ -35,7 +35,7 @@ class ROSImage:
         _, buffer = cv.imencode('.jpeg', _img)
         _data = base64.b64encode(buffer)
         print(type(_header))
-        _header = {'stamp': {'secs': None, 'nsecs': None}, 'frame_id': None, 'seq': None}
+        _header = {'stamp': {'secs': None, 'nsecs': None}, 'frame_id': 'ofm', 'seq': None}
         print(type(_header))
         return {
             'header': _header,
