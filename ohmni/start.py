@@ -1,6 +1,6 @@
 import time
 import numpy as np
-from utils import image, camera
+from utils import image, camera, ros
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking, formalize_data
@@ -65,6 +65,9 @@ def tracking(tracker, objs, img):
 
 
 def start(server, botshell, autonomy=False):
+    rosimg = ros.ROSImage()
+    rosimg.start()
+
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking(threshold=50)
@@ -92,6 +95,7 @@ def start(server, botshell, autonomy=False):
 
         imgstart = time.time()
         img = np.asarray(pilimg)
+        header, _ = rosimg.get()
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
@@ -134,6 +138,11 @@ def start(server, botshell, autonomy=False):
                     # Drive car
                     sm.next_state(False)
                     ctrl.goto(box)
+                    # Draw bounding box of tracking objective
+                    img = image.draw_box(img, box)
+
+        # Publish ROS topic
+        rosimg.push(header, img)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
