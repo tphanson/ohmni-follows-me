@@ -141,7 +141,7 @@ def start(server, botshell, autonomy=False):
                     img = image.draw_box(img, box)
 
         # Publish ROS topic
-        rosimg.push(img)
+        rosimg.apush(img)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
