@@ -16,7 +16,8 @@ class ROSImage:
 
         self.client = roslibpy.Ros(host='localhost', port=9090)
         self.listener = roslibpy.Topic(
-            self.client, self.in_topic, self.in_data_type, queue_size=1)
+            self.client, self.in_topic, self.in_data_type,
+            throttle_rate=5, queue_size=1)
         self.talker = roslibpy.Topic(
             self.client, self.out_topic, self.out_data_type)
 
