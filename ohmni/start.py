@@ -66,7 +66,7 @@ def tracking(tracker, objs, img):
 
 def start(server, botshell, autonomy=False):
     rosimg = ros.ROSImage()
-    rosimg.start()
+    rosimg.client.run()
 
     pd = PoseDetection()
     hd = HumanDetection()
@@ -95,7 +95,6 @@ def start(server, botshell, autonomy=False):
 
         imgstart = time.time()
         img = np.asarray(pilimg)
-        header, _ = rosimg.get()
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
@@ -142,7 +141,7 @@ def start(server, botshell, autonomy=False):
                     img = image.draw_box(img, box)
 
         # Publish ROS topic
-        rosimg.push(header, img)
+        rosimg.push(img)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()

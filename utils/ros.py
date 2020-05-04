@@ -13,6 +13,7 @@ class ROSImage:
         self.out_data_type = 'sensor_msgs/CompressedImage'
         self.header = None
         self.image = None
+        self.seq = 0
 
         self.client = roslibpy.Ros(host='localhost', port=9090)
         self.listener = roslibpy.Topic(
@@ -30,9 +31,19 @@ class ROSImage:
     def __callback(self, _msg):
         self.header, self.image = self.__compressed_to_cv(_msg)
 
-    def gen_compressed_img(self, _header, _img):
+    def __header(self):
+        _time = time.time()
+        self.seq += 1
+        return {
+            'stamp': {'secs': int(_time), 'nsecs': int(_time % 1*10**9)},
+            'frame_id': 'ofm',
+            'seq': self.seq
+        }
+
+    def gen_compressed_img(self, _img):
         _, buffer = cv.imencode('.jpeg', _img)
         _data = base64.b64encode(buffer)
+        _header = self.__header()
         return {
             'header': _header,
             'data': _data.decode('utf-8'),
@@ -54,11 +65,10 @@ class ROSImage:
     def get(self):
         return self.header, self.image
 
-    def push(self, _header, _img):
-        msg = self.gen_compressed_img(_header, _img)
+    def push(self, _img):
+        msg = self.gen_compressed_img(_img)
         self.talker.publish(roslibpy.Message(msg))
 
-    def apush(self, _header, _img):
-        t = threading.Thread(target=self.push, args=(
-            _header, _img,), daemon=True)
+    def apush(self, _img):
+        t = threading.Thread(target=self.push, args=(_img,), daemon=True)
         t.start()
