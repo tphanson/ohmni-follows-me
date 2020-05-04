@@ -70,7 +70,7 @@ def start(server, botshell, autonomy=False):
 
     pd = PoseDetection()
     hd = HumanDetection()
-    ht = HumanTracking(threshold=35)
+    ht = HumanTracking(threshold=50)
 
     say = Say(botshell)
     htnm = Heteronomy((1024, 1280), botshell)
