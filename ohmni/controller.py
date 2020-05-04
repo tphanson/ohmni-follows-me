@@ -211,7 +211,7 @@ class Heteronomy:
         print('*** Manual move:', lw, rw)
         print('*** Neck position:', pos)
         # Dynamic test
-        self.botshell.sendall(f'manual_move {lw} {rw}\n'.encode())
+        # self.botshell.sendall(f'manual_move {lw} {rw}\n'.encode())
         self.botshell.sendall(f'neck_angle {pos}\n'.encode())
 
     def wait(self):
