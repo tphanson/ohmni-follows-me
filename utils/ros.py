@@ -3,6 +3,7 @@ import numpy as np
 import base64
 import cv2 as cv
 import threading
+import time
 
 
 class ROSImage:
@@ -34,7 +35,9 @@ class ROSImage:
     def gen_compressed_img(self, _header, _img):
         _, buffer = cv.imencode('.jpeg', _img)
         _data = base64.b64encode(buffer)
-        # _header = {'stamp': {'secs': None, 'nsecs': None}, 'frame_id': 'ofm', 'seq': None}
+        _time = time.time()
+        _header = {'stamp': {'secs': int(_time), 'nsecs': int(
+            _time % 1*10**9)}, 'frame_id': 'ofm', 'seq': None}
         return {
             'header': _header,
             'data': _data.decode('utf-8'),
