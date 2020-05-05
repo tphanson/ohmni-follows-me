@@ -1,5 +1,5 @@
 var { spawn } = require('child_process');
-var BotShell = require('../assets/node-files/bot_shell');
+var BotShell = require('/data/data/com.ohmnilabs.telebot_rtc/files/assets/node-files/bot_shell');
 
 class FollowingMePlugin {
 
