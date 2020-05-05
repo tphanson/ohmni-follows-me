@@ -10,11 +10,11 @@ class FollowingMePlugin {
     // Log loading msg
     console.log(tag, 'loaded!');
     // Bind some extra bot shell commands
-    BotShell.prototype._botshell.cmd_start_following_me = function (params) {
+    BotShell.prototype.cmd_start_following_me = function (params) {
       console.log(tag, 'Start following me.');
       python3 = spawn('python3', ['/home/ohmnidev/ohmni-follows-me/main.py', '--ohmni', 'start']);
     }
-    BotShell.prototype._botshell.cmd_stop_following_me = function (params) {
+    BotShell.prototype.cmd_stop_following_me = function (params) {
       if (!python3) return console.log(tag, 'Following me process have not started yet.');
       console.log(tag, 'Stop following me.');
       python3.kill();
