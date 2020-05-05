@@ -8,7 +8,7 @@ class FollowingMePlugin {
     var tag = 'FolowingMePlugin';
     var python3 = null;
     // Log loading msg
-    Log.i("  -> FollowingMePlugin loaded!");
+    console.log(tag, 'loaded!');
     // Bind some extra bot shell commands
     BotShell.prototype._botshell.cmd_start_following_me = function (params) {
       console.log(tag, 'Start following me.');
