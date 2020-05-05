@@ -1,4 +1,4 @@
-var { spawn } = require('child_process');
+var { exec } = require('child_process');
 var BotShell = require('/data/data/com.ohmnilabs.telebot_rtc/files/assets/node-files/bot_shell');
 
 class FollowingMePlugin {
@@ -6,19 +6,17 @@ class FollowingMePlugin {
   constructor(botnode) {
     // States
     var tag = 'FolowingMePlugin';
-    var python3 = null;
     // Log loading msg
     console.log(tag, 'loaded!');
     // Bind some extra bot shell commands
     BotShell.prototype.cmd_start_following_me = function (params) {
       console.log(tag, 'Start following me.');
-      python3 = spawn('python3', ['/home/ohmnidev/ohmni-follows-me/main.py', '--ohmni', 'start']);
+      exec('docker start dev');
     }
     BotShell.prototype.cmd_stop_following_me = function (params) {
       if (!python3) return console.log(tag, 'Following me process have not started yet.');
       console.log(tag, 'Stop following me.');
-      python3.kill();
-      python3 = null;
+      exec('docker stop dev');
     }
   }
 
