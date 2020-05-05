@@ -14,7 +14,6 @@ class FollowingMePlugin {
       exec('docker start dev');
     }
     BotShell.prototype.cmd_stop_following_me = function (params) {
-      if (!python3) return console.log(tag, 'Following me process have not started yet.');
       console.log(tag, 'Stop following me.');
       exec('docker stop dev');
     }
