@@ -16,14 +16,14 @@ class FollowingMePlugin {
   }
 
   start_cmd = () => {
-    this.botnode._botshell.cmd_start_following_me = function (params, rl) {
+    this.botnode._botshell.cmd_start_following_me = (params, rl) => {
       this.log(rl, 'Start following me.');
       this.python3 = spawn('python3', ['/home/ohmnidev/ohmni-follows-me/main.py', '--ohmni', 'start']);
     }
   }
 
   stop_cmd = () => {
-    this.botnode._botshell.cmd_stop_following_me = function (params, rl) {
+    this.botnode._botshell.cmd_stop_following_me = (params, rl) => {
       if (!this.python3) return this.log(rl, 'Following me process have not started yet.');
       this.log(rl, 'Stop following me.');
       this.python3.kill();
