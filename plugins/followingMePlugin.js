@@ -2,8 +2,7 @@ var { exec } = require('child_process');
 var BotShell = require('/data/data/com.ohmnilabs.telebot_rtc/files/assets/node-files/bot_shell');
 
 class FollowingMePlugin {
-
-  constructor(botnode) {
+  constructor() {
     // States
     var tag = 'FolowingMePlugin';
     // Log loading msg
@@ -11,11 +10,11 @@ class FollowingMePlugin {
     // Bind some extra bot shell commands
     BotShell.prototype.cmd_start_following_me = function (params) {
       console.log(tag, 'Start following me.');
-      exec('docker start dev');
+      exec('docker start ofm');
     }
     BotShell.prototype.cmd_stop_following_me = function (params) {
       console.log(tag, 'Stop following me.');
-      exec('docker stop dev');
+      exec('docker stop ofm');
     }
   }
 
