@@ -1,6 +1,6 @@
 var { spawn } = require('child_process');
 var LogCatter = require('logcatter');
-var Log = new LogCatter('SampleOhmniJSPlugin');
+var Log = new LogCatter('FollowingMePlugin');
 
 class FollowingMePlugin {
 
