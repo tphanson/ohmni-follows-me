@@ -178,14 +178,14 @@ class Autonomy:
 
     def wait(self):
         t = int(time.time()*1000)
-        print('*** Autonomy move:', 0, 0, t)
-        self.botshell.sendall(f'follow_me 0 0 {t}\n'.encode())
+        print('*** Autonomy move:', 1, 0, t)
+        self.botshell.sendall(f'follow_me 1 0 {t}\n'.encode())
 
     def rest(self):
         t = int(time.time()*1000)
-        print('*** Autonomy move:', 1, 0, t)
+        print('*** Autonomy move:', 0, 0, t)
         print('*** Neck position:', NECK_POS)
-        self.botshell.sendall(f'follow_me 1 0 {t}\n'.encode())
+        self.botshell.sendall(f'follow_me 0 0 {t}\n'.encode())
         self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
 
 
