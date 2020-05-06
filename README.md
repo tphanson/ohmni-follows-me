@@ -1,5 +1,11 @@
 # Ohmni Follows Me
 
+## Quick start
+
+```
+wget https://raw.githubusercontent.com/tphanson/ohmni-follows-me/demo-3/setup.sh -P /tmp && chmod +x /temp/setup.sh && sh setup.sh
+```
+
 ## Docker
 
 ### Usage guides
