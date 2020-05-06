@@ -30,6 +30,3 @@ apt update && apt install -y libsm6 libxext6 libxrender1
 
 # Install roslibpy
 pip3 install roslibpy
-
-# Insert plugins
-cp ./plugins/followingMePlugin.js /data/data/com.ohmnilabs.telebot_rtc/files/plugins/
