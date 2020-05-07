@@ -13,12 +13,12 @@ BETA = 0.4
 NECK_POS = 500
 
 # Speed of rotation
-SLOW_RO = 200
-MEDIUM_RO = 300
+SLOW_RO = 150
+MEDIUM_RO = 250
 FAST_RO = 400
 # Speed of run
-SLOW_MO = 1000
-MEDIUM_MO = 1500
+SLOW_MO = 700
+MEDIUM_MO = 1100
 FAST_MO = 1800
 # Speed of neck
 NECK_DELTA = 10
@@ -178,7 +178,7 @@ class Autonomy:
 
     def wait(self):
         t = int(time.time()*1000)
-        print('*** Autonomy move:', 1, 0, t)
+        print('*** Autonomy move:', 0, 0, t)
         self.botshell.sendall(f'follow_me 1 0 {t}\n'.encode())
 
     def rest(self):
