@@ -179,7 +179,7 @@ class Autonomy:
     def wait(self):
         t = int(time.time()*1000)
         print('*** Autonomy move:', 0, 0, t)
-        self.botshell.sendall(f'follow_me 1 0 {t}\n'.encode())
+        self.botshell.sendall(f'follow_me 0 0 {t}\n'.encode())
 
     def rest(self):
         t = int(time.time()*1000)
