@@ -23,7 +23,7 @@ sudo docker push tphanson/ohmni_follows_me:<version>
 ### Run docker image 
 
 ```
-docker run --network="host" -v /data/data/com.ohmnilabs.telebot_rtc/files:/app -v /data:/data -w /home/ohmnidev/ohmni-follows-me --privileged -v /dev:/dev --security-opt seccomp:unconfined --name ofm tphanson/ohmni_follows_me:0.0.3
+docker run -it --network="host" -v /data/data/com.ohmnilabs.telebot_rtc/files:/app -v /data:/data -w /home/ohmnidev/ohmni-follows-me --privileged -v /dev:/dev --security-opt seccomp:unconfined --name ofm tphanson/ohmni_follows_me:0.0.3
 ```
 
 ## Build your own development environment

@@ -11,11 +11,11 @@ class FollowingMePlugin {
     BotShell.prototype.cmd_start_following_me = function (params) {
       if (params[0] == 'heteronomy') {
         console.log(tag, 'Start following me in HETERONOMY mode.');
-        exec('docker start ofm && docker exec ofm python3 main.py --ohmni heteronomy');
+        exec('docker start ofm && docker exec -d ofm python3 main.py --ohmni heteronomy');
       }
       if (params[0] == 'autonomy') {
         console.log(tag, 'Start following me in AUTONOMY mode.');
-        exec('docker start ofm && docker exec ofm python3 main.py --ohmni autonomy');
+        exec('docker start ofm && docker exec -d ofm python3 main.py --ohmni autonomy');
       }
     }
     BotShell.prototype.cmd_stop_following_me = function (params) {
