@@ -24,10 +24,12 @@ if __name__ == "__main__":
             wheel.start(botshell)
 
     elif sys.argv[1] == '--ohmni':
-        if sys.argv[2] == 'start':
-            ohmni.start(server, botshell, False)
+        if sys.argv[2] == 'debug':
+            ohmni.start(server, botshell, debug=True)
+        if sys.argv[2] == 'heteronomy':
+            ohmni.start(server, botshell)
         if sys.argv[2] == 'autonomy':
-            ohmni.start(server, botshell, True)
+            ohmni.start(server, botshell, autonomy=True)
 
     else:
         print("Error: Invalid option!")
