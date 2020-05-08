@@ -3,7 +3,7 @@ import time
 
 def start(botshell):
     print('Testing wheel')
-    
+
     # botshell.sendall(b'start_autonomy\n')
     # time.sleep(5)
     # print('Start')
@@ -11,7 +11,7 @@ def start(botshell):
     # time.sleep(5)
     # botshell.sendall(b'stop_autonomy\n')
 
-    botshell.sendall("manual_move 0 -1000\n".encode())
+    botshell.sendall("manual_move 100 100\n".encode())
     time.sleep(5)
     botshell.sendall("manual_move 0 0\n".encode())
     time.sleep(2)
