@@ -22,7 +22,7 @@ FAST_MO = 1500
 NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
-AREA = np.array([5/30, 7/30, 9/30])
+AREA = np.array([4/30, 7/30, 10/30])
 YMED = np.array([4/7, 5/7])
 
 
