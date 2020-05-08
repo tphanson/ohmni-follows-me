@@ -9,10 +9,10 @@ def start(botshell):
     # time.sleep(5)
     # botshell.sendall(b'stop_autonomy\n')
 
-    botshell.sendall("manual_move 0 -1800\n".encode())
+    botshell.sendall("manual_move 0 -1000\n".encode())
     time.sleep(5)
-    # botshell.sendall("manual_move 0 0\n".encode())
-    # time.sleep(2)
+    botshell.sendall("manual_move 0 0\n".encode())
+    time.sleep(2)
     # botshell.sendall("manual_move -500 500\n".encode())
     # time.sleep(5)
     # botshell.sendall("manual_move 0 0\n".encode())
