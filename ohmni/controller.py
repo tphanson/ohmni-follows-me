@@ -13,18 +13,16 @@ BETA = 0.4
 NECK_POS = 500
 
 # Speed of rotation
-SLOW_RO = 200
-MEDIUM_RO = 400
+SLOW_RO = 400
 FAST_RO = 600
 # Speed of run
 SLOW_MO = 800
-MEDIUM_MO = 1500
-FAST_MO = 1700
+FAST_MO = 1500
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
-AREA = np.array([3/30, 5/30, 7/30, 9/30])
+AREA = np.array([5/30, 7/30, 9/30])
 YMED = np.array([4/7, 5/7])
 
 
@@ -48,24 +46,18 @@ class Estimation:
         speed = 0
         if run == 'fast':
             speed = int(SLOW_RO*delta)
-        elif run == 'medium':
-            speed = int(MEDIUM_RO*delta)
-        elif run == 'slow':
-            speed = int(FAST_RO*delta)
         else:
             speed = int(FAST_RO*delta)
         print('*** Debug:', xmed, delta, speed)
         return speed, speed
 
     def run(self, area):
-        if area >= self.area[3]:  # Medium Backward
-            return -MEDIUM_MO, MEDIUM_MO, 'medium'
-        elif self.area[3] > area >= self.area[2]:  # Safe zone
-            return 0, 0, 'safe'
-        elif self.area[2] > area >= self.area[1]:  # Slow Forward
+        if area >= self.area[2]:  # Slow Backward
+            return -SLOW_MO, SLOW_MO, 'slow'
+        elif self.area[2] > area >= self.area[1]:  # Safe zone
+            return 0, 0, 'slow'
+        elif self.area[1] > area >= self.area[0]:  # Slow Forward
             return SLOW_MO, -SLOW_MO, 'slow'
-        elif self.area[1] > area >= self.area[0]:  # Medium Forward
-            return MEDIUM_MO, -MEDIUM_MO, 'medium'
         else:  # Fast Forward
             return FAST_MO, -FAST_MO, 'fast'
 
