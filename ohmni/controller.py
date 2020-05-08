@@ -48,10 +48,11 @@ class Estimation:
             speed = int(SLOW_RO*delta)
         else:
             speed = int(FAST_RO*delta)
-        print('*** Debug:', xmed, delta, speed)
+        print('*** Debug: (xmed, delat, speed)', xmed, delta, speed)
         return speed, speed
 
     def run(self, area):
+        print('*** Debug: (area)', area)
         if area >= self.area[2]:  # Slow Backward
             return -SLOW_MO, SLOW_MO, 'slow'
         elif self.area[2] > area >= self.area[1]:  # Safe zone
