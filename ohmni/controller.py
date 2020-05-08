@@ -13,9 +13,9 @@ BETA = 0.4
 NECK_POS = 500
 
 # Speed of rotation
-SLOW_RO = 100
-MEDIUM_RO = 200
-FAST_RO = 400
+SLOW_RO = 200
+MEDIUM_RO = 600
+FAST_RO = 800
 # Speed of run
 SLOW_MO = 800
 MEDIUM_MO = 1600
@@ -25,7 +25,6 @@ NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
 AREA = np.array([3/30, 5/30, 7/30, 10/30])
-XMED = np.array([11/30, 13/30, 14/30, 16/30, 17/30, 19/30])
 YMED = np.array([4/7, 5/7])
 
 
@@ -33,7 +32,6 @@ class Estimation:
     def __init__(self, frame_shape):
         self.frame_shape = frame_shape
         self.area = AREA*self.frame_shape[0]*self.frame_shape[1]
-        self.xmed = XMED*self.frame_shape[1]
         self.ymed = YMED*self.frame_shape[0]
         self.neck_position = NECK_POS
 
@@ -45,76 +43,36 @@ class Estimation:
         return area, xmed, ymed
 
     def rotate(self, xmed, run):
-        left_margin = 0
-        right_margin = 0
+        # if delta > 0: right, else: left
+        delta = (xmed - self.frame_shape[0]/2)/(self.frame_shape[0]/2)
         speed = 0
         if run == 'fast':
-            left_margin = self.xmed[2]
-            right_margin = self.xmed[3]
-            speed = SLOW_RO
+            speed = int(SLOW_RO*delta)
         elif run == 'medium':
-            left_margin = self.xmed[1]
-            right_margin = self.xmed[4]
-            speed = MEDIUM_RO
+            speed = int(MEDIUM_RO*delta)
         elif run == 'slow':
-            left_margin = self.xmed[0]
-            right_margin = self.xmed[5]
-            speed = FAST_RO
+            speed = int(FAST_RO*delta)
         else:
-            left_margin = self.xmed[0]
-            right_margin = self.xmed[5]
-            speed = FAST_RO
-
-        # Right
-        if xmed >= right_margin:
-            return speed, speed
-        # Safe zone
-        elif right_margin > xmed > left_margin:
-            return 0, 0
-        # Left
-        else:
-            return -speed, -speed
+            speed = int(FAST_RO*delta)
+        return speed, speed
 
     def run(self, area):
-        run = 'safe'
-        left_wheel = 0
-        right_wheel = 0
-
-        if area >= self.area[3]:
-            # Medium Backward
-            run = 'medium'
-            left_wheel = left_wheel - MEDIUM_MO
-            right_wheel = right_wheel + MEDIUM_MO
-        elif self.area[3] > area >= self.area[2]:
-            # Safe zone
-            run = 'safe'
-            left_wheel = 0
-            right_wheel = 0
-        elif self.area[2] > area >= self.area[1]:
-            # Slow Forward
-            run = 'slow'
-            left_wheel = left_wheel + SLOW_MO
-            right_wheel = right_wheel - SLOW_MO
-        elif self.area[1] > area >= self.area[0]:
-            # Medium Forward
-            run = 'medium'
-            left_wheel = left_wheel + MEDIUM_MO
-            right_wheel = right_wheel - MEDIUM_MO
-        else:
-            # Fast Forward
-            run = 'fast'
-            left_wheel = left_wheel + FAST_MO
-            right_wheel = right_wheel - FAST_MO
-
-        return left_wheel, right_wheel, run
+        if area >= self.area[3]:  # Medium Backward
+            return -MEDIUM_MO, MEDIUM_MO, 'medium'
+        elif self.area[3] > area >= self.area[2]:  # Safe zone
+            return 0, 0, 'safe'
+        elif self.area[2] > area >= self.area[1]:  # Slow Forward
+            return SLOW_MO, -SLOW_MO, 'slow'
+        elif self.area[1] > area >= self.area[0]:  # Medium Forward
+            return MEDIUM_MO, -MEDIUM_MO, 'medium'
+        else:  # Fast Forward
+            return FAST_MO, -FAST_MO, 'fast'
 
     def wheel(self, box):
         area, xmed, _ = self.calculate(box)
         lw_run, rw_run, run = self.run(area)
         lw_rotate, rw_rotate = self.rotate(xmed, run)
-        left_wheel = lw_run + lw_rotate
-        right_wheel = rw_run + rw_rotate
-        return left_wheel, right_wheel
+        return lw_run + lw_rotate, rw_run + rw_rotate
 
     def neck(self, box):
         _, _, ymed = self.calculate(box)
@@ -125,11 +83,7 @@ class Estimation:
         else:
             self.neck_position += NECK_DELTA
 
-        if self.neck_position > NECK[1]:
-            self.neck_position = NECK[1]
-        if self.neck_position < NECK[0]:
-            self.neck_position = NECK[0]
-        return self.neck_position
+        return min(max(self.neck_position, NECK[0]), NECK[1])
 
     def pose(self, box):
         # Calculate x
