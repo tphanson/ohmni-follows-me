@@ -14,12 +14,12 @@ NECK_POS = 500
 
 # Speed of rotation
 SLOW_RO = 100
-MEDIUM_RO = 200
+MEDIUM_RO = 300
 FAST_RO = 400
 # Speed of run
 SLOW_MO = 800
 MEDIUM_MO = 1600
-FAST_MO = 2000
+FAST_MO = 1800
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
@@ -65,22 +65,15 @@ class Estimation:
             right_margin = self.xmed[5]
             speed = FAST_RO
 
-        left_wheel = 0
-        right_wheel = 0
         # Right
         if xmed >= right_margin:
-            left_wheel = left_wheel + speed
-            right_wheel = right_wheel + speed
+            return speed, speed
         # Safe zone
         elif right_margin > xmed > left_margin:
-            left_wheel = 0
-            right_wheel = 0
+            return 0, 0
         # Left
         else:
-            left_wheel = left_wheel - speed
-            right_wheel = right_wheel - speed
-
-        return left_wheel, right_wheel
+            return -speed, -speed
 
     def run(self, area):
         run = 'safe'
