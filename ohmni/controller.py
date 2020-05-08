@@ -13,8 +13,8 @@ BETA = 0.4
 NECK_POS = 500
 
 # Speed of rotation
-SLOW_RO = 100
-MEDIUM_RO = 300
+SLOW_RO = 200
+MEDIUM_RO = 400
 FAST_RO = 600
 # Speed of run
 SLOW_MO = 800
