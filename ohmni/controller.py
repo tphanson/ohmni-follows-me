@@ -24,7 +24,7 @@ FAST_MO = 1800
 NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
-AREA = np.array([2/30, 4/30, 7/30, 10/30])
+AREA = np.array([3/30, 5/30, 7/30, 10/30])
 XMED = np.array([11/30, 13/30, 14/30, 16/30, 17/30, 19/30])
 YMED = np.array([4/7, 5/7])
 
@@ -169,8 +169,8 @@ class Autonomy:
 
     def wait(self):
         t = int(time.time()*1000)
-        print('*** Autonomy move:', 1, 0, t)
-        self.botshell.sendall(f'follow_me 1 0 {t}\n'.encode())
+        print('*** Autonomy move:', 0.7, 0, t)
+        self.botshell.sendall(f'follow_me 0.7 0 {t}\n'.encode())
 
     def rest(self):
         t = int(time.time()*1000)
