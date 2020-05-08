@@ -54,6 +54,7 @@ class Estimation:
             speed = int(FAST_RO*delta)
         else:
             speed = int(FAST_RO*delta)
+        print('*** Debug:' xmed, self.frame_shape[0]/2, speedI)
         return speed, speed
 
     def run(self, area):
