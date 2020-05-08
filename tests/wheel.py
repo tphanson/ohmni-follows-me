@@ -11,7 +11,7 @@ def start(botshell):
     # time.sleep(5)
     # botshell.sendall(b'stop_autonomy\n')
 
-    botshell.sendall("manual_move 1000 500\n".encode())
+    botshell.sendall("manual_move 1000 -500\n".encode())
     time.sleep(5)
     botshell.sendall("manual_move 0 0\n".encode())
     time.sleep(2)
