@@ -119,10 +119,8 @@ class Estimation:
         area, xmed, _ = self.calculate(box)
         lw_run, rw_run, run = self.run(area)
         lw_rotate, rw_rotate = self.rotate(xmed, run)
-        left_wheel = 0
-        right_wheel = 0
-        left_wheel = left_wheel + lw_run + lw_rotate
-        right_wheel = right_wheel + rw_run + rw_rotate
+        left_wheel = lw_run + lw_rotate
+        right_wheel = rw_run + rw_rotate
         return left_wheel, right_wheel
 
     def neck(self, box):
@@ -178,8 +176,8 @@ class Autonomy:
 
     def wait(self):
         t = int(time.time()*1000)
-        print('*** Autonomy move:', 0.5, 0, t)
-        self.botshell.sendall(f'follow_me 0.5 0 {t}\n'.encode())
+        print('*** Autonomy move:', 1, 0, t)
+        self.botshell.sendall(f'follow_me 1 0 {t}\n'.encode())
 
     def rest(self):
         t = int(time.time()*1000)
