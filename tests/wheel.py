@@ -2,6 +2,8 @@ import time
 
 
 def start(botshell):
+    print('Testing wheel')
+    
     # botshell.sendall(b'start_autonomy\n')
     # time.sleep(5)
     # print('Start')
