@@ -13,6 +13,7 @@ class PoseDetection():
         self.engine = PoseEngine(
             'tpu/posenet_mobilenet_v1_075_481_641_quant_decoder_edgetpu.tflite')
         self.raising_confidence = 4
+        self.pose_confidence = 0.3
         self.image_shape = (640, 480)
         self.input_shape = (641, 481)
 
@@ -33,20 +34,20 @@ class PoseDetection():
 
     def looking_eyes(self, marks):
         looking = 0
-        for (label, _, _, _) in marks:
-            if label == 'left eye':
+        for (label, score, _, _) in marks:
+            if label == 'left eye' and score >= self.pose_confidence:
                 looking += 1
-            if label == 'right eye':
+            if label == 'right eye' and score >= self.pose_confidence:
                 looking += 1
         return looking == 2
 
     def raise_left_hand(self, marks):
         dx, dy = 0, 0
-        for (label, _, x, y) in marks:
-            if label == 'left elbow':
+        for (label, score, x, y) in marks:
+            if label == 'left elbow' and score >= self.pose_confidence:
                 dx += x
                 dy += y
-            if label == 'left wrist':
+            if label == 'left wrist' and score >= self.pose_confidence:
                 dx -= x
                 dy -= y
         return True if dy/(abs(dx)+1) > self.raising_confidence else False
@@ -54,11 +55,11 @@ class PoseDetection():
     def raise_right_hand(self, marks):
         dx = 0
         dy = 0
-        for (label, _, x, y) in marks:
-            if label == 'right elbow':
+        for (label, score, x, y) in marks:
+            if label == 'right elbow' and score >= self.pose_confidence:
                 dx += x
                 dy += y
-            if label == 'right wrist':
+            if label == 'right wrist' and score >= self.pose_confidence:
                 dx -= x
                 dy -= y
         return True if dy/(abs(dx)+1) > self.raising_confidence else False
@@ -84,7 +85,7 @@ class PoseDetection():
         poses, inference_time = self.engine.DetectPosesInImage(img)
         objects = []
         for pose in poses:
-            if pose.score < 0.4:
+            if pose.score < self.pose_confidence:
                 continue
             marks = []
             for label, keypoint in pose.keypoints.items():
