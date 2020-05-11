@@ -25,23 +25,24 @@ FAST_MO = 1600
 NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
-AREA = np.array([5/30, 6/30, 8/30, 10/30])
-YMED = np.array([4/7, 5/7])
+XSCALE = np.array([5/30, 6/30, 8/30, 10/30])
+YSCALE = np.array([4/7, 5/7])
 
 
 class Estimation:
     def __init__(self, frame_shape):
         self.frame_shape = frame_shape
-        self.area = AREA*self.frame_shape[0]*self.frame_shape[1]
-        self.ymed = YMED*self.frame_shape[0]
+        self.xscale = XSCALE*self.frame_shape[1]
+        self.yscale = YSCALE*self.frame_shape[0]
         self.neck_position = NECK_POS
 
     def calculate(self, bbox):
         [xmin, ymin, xmax, ymax] = bbox
-        area = (xmax-xmin) * (ymax-ymin)
+        width = xmax - xmin
+        height = ymax - ymin
         xmed = (xmin + xmax)/2
         ymed = (ymin + ymax)/2
-        return area, xmed, ymed
+        return width, height, xmed, ymed
 
     def rotate(self, xmed, run):
         # if delta > 0: right, else: left
@@ -58,23 +59,23 @@ class Estimation:
         print('*** Debug: (delta, responsive)', delta, responsive)
         return speed, speed, responsive
 
-    def run(self, area):
-        print('*** Debug: (area)', area)
-        if area >= self.area[3]:  # Slow Backward
+    def run(self, width):
+        print('*** Debug: (width)', width)
+        if width >= self.xscale[3]:  # Slow Backward
             return -SLOW_MO, SLOW_MO, 'slow'
-        elif self.area[3] > area >= self.area[2]:  # Safe zone
+        elif self.xscale[3] > width >= self.xscale[2]:  # Safe zone
             return 0, 0, 'slow'
-        elif self.area[2] > area >= self.area[1]:  # Slow Forward
+        elif self.xscale[2] > width >= self.xscale[1]:  # Slow Forward
             return SLOW_MO, -SLOW_MO, 'slow'
-        elif self.area[1] > area >= self.area[0]:  # Medium Forward
+        elif self.xscale[1] > width >= self.xscale[0]:  # Medium Forward
             return MEDIUM_MO, -MEDIUM_MO, 'medium'
         else:  # Fast Forward
             return FAST_MO, -FAST_MO, 'fast'
 
     def wheel(self, box):
-        area, xmed, _ = self.calculate(box)
-        lw_run, rw_run, run = self.run(area)
-        lw_rotate, rw_rotate, responsive = self.rotate(xmed, run)
+        width, _, xmed, _ = self.calculate(box)
+        lw_run, rw_run, speed = self.run(width)
+        lw_rotate, rw_rotate, responsive = self.rotate(xmed, speed)
         lw = 0
         rw = 0
         if responsive:
@@ -86,10 +87,10 @@ class Estimation:
         return lw, rw
 
     def neck(self, box):
-        _, _, ymed = self.calculate(box)
-        if ymed >= self.ymed[1]:
+        _, _, _, ymed = self.calculate(box)
+        if ymed >= self.yscale[1]:
             self.neck_position -= NECK_DELTA
-        elif self.ymed[1] > ymed >= self.ymed[0]:
+        elif self.yscale[1] > ymed >= self.yscale[0]:
             pass
         else:
             self.neck_position += NECK_DELTA
@@ -98,7 +99,8 @@ class Estimation:
 
     def pose(self, box):
         # Calculate x
-        area, xmed, _ = self.calculate(box)
+        width, height, xmed, _ = self.calculate(box)
+        area = width * height
         x = ALPHA/(area/(self.frame_shape[0]*self.frame_shape[1]))
         # Calculate y
         [xmin, _, xmax, _] = box
