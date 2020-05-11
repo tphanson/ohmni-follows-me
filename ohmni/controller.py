@@ -13,9 +13,9 @@ BETA = 0.4
 NECK_POS = 500
 
 # Speed of rotation
-SLOW_RO = 400
-MEDIUM_RO = 500
-FAST_RO = 600
+SLOW_RO = 200
+MEDIUM_RO = 300
+FAST_RO = 400
 DANGEROUS_AREA = 0.5
 # Speed of run
 SLOW_MO = 400
@@ -25,7 +25,7 @@ FAST_MO = 1600
 NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
-AREA = np.array([6/30, 7/30, 8/30, 10/30])
+AREA = np.array([5/30, 6/30, 8/30, 10/30])
 YMED = np.array([4/7, 5/7])
 
 
