@@ -31,6 +31,15 @@ class PoseDetection():
             dtype=np.float32)
         return box
 
+    def looking_eyes(self, marks):
+        looking = 0
+        for (label, _, _, _) in marks:
+            if label == 'left eye':
+                looking += 1
+            if label == 'right eye':
+                looking += 1
+        return looking == 2
+
     def raise_left_hand(self, marks):
         dx, dy = 0, 0
         for (label, _, x, y) in marks:
@@ -55,13 +64,13 @@ class PoseDetection():
         return True if dy/(abs(dx)+1) > self.raising_confidence else False
 
     def activate(self, marks):
-        if self.raise_left_hand(marks) and self.raise_right_hand(marks):
+        if self.looking_eyes(marks) and self.raise_left_hand(marks) and self.raise_right_hand(marks):
             box = self.generate_bbox(marks)
             return 3, box
-        elif self.raise_left_hand(marks):
+        elif self.looking_eyes(marks) and self.raise_left_hand(marks):
             box = self.generate_bbox(marks)
             return 2, box
-        elif self.raise_right_hand(marks):
+        elif self.looking_eyes(marks) and self.raise_right_hand(marks):
             box = self.generate_bbox(marks)
             return 1, box
         else:
