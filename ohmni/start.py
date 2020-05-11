@@ -18,7 +18,7 @@ def detect_gesture(pd, tracker, img, action='activate'):
     # Calculate result
     ok = False
     # 0: None, 1: lefthand, 2: righthand, 3: both hands
-    if action == 'activate' and status == 3:
+    if action == 'activate' and (status == 1 or status == 2):
         height, width, _ = img.shape
         xmin, ymin = int(box[0]*width), int(box[1]*height)
         xmax, ymax = int(box[2]*width), int(box[3]*height)
@@ -27,7 +27,7 @@ def detect_gesture(pd, tracker, img, action='activate'):
         obj_img = image.resize(obj_img, tracker.input_shape)
         obj_img = np.array(obj_img/127.5 - 1, dtype=np.float32)
         ok = tracker.set_anchor(obj_img, box)
-    if action == 'deactivate' and (status == 1 or status == 2):
+    if action == 'deactivate' and status == 3:
         ok = True
     # Return
     return ok
