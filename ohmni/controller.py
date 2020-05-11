@@ -15,6 +15,7 @@ NECK_POS = 500
 # Speed of rotation
 SLOW_RO = 400
 FAST_RO = 600
+DANGEROUS_AREA = 0.8
 # Speed of run
 SLOW_MO = 800
 FAST_MO = 1500
@@ -44,12 +45,14 @@ class Estimation:
         # if delta > 0: right, else: left
         delta = (xmed - self.frame_shape[0]/2)/(self.frame_shape[0]/2)
         speed = 0
+        responsive = delta < DANGEROUS_AREA
         if run == 'fast':
             speed = int(SLOW_RO*delta)
         else:
             speed = int(FAST_RO*delta)
-        print('*** Debug: (xmed, delat, speed)', xmed, delta, speed)
-        return speed, speed
+        print('*** Debug: (xmed, speed)', xmed, speed)
+        print('*** Debug: (delta, responsive)', delta, responsive)
+        return speed, speed, responsive
 
     def run(self, area):
         print('*** Debug: (area)', area)
@@ -65,8 +68,16 @@ class Estimation:
     def wheel(self, box):
         area, xmed, _ = self.calculate(box)
         lw_run, rw_run, run = self.run(area)
-        lw_rotate, rw_rotate = self.rotate(xmed, run)
-        return lw_run + lw_rotate, rw_run + rw_rotate
+        lw_rotate, rw_rotate, responsive = self.rotate(xmed, run)
+        lw = 0
+        rw = 0
+        if responsive:
+            lw = lw_run + lw_rotate
+            rw = rw_run + rw_rotate
+        else:
+            lw = lw_rotate
+            rw = rw_rotate
+        return lw, rw
 
     def neck(self, box):
         _, _, ymed = self.calculate(box)
