@@ -17,7 +17,6 @@ def detect_gesture(pd, tracker, img, action='activate'):
     print('Gesture detection estimated time {:.4f}'.format(t/1000))
     # Calculate result
     ok = False
-    print('status:', status)
     # 0: None, 1: lefthand, 2: righthand, 3: both hands
     if action == 'activate' and (status == 1 or status == 2):
         height, width, _ = img.shape

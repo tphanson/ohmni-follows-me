@@ -53,7 +53,8 @@ class PoseDetection():
                 dx -= x
                 dy -= y
                 both += 1
-        print('*** Debug: (both, left hand)', both, dy/(abs(dx)+1))
+        if both == 2:
+            print('*** Debug: (left hand)', dy/(abs(dx)+1))
         return both == 2 and dy/(abs(dx)+1) > self.raising_confidence
 
     def raise_right_hand(self, marks):
@@ -68,12 +69,9 @@ class PoseDetection():
                 dx -= x
                 dy -= y
                 both += 1
-        print('*** Debug: (both, right hand)', both, dy/(abs(dx)+1))
+        if both == 2:
+            print('*** Debug: (right hand)', dy/(abs(dx)+1))
         return both == 2 and dy/(abs(dx)+1) > self.raising_confidence
-
-    def debug(self, marks):
-        for(label, score, x, y) in marks:
-            print('*** Debug: (label, score, x, y)', label, score, x, y)
 
     def activate(self, marks):
         if self.looking_eyes(marks) and self.raise_left_hand(marks) and self.raise_right_hand(marks):
@@ -110,8 +108,6 @@ class PoseDetection():
         status = 0
         box = None
         for marks in objects:
-            # Debug
-            self.debug(marks)
             # Find an activation
             status, box = self.activate(marks)
         return objects, inference_time, status, box
