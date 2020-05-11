@@ -74,6 +74,7 @@ class PoseDetection():
         return both == 2 and dy/(abs(dx)+1) > self.raising_confidence
 
     def activate(self, marks):
+        print(self.looking_eyes(marks))
         if self.looking_eyes(marks) and self.raise_left_hand(marks) and self.raise_right_hand(marks):
             box = self.generate_bbox(marks)
             return 3, box
