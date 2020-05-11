@@ -24,7 +24,7 @@ NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
 AREA = np.array([7/30, 8/30, 10/30])
-YMED = np.array([4/7, 5/7])
+YMED = np.array([3/7, 4/7])
 
 
 class Estimation:
