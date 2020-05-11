@@ -18,12 +18,12 @@ FAST_RO = 600
 DANGEROUS_AREA = 0.5
 # Speed of run
 SLOW_MO = 500
-FAST_MO = 1600
+FAST_MO = 1650
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
-AREA = np.array([7/30, 8/30, 10/30])
+AREA = np.array([6/30, 8/30, 10/30])
 YMED = np.array([4/7, 5/7])
 
 
