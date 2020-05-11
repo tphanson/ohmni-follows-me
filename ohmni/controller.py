@@ -15,10 +15,10 @@ NECK_POS = 500
 # Speed of rotation
 SLOW_RO = 400
 FAST_RO = 600
-DANGEROUS_AREA = 0.8
+DANGEROUS_AREA = 0.6
 # Speed of run
 SLOW_MO = 800
-FAST_MO = 1500
+FAST_MO = 1600
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
