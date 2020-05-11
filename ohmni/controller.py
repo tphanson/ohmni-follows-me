@@ -18,7 +18,7 @@ FAST_RO = 600
 DANGEROUS_AREA = 0.5
 # Speed of run
 SLOW_MO = 600
-FAST_MO = 1800
+FAST_MO = 1700
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
