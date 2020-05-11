@@ -103,7 +103,7 @@ class PoseDetection():
         box = None
         for marks in objects:
             # Debug
-            debug(marks)
+            self.debug(marks)
             # Find an activation
             status, box = self.activate(marks)
         return objects, inference_time, status, box
