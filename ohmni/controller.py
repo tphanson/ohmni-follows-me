@@ -16,7 +16,7 @@ NECK_POS = 500
 SLOW_RO = 100
 MEDIUM_RO = 200
 FAST_RO = 400
-DANGEROUS_AREA = 0.5
+DANGEROUS_AREA = [0.3, 0.4, 0.5]
 # Speed of run
 SLOW_MO = 500
 MEDIUM_MO = 800
@@ -48,13 +48,15 @@ class Estimation:
         # if delta > 0: right, else: left
         delta = (xmed - self.frame_shape[1]/2)/(self.frame_shape[1]/2)
         speed = 0
-        responsive = abs(delta) < DANGEROUS_AREA
         if run == 'fast':
             speed = int(SLOW_RO*delta)
+            responsive = abs(delta) < DANGEROUS_AREA[2]
         if run == 'medium':
             speed = int(MEDIUM_RO*delta)
+            responsive = abs(delta) < DANGEROUS_AREA[1]
         else:
             speed = int(FAST_RO*delta)
+            responsive = abs(delta) < DANGEROUS_AREA[0]
         print('*** Debug: (xmed, speed)', xmed, speed)
         print('*** Debug: (delta, responsive)', delta, responsive)
         return speed, speed, responsive
