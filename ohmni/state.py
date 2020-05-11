@@ -55,6 +55,7 @@ class StateMachine:
             self.__change_state(True)
         elif self.current_state == 'idle':
             mean = self.denoise.input(int(next_flag), duration)
+            print('*** Debug: (mean)', mean)
             self.__change_state(bool(mean >= 0.4))
         elif self.current_state == 'init_run':
             self.__change_state(True)
