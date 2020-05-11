@@ -79,14 +79,18 @@ class PoseDetection():
             marks), self.raise_left_hand(marks))
         if self.looking_eyes(marks) and self.raise_left_hand(marks) and self.raise_right_hand(marks):
             box = self.generate_bbox(marks)
+            print(3)
             return 3, box
         elif self.looking_eyes(marks) and self.raise_left_hand(marks):
             box = self.generate_bbox(marks)
+            print(2)
             return 2, box
         elif self.looking_eyes(marks) and self.raise_right_hand(marks):
             box = self.generate_bbox(marks)
+            print(1)
             return 1, box
         else:
+            print(0)
             return 0, np.array([0., 0., 0., 0.], dtype=np.float32)
 
     def inference(self, img):
