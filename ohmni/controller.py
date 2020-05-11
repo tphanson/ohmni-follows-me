@@ -20,12 +20,12 @@ DANGEROUS_AREA = 0.5
 # Speed of run
 SLOW_MO = 600
 MEDIUM_MO = 1000
-FAST_MO = 1600
+FAST_MO = 1650
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
-XSCALE = np.array([7/30, 8/30, 9/30, 10/30])
+XSCALE = np.array([7/30, 8/30, 9/30, 11/30])
 YSCALE = np.array([4/7, 5/7])
 
 
