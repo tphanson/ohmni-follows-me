@@ -43,7 +43,7 @@ class Estimation:
 
     def rotate(self, xmed, run):
         # if delta > 0: right, else: left
-        delta = (xmed - self.frame_shape[0]/2)/(self.frame_shape[0]/2)
+        delta = (xmed - self.frame_shape[1]/2)/(self.frame_shape[1]/2)
         speed = 0
         responsive = abs(delta) < DANGEROUS_AREA
         if run == 'fast':
