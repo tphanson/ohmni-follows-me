@@ -12,8 +12,8 @@ class PoseDetection():
     def __init__(self):
         self.engine = PoseEngine(
             'tpu/posenet_mobilenet_v1_075_481_641_quant_decoder_edgetpu.tflite')
-        self.raising_confidence = 2
-        self.pose_confidence = 0.3
+        self.raising_confidence = 3
+        self.pose_confidence = 0.4
         self.image_shape = (640, 480)
         self.input_shape = (641, 481)
 
@@ -53,8 +53,6 @@ class PoseDetection():
                 dx -= x
                 dy -= y
                 both += 1
-        if both == 2:
-            print('*** Debug: (left hand)', dy/(abs(dx)+1))
         return both == 2 and dy/(abs(dx)+1) > self.raising_confidence
 
     def raise_right_hand(self, marks):
@@ -69,14 +67,9 @@ class PoseDetection():
                 dx -= x
                 dy -= y
                 both += 1
-        if both == 2:
-            print('*** Debug: (right hand)', dy/(abs(dx)+1))
         return both == 2 and dy/(abs(dx)+1) > self.raising_confidence
 
     def activate(self, marks):
-        print("===================================")
-        print(self.looking_eyes(marks), self.raise_right_hand(
-            marks), self.raise_left_hand(marks))
         if self.looking_eyes(marks) and self.raise_left_hand(marks) and self.raise_right_hand(marks):
             box = self.generate_bbox(marks)
             print(3)
