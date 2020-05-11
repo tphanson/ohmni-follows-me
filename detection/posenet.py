@@ -63,6 +63,10 @@ class PoseDetection():
                 dy -= y
         return True if dy/(abs(dx)+1) > self.raising_confidence else False
 
+    def debug(self, marks):
+        for(label, score, x, y) in marks:
+            print('*** Debug: (label, score, x, y)', label, score, x, y)
+
     def activate(self, marks):
         if self.looking_eyes(marks) and self.raise_left_hand(marks) and self.raise_right_hand(marks):
             box = self.generate_bbox(marks)
@@ -98,6 +102,8 @@ class PoseDetection():
         status = 0
         box = None
         for marks in objects:
+            # Debug
+            debug(marks)
             # Find an activation
             status, box = self.activate(marks)
         return objects, inference_time, status, box
