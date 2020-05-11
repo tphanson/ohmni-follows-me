@@ -110,6 +110,7 @@ def start(server, botshell, autonomy=False, debug=False):
         if state == 'idle':
             # Detect gesture
             ok = detect_gesture(pd, ht, img, 'activate')
+            print('ok:', ok)
             sm.next_state(ok, 0.5)
 
         # Run
