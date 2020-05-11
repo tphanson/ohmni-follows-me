@@ -45,7 +45,7 @@ class Estimation:
         # if delta > 0: right, else: left
         delta = (xmed - self.frame_shape[0]/2)/(self.frame_shape[0]/2)
         speed = 0
-        responsive = delta < DANGEROUS_AREA
+        responsive = abs(delta) < DANGEROUS_AREA
         if run == 'fast':
             speed = int(SLOW_RO*delta)
         else:
