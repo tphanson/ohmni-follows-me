@@ -43,28 +43,33 @@ class PoseDetection():
 
     def raise_left_hand(self, marks):
         dx, dy = 0, 0
+        both = 0
         for (label, score, x, y) in marks:
             if label == 'left elbow' and score >= self.pose_confidence:
                 dx += x
                 dy += y
+                both += 1
             if label == 'left wrist' and score >= self.pose_confidence:
                 dx -= x
                 dy -= y
-        print('*** Debug: (left hand)', dy/(abs(dx)+1))
-        return dy/(abs(dx)+1) > self.raising_confidence
+                both += 1
+        print('*** Debug: (both, left hand)', both, dy/(abs(dx)+1))
+        return both == 2 and dy/(abs(dx)+1) > self.raising_confidence
 
     def raise_right_hand(self, marks):
-        dx = 0
-        dy = 0
+        dx, dy = 0, 0
+        both = 0
         for (label, score, x, y) in marks:
             if label == 'right elbow' and score >= self.pose_confidence:
                 dx += x
                 dy += y
+                both += 1
             if label == 'right wrist' and score >= self.pose_confidence:
                 dx -= x
                 dy -= y
-        print('*** Debug: (right hand)', dy/(abs(dx)+1))
-        return dy/(abs(dx)+1) > self.raising_confidence
+                both += 1
+        print('*** Debug: (both, right hand)', both, dy/(abs(dx)+1))
+        return both == 2 and dy/(abs(dx)+1) > self.raising_confidence
 
     def debug(self, marks):
         for(label, score, x, y) in marks:
