@@ -16,7 +16,7 @@ NECK_POS = 500
 ROTATION = 450
 # Speed of run
 BACKWARD = 600
-FORWARD = 1800
+FORWARD = 2000
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
