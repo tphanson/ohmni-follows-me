@@ -44,11 +44,7 @@ class Estimation:
     def rotate(self, xmed, run):
         # if urgency > 0: right, else: left
         urgency = (xmed - self.frame_shape[1]/2)/(self.frame_shape[1]/2)
-        speed = 0
-        if run == 'fast':
-            speed = int(SLOW_RO*urgency)
-        else:
-            speed = int(FAST_RO*urgency)
+        speed = int(FAST_RO*urgency)
         print('*** Debug: (xmed, speed, urgency)', xmed, speed, urgency)
         return speed, speed, abs(urgency)
 
