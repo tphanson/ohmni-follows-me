@@ -13,10 +13,10 @@ BETA = 0.4
 NECK_POS = 500
 
 # Speed of rotation
-ROTATION = 400
+ROTATION = 450
 # Speed of run
-SLOW_MO = 600
-FAST_MO = 1800
+BACKWARD = 600
+FORWARD = 1800
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
@@ -52,11 +52,11 @@ class Estimation:
             1, max(0, (self.xscale[1]-width)/(self.xscale[1] - self.xscale[0])))
         print('*** Debug: (width, ratio)', width, ratio)
         if width >= self.xscale[2]:  # Slow Backward
-            return -SLOW_MO, SLOW_MO
+            return -BACKWARD, BACKWARD
         elif self.xscale[2] > width >= self.xscale[1]:  # Safe zone
             return 0, 0
         else:  # Fast Forward
-            return FAST_MO*ratio, -FAST_MO*ratio
+            return FORWARD*ratio, -FORWARD*ratio
 
     def wheel(self, box):
         width, _, xmed, _ = self.calculate(box)
@@ -64,7 +64,7 @@ class Estimation:
         lw_rotate, rw_rotate, urgency = self.rotate(xmed)
         lw = lw_run*(1-urgency) + lw_rotate
         rw = rw_run*(1-urgency) + rw_rotate
-        return lw, rw
+        return int(lw), int(rw)
 
     def neck(self, box):
         _, _, _, ymed = self.calculate(box)
