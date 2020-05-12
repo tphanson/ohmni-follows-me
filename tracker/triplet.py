@@ -10,7 +10,7 @@ EDGE_MODEL = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                           "../tpu/ohmnilabs_features_extractor_quant_postprocess_edgetpu.tflite")
 
 
-def formaliza_data(obj, frame):
+def formalize_data(obj, frame):
     (height, width, _) = frame.shape
 
     xmin = min(width, max(0, int(obj[-4]*width)))
@@ -95,7 +95,7 @@ class HumanTracking:
         encodings = []
         for index, box in enumerate(bboxes):
             iou = self.iou(self.prev_bbox, box)
-            if iou > 0.5:
+            if iou > 0.4:
                 img = imgs[index]
                 encoding = self.infer(img)
                 differential = np.linalg.norm(self.prev_encoding - encoding)

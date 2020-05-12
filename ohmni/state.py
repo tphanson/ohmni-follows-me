@@ -50,16 +50,16 @@ class StateMachine:
     def __throw_error(self):
         raise ValueError('The state is undefined.')
 
-    def next_state(self, next_flag):
+    def next_state(self, next_flag, duration=1):
         if self.current_state == 'init_idle':
             self.__change_state(True)
         elif self.current_state == 'idle':
-            mean = self.denoise.input(int(next_flag), 0.5)
+            mean = self.denoise.input(int(next_flag), duration)
             self.__change_state(bool(mean >= 0.4))
         elif self.current_state == 'init_run':
             self.__change_state(True)
         elif self.current_state == 'run':
-            mean = self.denoise.input(int(next_flag), 5)
+            mean = self.denoise.input(int(next_flag), duration)
             self.__change_state(bool(mean == 1))
         else:
             self.__throw_error()

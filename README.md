@@ -1,52 +1,31 @@
 # Ohmni Follows Me
 
-## Prerequisites
+## Quick start
 
 ```
-python3 - version 3.6.9
-pip3 - version 19.3.1
+wget https://raw.githubusercontent.com/tphanson/ohmni-follows-me/demo-3/setup.sh -P /tmp && chmod +x /temp/setup.sh && sh setup.sh
 ```
 
-## Install Tensorflow 2.0 for Intel Atom (Optional)
+## Docker
 
-Using built package in `runtime` folder
+### Usage guides
 
-```
-pip3 install tensorflow-2.0.0-cp36-cp36m-linux_x86_64.whl
-```
+Follow this step-by-step [tutorial](https://docs.google.com/document/d/1ibkJVjdmrauHGQ0eP4HKzEVfYO_O8CrFDh9kXa5Ijmo/edit?usp=sharing)
 
-To test env 
+### Build docker image
 
 ```
-python3
+sudo docker build -t ohmni_follows_me .
+sudo docker tag ohmni_follows_me:latest tphanson/ohmni_follows_me:<version>
+sudo docker push tphanson/ohmni_follows_me:<version>
 ```
 
-In python sheel,
+### Run docker image 
 
 ```
-import tensorflow as tf
-print(tf.__version__)
+docker run -it --network="host" -v /data/data/com.ohmnilabs.telebot_rtc/files:/app -v /data:/data -w /home/ohmnidev/ohmni-follows-me --privileged -v /dev:/dev --security-opt seccomp:unconfined --name ofm tphanson/ohmni_follows_me:0.0.3
 ```
 
-## Install TFLite
+## Build your own development environment
 
-* Doc: https://coral.ai/docs/accelerator/get-started
-
-```
-echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sudo tee /etc/apt/sources.list.d/coral-edgetpu.list
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install libedgetpu1-std
-```
-Then
-
-```
-pip3 install https://dl.google.com/coral/python/tflite_runtime-2.1.0-cp36-cp36m-linux_x86_64.whl
-```
-
-## Install dependencies
-
-```
-pip3 install opencv-python Pillow
-apt update && apt install -y libsm6 libxext6 libxrender1
-```
+In case you wish to build a development environment on your machine, follow this [Technical documents](./DEVELOPMENT.md)

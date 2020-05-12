@@ -27,3 +27,6 @@ sudo apt-get install -y python3-edgetpu
 # Install dependencies
 pip3 install opencv-python Pillow
 apt update && apt install -y libsm6 libxext6 libxrender1
+
+# Install roslibpy
+pip3 install roslibpy
