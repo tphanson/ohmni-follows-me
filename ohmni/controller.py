@@ -16,7 +16,7 @@ NECK_POS = 500
 ROTATION = 400
 # Speed of run
 SLOW_MO = 600
-FAST_MO = 2000
+FAST_MO = 1800
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
@@ -42,7 +42,7 @@ class Estimation:
 
     def rotate(self, xmed):
         # if urgency > 0: right, else: left
-        urgency = (xmed - self.frame_shape[1]/2)/(self.frame_shape[1]/2)
+        urgency = (xmed/self.frame_shape[1] - 0.5)/0.5
         speed = int(ROTATION*urgency)
         print('*** Debug: (xmed, speed, urgency)', xmed, speed, urgency)
         return speed, speed, abs(urgency)
