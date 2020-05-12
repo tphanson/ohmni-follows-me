@@ -24,7 +24,8 @@ FAST_MO = 1800
 NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
-XSCALE = np.array([7/30, 8/30, 9/30, 11/30])
+# XSCALE = np.array([7/30, 8/30, 9/30, 11/30])
+XSCALE = np.array([6/30, 9/30, 11/30])
 YSCALE = np.array([4/7, 5/7])
 
 
@@ -58,18 +59,18 @@ class Estimation:
 
     def run(self, width):
         print('*** Debug: (width)', width)
-        ratio = min(1, max(0, (1/3-width/self.frame_shape[1])/(1/3-7/30)))
+        ratio = min(
+            1, max(0, (self.xscale[1]-width)/(self.xscale[1] - self.xscale[0])))
         print(ratio)
-        if width >= self.xscale[3]:  # Slow Backward
+        if width >= self.xscale[2]:  # Slow Backward
             return -SLOW_MO, SLOW_MO, 'slow'
-        elif self.xscale[3] > width >= self.xscale[2]:  # Safe zone
+        elif self.xscale[2] > width >= self.xscale[1]:  # Safe zone
             return 0, 0, 'slow'
-        elif self.xscale[2] > width >= self.xscale[1]:  # Slow Forward
-            return SLOW_MO, -SLOW_MO, 'slow'
-        elif self.xscale[1] > width >= self.xscale[0]:  # Medium Forward
-            return MEDIUM_MO, -MEDIUM_MO, 'medium'
         else:  # Fast Forward
-            return FAST_MO, -FAST_MO, 'fast'
+            ratio = min(
+                1, max(0, (self.xscale[1]-width)/(self.xscale[1] - self.xscale[0])))
+            print(ratio)
+            return FAST_MO*ratio, -FAST_MO*ratio, 'fast'
 
     def wheel(self, box):
         width, _, xmed, _ = self.calculate(box)
