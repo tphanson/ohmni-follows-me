@@ -14,7 +14,7 @@ NECK_POS = 500
 
 # Speed of rotation
 SLOW_RO = 200
-FAST_RO = 400
+FAST_RO = 500
 # Speed of run
 SLOW_MO = 600
 FAST_MO = 1800
@@ -53,14 +53,14 @@ class Estimation:
         return speed, speed, abs(urgency)
 
     def run(self, width):
-        print('*** Debug: (width)', width)
+        ratio = min(
+            1, max(0, (self.xscale[1]-width)/(self.xscale[1] - self.xscale[0])))
+        print('*** Debug: (width, ratio)', width, ratio)
         if width >= self.xscale[2]:  # Slow Backward
             return -SLOW_MO, SLOW_MO, 'slow'
         elif self.xscale[2] > width >= self.xscale[1]:  # Safe zone
             return 0, 0, 'slow'
         else:  # Fast Forward
-            ratio = min(
-                1, max(0, (self.xscale[1]-width)/(self.xscale[1] - self.xscale[0])))
             return FAST_MO*ratio, -FAST_MO*ratio, 'fast'
 
     def wheel(self, box):
