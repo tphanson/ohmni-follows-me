@@ -18,7 +18,7 @@ MEDIUM_RO = 300
 FAST_RO = 400
 # Speed of run
 SLOW_MO = 500
-MEDIUM_MO = 8000
+MEDIUM_MO = 800
 FAST_MO = 1800
 # Speed of neck
 NECK_DELTA = 10
