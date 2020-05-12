@@ -55,7 +55,7 @@ class Estimation:
         else:
             speed = int(FAST_RO*urgency)
         print('*** Debug: (xmed, speed, urgency)', xmed, speed, urgency)
-        return speed, speed, urgency
+        return speed, speed, abs(urgency)
 
     def run(self, width):
         print('*** Debug: (width)', width)
