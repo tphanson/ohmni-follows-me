@@ -45,21 +45,17 @@ class Estimation:
         return width, height, xmed, ymed
 
     def rotate(self, xmed, run):
-        # if delta > 0: right, else: left
-        delta = (xmed - self.frame_shape[1]/2)/(self.frame_shape[1]/2)
+        # if urgency > 0: right, else: left
+        urgency = (xmed - self.frame_shape[1]/2)/(self.frame_shape[1]/2)
         speed = 0
         if run == 'fast':
-            speed = int(SLOW_RO*delta)
-            responsive = abs(delta) < DANGEROUS_AREA[2]
+            speed = int(SLOW_RO*urgency)
         if run == 'medium':
-            speed = int(MEDIUM_RO*delta)
-            responsive = abs(delta) < DANGEROUS_AREA[1]
+            speed = int(MEDIUM_RO*urgency)
         else:
-            speed = int(FAST_RO*delta)
-            responsive = abs(delta) < DANGEROUS_AREA[0]
-        print('*** Debug: (xmed, speed)', xmed, speed)
-        print('*** Debug: (delta, responsive)', delta, responsive)
-        return speed, speed, responsive
+            speed = int(FAST_RO*urgency)
+        print('*** Debug: (xmed, speed, urgency)', xmed, speed, urgency)
+        return speed, speed, urgency
 
     def run(self, width):
         print('*** Debug: (width)', width)
@@ -77,15 +73,9 @@ class Estimation:
     def wheel(self, box):
         width, _, xmed, _ = self.calculate(box)
         lw_run, rw_run, speed = self.run(width)
-        lw_rotate, rw_rotate, responsive = self.rotate(xmed, speed)
-        lw = 0
-        rw = 0
-        if responsive:
-            lw = lw_run + lw_rotate
-            rw = rw_run + rw_rotate
-        else:
-            lw = lw_rotate
-            rw = rw_rotate
+        lw_rotate, rw_rotate, urgency = self.rotate(xmed, speed)
+        lw = lw_run*(1-urgency) + lw_rotate
+        rw = rw_run*(1-urgency) + rw_rotate
         return lw, rw
 
     def neck(self, box):
