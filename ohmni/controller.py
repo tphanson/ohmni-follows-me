@@ -15,7 +15,7 @@ NECK_POS = 500
 # Speed of rotation
 SLOW_RO = 200
 MEDIUM_RO = 300
-FAST_RO = 500
+FAST_RO = 400
 # Speed of run
 SLOW_MO = 500
 MEDIUM_MO = 1000
