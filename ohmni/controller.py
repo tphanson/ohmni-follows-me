@@ -14,17 +14,14 @@ NECK_POS = 500
 
 # Speed of rotation
 SLOW_RO = 200
-MEDIUM_RO = 300
 FAST_RO = 400
 # Speed of run
-SLOW_MO = 500
-MEDIUM_MO = 800
+SLOW_MO = 600
 FAST_MO = 1800
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
 # Action zones
-# XSCALE = np.array([7/30, 8/30, 9/30, 11/30])
 XSCALE = np.array([6/30, 9/30, 11/30])
 YSCALE = np.array([4/7, 5/7])
 
@@ -50,8 +47,6 @@ class Estimation:
         speed = 0
         if run == 'fast':
             speed = int(SLOW_RO*urgency)
-        if run == 'medium':
-            speed = int(MEDIUM_RO*urgency)
         else:
             speed = int(FAST_RO*urgency)
         print('*** Debug: (xmed, speed, urgency)', xmed, speed, urgency)
@@ -59,9 +54,6 @@ class Estimation:
 
     def run(self, width):
         print('*** Debug: (width)', width)
-        ratio = min(
-            1, max(0, (self.xscale[1]-width)/(self.xscale[1] - self.xscale[0])))
-        print(ratio)
         if width >= self.xscale[2]:  # Slow Backward
             return -SLOW_MO, SLOW_MO, 'slow'
         elif self.xscale[2] > width >= self.xscale[1]:  # Safe zone
@@ -69,7 +61,6 @@ class Estimation:
         else:  # Fast Forward
             ratio = min(
                 1, max(0, (self.xscale[1]-width)/(self.xscale[1] - self.xscale[0])))
-            print(ratio)
             return FAST_MO*ratio, -FAST_MO*ratio, 'fast'
 
     def wheel(self, box):
