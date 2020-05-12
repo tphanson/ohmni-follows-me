@@ -58,6 +58,8 @@ class Estimation:
 
     def run(self, width):
         print('*** Debug: (width)', width)
+        ratio = min(1, max(0, (1/3-width/self.frame_shape[1])/(1/3-7/30)))
+        print(ratio)
         if width >= self.xscale[3]:  # Slow Backward
             return -SLOW_MO, SLOW_MO, 'slow'
         elif self.xscale[3] > width >= self.xscale[2]:  # Safe zone
