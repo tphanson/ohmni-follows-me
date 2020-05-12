@@ -13,8 +13,7 @@ BETA = 0.4
 NECK_POS = 500
 
 # Speed of rotation
-SLOW_RO = 200
-FAST_RO = 500
+ROTATION = 400
 # Speed of run
 SLOW_MO = 600
 FAST_MO = 2000
@@ -41,10 +40,10 @@ class Estimation:
         ymed = (ymin + ymax)/2
         return width, height, xmed, ymed
 
-    def rotate(self, xmed, run):
+    def rotate(self, xmed):
         # if urgency > 0: right, else: left
         urgency = (xmed - self.frame_shape[1]/2)/(self.frame_shape[1]/2)
-        speed = int(FAST_RO*urgency)
+        speed = int(ROTATION*urgency)
         print('*** Debug: (xmed, speed, urgency)', xmed, speed, urgency)
         return speed, speed, abs(urgency)
 
@@ -53,16 +52,16 @@ class Estimation:
             1, max(0, (self.xscale[1]-width)/(self.xscale[1] - self.xscale[0])))
         print('*** Debug: (width, ratio)', width, ratio)
         if width >= self.xscale[2]:  # Slow Backward
-            return -SLOW_MO, SLOW_MO, 'slow'
+            return -SLOW_MO, SLOW_MO
         elif self.xscale[2] > width >= self.xscale[1]:  # Safe zone
-            return 0, 0, 'slow'
+            return 0, 0
         else:  # Fast Forward
-            return FAST_MO*ratio, -FAST_MO*ratio, 'fast'
+            return FAST_MO*ratio, -FAST_MO*ratio
 
     def wheel(self, box):
         width, _, xmed, _ = self.calculate(box)
-        lw_run, rw_run, speed = self.run(width)
-        lw_rotate, rw_rotate, urgency = self.rotate(xmed, speed)
+        lw_run, rw_run = self.run(width)
+        lw_rotate, rw_rotate, urgency = self.rotate(xmed)
         lw = lw_run*(1-urgency) + lw_rotate
         rw = rw_run*(1-urgency) + rw_rotate
         return lw, rw
