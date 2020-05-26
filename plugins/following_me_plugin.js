@@ -21,19 +21,19 @@ class FollowingMePlugin {
         console.log(this.TAG, 'Start following me in HETERONOMY mode.');
         if (botnode.currentStack === STACK.AUTONOMY) botnode.switchToNormalStack();
         execSync('docker start ofm && docker exec -d ofm python3 main.py --ohmni heteronomy');
-        return self.notify(botnode, 'start_following_me', 'success', 'idle');
+        return self.notify(botnode, 'following_me', 'success', 'start');
       }
       if (mode == 'autonomy') {
         console.log(this.TAG, 'Start following me in AUTONOMY mode.');
         if (botnode.currentStack === STACK.NORMAL) botnode.switchAutonomyStack();
         execSync('docker start ofm && docker exec -d ofm python3 main.py --ohmni autonomy');
-        return self.notify(botnode, 'start_following_me', 'success', 'idle');
+        return self.notify(botnode, 'following_me', 'success', 'start');
       }
     }
     AutonomyController.prototype.cmd_stopFollowingMe = function () {
       console.log(this.TAG, 'Stop following me.');
       execSync('docker stop ofm');
-      return self.notify(botnode, 'stop_following_me', 'success');
+      return self.notify(botnode, 'following_me', 'success', 'stop');
     }
 
     // Auto open camera before start following me
@@ -53,7 +53,7 @@ class FollowingMePlugin {
     }
     // Broadcast msg
     BotShell.prototype.cmd_broadcast_following_me = function (params) {
-      return self.notify(botnode, 'start_following_me', 'success', params[0]);
+      return self.notify(botnode, 'following_me', 'success', params[0]);
     }
 
   }
