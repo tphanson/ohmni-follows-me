@@ -21,13 +21,13 @@ class FollowingMePlugin {
         console.log(this.TAG, 'Start following me in HETERONOMY mode.');
         if (botnode.currentStack === STACK.AUTONOMY) botnode.switchToNormalStack();
         execSync('docker start ofm && docker exec -d ofm python3 main.py --ohmni heteronomy');
-        return self.notify(botnode, 'start_following_me', 'success', 'heteronomy');
+        return self.notify(botnode, 'start_following_me', 'success', 'idle');
       }
       if (mode == 'autonomy') {
         console.log(this.TAG, 'Start following me in AUTONOMY mode.');
         if (botnode.currentStack === STACK.NORMAL) botnode.switchAutonomyStack();
         execSync('docker start ofm && docker exec -d ofm python3 main.py --ohmni autonomy');
-        return self.notify(botnode, 'start_following_me', 'success', 'autonomy');
+        return self.notify(botnode, 'start_following_me', 'success', 'idle');
       }
     }
     AutonomyController.prototype.cmd_stopFollowingMe = function () {
@@ -51,8 +51,14 @@ class FollowingMePlugin {
     BotShell.prototype.cmd_stop_following_me = function (params) {
       return botnode.autonomyController.cmd_stopFollowingMe();
     }
+    // Broadcast msg
+    BotShell.prototype.cmd_broadcast_following_me = function (params) {
+      return self.notify(botnode, 'start_following_me', 'success', params[0]);
+    }
 
   }
+
+
 
   notify(botnode, funcName, status, mode = '') {
     return botnode._api.sendJson({

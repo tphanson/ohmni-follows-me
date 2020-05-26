@@ -163,12 +163,15 @@ class Heteronomy:
         self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
 
 
-class Say:
+class Notifier:
     def __init__(self, botshell):
         self.botshell = botshell
 
-    def ready(self):
+    def say_ready(self):
         self.botshell.sendall(b'say I\'m ready\n')
 
-    def wait(self):
+    def say_waiting(self):
         self.botshell.sendall(b'say ok I\'m waiting for you\n')
+
+    def send_status(self, status):
+        self.botshell.sendall(f'broadcast_following_me {status}\n'.encode())
