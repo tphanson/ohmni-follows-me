@@ -1,3 +1,4 @@
 /dist
 __pycache__
 *.pyc
+/floor_detection/models/
