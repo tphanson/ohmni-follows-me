@@ -11,24 +11,33 @@ from floor_detection.src.TrajectoryPlanner import TrajectoryPlanner
 from ohmni.controller import Notifier, Heteronomy, Autonomy
 from ohmni.state import StateMachine
 
+import base64
+import zmq
+import cv2
+#server to stream to the laptop to visualize
+context = zmq.Context()
+footage_socket = context.socket(zmq.PUB)
+ip = "tcp://192.168.123.42:5555"
+footage_socket.connect(ip)
+
 # Open camera:
 # monkey -p net.sourceforge.opencamera -c android.intent.category.LAUNCHER 1
 
 def detect_floor(fd, img):
-    mask = fd.infer(img)
+    _, mask = fd.predict(img)
     return mask
 
-def stop_motion(mask, v_left, v_right, x, y, theta, sample_time):
+def stop_motion(mask, v_left, v_right, x, y, theta, limit_time):
     theta = 0
-    sample_time = 1
+    sample_time = 0.1
     l = 0.333
-    predicted_traj = TrajectoryPlanner(x,y, 0, 0,theta, l, 0.1)
-    predicted_traj.run(v_right, v_left, sample_time)
+    predicted_traj = TrajectoryPlanner(x,y, v_left, v_right,theta, l, sample_time)
+    predicted_traj.run(v_right, v_left, limit_time)
     traj = [(i,j) for i,j in zip(predicted_traj.path_x, predicted_traj.path_y)]
-    oa = ObstacleAvoidance(mask) # obstacle avoidance
-    is_collide = oa.check_collide_with_traj(traj)
+    oa = ObstacleAvoidance(mask) 
+    is_collide, boundRect= oa.check_collide_with_traj(traj)
 
-    return is_collide
+    return is_collide, traj, boundRect
 
 def detect_gesture(pd, tracker, img, action='activate'):
     # Inference
@@ -91,6 +100,7 @@ def start(server, botshell, autonomy=False, debug=False):
 
     pd = PoseDetection()
     hd = HumanDetection()
+    
     ht = HumanTracking(threshold=50)
     fd = FloorDetection()
 
@@ -171,27 +181,48 @@ def start(server, botshell, autonomy=False, debug=False):
                     print('tracking')
                     # Drive car
                     sm.next_state(False)
+
                     # Detect floor
                     t_seg = time.time()
                     mask = detect_floor(fd, down_cam_img)
+                    
                     print("time segment: ", time.time()-t_seg)
                     
                     #get v_left, v_right to draw predicted trajectory of 2 wheels
                     v_left, v_right = ctrl.get_vlr(box)
                     print("Vleft: {}, Vright: {}".format(v_left, v_right))
-                    x,y = mask.shape[1]//2, mask.shape[0]//2
+                    x,y = mask.shape[1]//2 + 25, mask.shape[0]//2 - 15
                     theta = 0
                     
-                    mask = mask[0:mask.shape[0]//2, 0:mask.shape[1]//2]
-                    sample_time = 0.2
+                    #mask = mask[0:mask.shape[0]//2, 0:mask.shape[1]//2]
+                    limit_time = 0.5
                     t_stop = time.time()
-                    is_stop = stop_motion(mask, v_left, v_right, x,y,theta, sample_time)
+                      
+                    mask[np.where(mask == 0)] = 0
+                    mask[np.where(mask == 1)] = 255
+                    
+                    is_stop, traj, boundRect = stop_motion(mask, v_left/10, v_right/10, x,y,theta, limit_time)
                     print("Time stop: ", time.time()-t_stop)
-                    print(is_stop)
+                    print("Stop the robot when detecting obstacles: ", is_stop)
+                    mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+                    #stream to the laptop
 
+                    #visualize the results
+                    for p in traj:
+                        mask = cv2.circle(mask,(int(p[0]), int(p[1])),3,(255,0,0), 1)
+
+                    for ii in range(len(traj)-1):
+                        mask = cv2.line(mask, (int(traj[ii][0]), int(traj[ii][1])), (int(traj[ii+1][0]), int(traj[ii+1][1])), (255,0,0), 1)
+
+                    for r in boundRect:
+                        mask = cv2.rectangle(mask, (r[0], r[1]), (r[0]+r[2], r[1]+r[3]), (0,255,0),1) 
+                    
+                    encoded, buffer = cv2.imencode('.jpg', mask)
+                    jpg_as_text = base64.b64encode(buffer)
+                    footage_socket.send(jpg_as_text)
+    
                     if is_stop: #Stop
                         ctrl.stop()
-                        exit()
                 
                     if not debug:
                         ctrl.goto(box)
@@ -214,3 +245,4 @@ def start(server, botshell, autonomy=False, debug=False):
 
     ctrl.stop()
     print('Stopped OFM.')
+

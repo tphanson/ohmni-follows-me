@@ -7,7 +7,7 @@ import threading
 import time
 
 class CamThread(threading.Thread):
-    def __init__(self, camName, camID, size_x=480, size_y=640):
+    def __init__(self, camName, camID, size_x=1024, size_y=1024):
         threading.Thread.__init__(self)
         self.camID = camID
         self.camName = camName
