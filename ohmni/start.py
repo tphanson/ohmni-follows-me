@@ -201,7 +201,8 @@ def start(server, botshell, autonomy=False, debug=False):
                     mask[np.where(mask == 0)] = 0
                     mask[np.where(mask == 1)] = 255
                     
-                    is_stop, traj, boundRect = stop_motion(mask, v_left/10, v_right/10, x,y,theta, limit_time)
+                    is_stop, traj, boundRect = stop_motion(mask, v_left, v_right, x,y,theta, limit_time)
+                    print("Is stop: ", is_stop)
                     print("Time stop: ", time.time()-t_stop)
                     print("Stop the robot when detecting obstacles: ", is_stop)
                     mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
