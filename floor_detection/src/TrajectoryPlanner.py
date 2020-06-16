@@ -57,7 +57,3 @@ class TrajectoryPlanner:
             self.update_parameters(v_right, v_left)
 
 
-if __name__ == '__main__':
-    my_robot = TrajectoryPlanner(0, 0, 0, 0, 0, 3.5, 0.1)
-    my_robot.run(42, 36, 7) 
-

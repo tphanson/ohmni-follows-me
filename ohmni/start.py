@@ -206,8 +206,8 @@ def start(server, botshell, autonomy=False, debug=False):
                     print("Time stop: ", time.time()-t_stop)
                     print("Stop the robot when detecting obstacles: ", is_stop)
                     mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-                    #stream to the laptop
 
+                    #stream to the laptop
                     #visualize the results
                     for p in traj:
                         mask = cv2.circle(mask,(int(p[0]), int(p[1])),3,(255,0,0), 1)
