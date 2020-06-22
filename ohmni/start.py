@@ -31,11 +31,27 @@ def stop_motion(mask, v_left, v_right, x, y, theta, limit_time):
     theta = 0
     sample_time = 0.1
     l = 0.333
-    predicted_traj = TrajectoryPlanner(x,y, v_left, v_right,theta, l, sample_time)
-    predicted_traj.run(v_right, v_left, limit_time)
-    traj = [(i,j) for i,j in zip(predicted_traj.path_x, predicted_traj.path_y)]
+    #predict left, right and center trajectories
+    #center
+    predicted_traj_center = TrajectoryPlanner(x,y, v_left, v_right,theta, l, sample_time)
+    predicted_traj_center.run(v_right, v_left, limit_time)
+    traj_center = [(i,j) for i,j in zip(predicted_traj_center.path_x, predicted_traj_center.path_y)]
+    #left
+    predicted_traj_left = TrajectoryPlanner(x-10, y, v_left, v_right, theta, l, sample_time)
+    predicted_traj_left.run(v_right, v_left, limit_time)
+    traj_left = [(i, j) for i,j in zip(predicted_traj_left.path_x, predicted_traj_left.path_y)]
+    #right
+    predicted_traj_right = TrajectoryPlanner(x+10, y, v_left, v_right, theta, l, sample_time) 
+    predicted_traj_right.run(v_right, v_left, limit_time)
+    traj_right = [(i, j) for i,j in zip(predicted_traj_right.path_x, predicted_traj_right.path_y)]
+    #check collisions
     oa = ObstacleAvoidance(mask) 
-    is_collide, boundRect= oa.check_collide_with_traj(traj)
+    is_collide_center, boundRect= oa.check_collide_with_traj(traj_center)
+    is_collide_left, _ = oa.check_collide_with_traj(traj_left)
+    is_collide_right, _ = oa.check_collide_with_traj(traj_right)
+
+    is_collide = is_collide_center & is_collide_left & is_collide_right
+    traj = [traj_center, traj_left, traj_right]
 
     return is_collide, traj, boundRect
 
@@ -182,51 +198,61 @@ def start(server, botshell, autonomy=False, debug=False):
                     # Drive car
                     sm.next_state(False)
 
-                    # Detect floor
-                    t_seg = time.time()
-                    mask = detect_floor(fd, down_cam_img)
-                    
-                    print("time segment: ", time.time()-t_seg)
-                    
-                    #get v_left, v_right to draw predicted trajectory of 2 wheels
-                    v_left, v_right = ctrl.get_vlr(box)
-                    print("Vleft: {}, Vright: {}".format(v_left, v_right))
-                    x,y = mask.shape[1]//2 + 25, mask.shape[0]//2 - 15
-                    theta = 0
-                    
-                    #mask = mask[0:mask.shape[0]//2, 0:mask.shape[1]//2]
-                    limit_time = 0.5
-                    t_stop = time.time()
-                      
-                    mask[np.where(mask == 0)] = 0
-                    mask[np.where(mask == 1)] = 255
-                    
-                    is_stop, traj, boundRect = stop_motion(mask, v_left, v_right, x,y,theta, limit_time)
-                    print("Is stop: ", is_stop)
-                    print("Time stop: ", time.time()-t_stop)
-                    print("Stop the robot when detecting obstacles: ", is_stop)
-                    mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-
-                    #stream to the laptop
-                    #visualize the results
-                    for p in traj:
-                        mask = cv2.circle(mask,(int(p[0]), int(p[1])),3,(255,0,0), 1)
-
-                    for ii in range(len(traj)-1):
-                        mask = cv2.line(mask, (int(traj[ii][0]), int(traj[ii][1])), (int(traj[ii+1][0]), int(traj[ii+1][1])), (255,0,0), 1)
-
-                    for r in boundRect:
-                        mask = cv2.rectangle(mask, (r[0], r[1]), (r[0]+r[2], r[1]+r[3]), (0,255,0),1) 
-                    
-                    encoded, buffer = cv2.imencode('.jpg', mask)
-                    jpg_as_text = base64.b64encode(buffer)
-                    footage_socket.send(jpg_as_text)
-    
-                    if is_stop: #Stop
-                        ctrl.stop()
-                
                     if not debug:
                         ctrl.goto(box)
+                        # Detect floor
+                        t_seg = time.time()
+                        mask = detect_floor(fd, down_cam_img)
+                    
+                        print("time segment: ", time.time()-t_seg)
+                    
+                        #get v_left, v_right to draw predicted trajectory of 2 wheels
+                        v_left, v_right = ctrl.get_vlr(box)
+                        print("Vleft: {}, Vright: {}".format(v_left, v_right))
+                        x,y = mask.shape[1]//2 + 25, mask.shape[0]//2 - 15
+                        theta = 0
+                        
+                        #mask = mask[0:mask.shape[0]//2, 0:mask.shape[1]//2]
+                        limit_time = 0.3
+                        t_stop = time.time()
+                      
+                        mask[np.where(mask == 0)] = 0
+                        mask[np.where(mask == 1)] = 255
+                        
+                        is_stop, traj, boundRect = stop_motion(mask, -v_left/2, -v_right/2, x,y,theta, limit_time)
+                        
+                        print("Is stop: ", is_stop)
+                        print("Time stop: ", time.time()-t_stop)
+                        print("Stop the robot when detecting obstacles: ", is_stop)
+                        mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+
+                        #visualize the results
+                        colors=[(255, 0, 0), (255, 255, 0), (0, 255, 0)]
+                        for direction_traj in traj: #center, left, right
+                            color = 0
+                            for p in direction_traj:
+                                mask = cv2.circle(mask,(int(p[0]), int(p[1])),3,colors[color], 1)
+                            color += 1
+
+                        for direction_traj in traj:
+                            color = 0
+                            for ii in range(len(traj)-1):
+                                mask = cv2.line(mask, (int(traj[ii][0]), int(traj[ii][1])), (int(traj[ii+1][0]), int(traj[ii+1][1])), colors[color], 1)
+                            color += 1
+
+                        for r in boundRect:
+                            mask = cv2.rectangle(mask, (r[0], r[1]), (r[0]+r[2], r[1]+r[3]), (0,255,0),1)
+
+                        # combine mask and original down cam image
+                        mask = cv2.resize(mask, (down_cam_img.shape[1], down_cam_img.shape[0]))
+                        horizontal_concat = np.concatenate((down_cam_img, mask), axis=1)
+                        encoded, buffer = cv2.imencode('.jpg', horizontal_concat)
+                        jpg_as_text = base64.b64encode(buffer)
+                        #stream to the laptop
+                        footage_socket.send(jpg_as_text)
+
+                        if is_stop: #Stop
+                            ctrl.stop()
                     # Draw bounding box of tracking objective
                     if debug:
                         img = image.draw_box(img, box)
