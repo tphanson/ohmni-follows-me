@@ -51,12 +51,8 @@ def stop_motion(mask, v_left, v_right, x, y, theta, limit_time):
     t1 = Thread(target=predict_traj_direction, args=("left", x-25, y))
     t2 = Thread(target=predict_traj_direction, args=("right",x+15, y))
     t1.start()
-    t1.join()
     t2.start()
-    t2.join()
 
-    #left
-    #traj_left = predict_traj_direction("left", x-25, y)
     trajs = []
     trajs.append(q.get())
     trajs.append(q.get())
@@ -65,8 +61,7 @@ def stop_motion(mask, v_left, v_right, x, y, theta, limit_time):
             traj_left = i[1]
         else:
             traj_right = i[1]
-    #right
-    # traj_right = predict_traj_direction("right", x+15, y)
+
     #check collisions
     oa = ObstacleAvoidance(mask)
     is_collide_left, boundRect = oa.check_collide_with_traj(traj_left)
