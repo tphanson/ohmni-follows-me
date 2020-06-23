@@ -73,9 +73,10 @@ class ObstacleAvoidance:
         self.img = mask_img
         self.img_height, self.img_width = self.img.shape[:2]
     
-    def check_collide_with_traj(self, traj):
+    def check_collide_with_traj(self, traj, boundRect=None):
         """
         Input: trajectory: a waypoint which we will consider if any obstacles lying on it.
+                boundRect: Obstacle (optional)
         Output: Boolean
         """
         def lineLine(line1, line2):
@@ -83,6 +84,7 @@ class ObstacleAvoidance:
             x3,y3,x4,y4 = line2[0][0], line2[0][1], line2[1][0], line2[1][1]
             #if y4-y3==0 or x2-x1==0 or x4-x3==0 or y2-y1==0:
                 #return False
+            
             if (y4-y3)*(x2-x1) - (x4-x3)*(y2-y1) == 0 or (y4-y3)*(x2-x1) - (x4-x3)*(y2-y1) == 0:
                 return False
             uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1))
@@ -103,8 +105,8 @@ class ObstacleAvoidance:
             if left or right or top or bottom:
                 return True
             return False
-
-        boundRect=self.find_obstacles()
+        if boundRect is None:
+            boundRect=self.find_obstacles()
         for rect in boundRect:
             rx, ry, rw, rh = rect[0], rect[1], rect[2], rect[3]
             for i in range(len(traj) - 1):
@@ -128,7 +130,6 @@ class ObstacleAvoidance:
         find obstacles using contour method, the height of the obstacles must be higher than half of the image height 
         return a list of obstacles respect to the requirements
         """
-        print(self.img.shape)
         threshold = 30
         # Detect edges using Canny
         canny_output = cv.Canny(np.uint8(self.img), threshold, threshold * 2)
