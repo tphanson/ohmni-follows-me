@@ -1,6 +1,7 @@
 import time
 import numpy as np
 from utils.thread_camera import CamThread
+from utils.spline import approximate_b_spline_path, interpolate_b_spline_path
 from utils import image, camera, ros
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
@@ -10,6 +11,9 @@ from floor_detection.src.TrajectoryPlanner import TrajectoryPlanner
 
 from ohmni.controller import Notifier, Heteronomy, Autonomy
 from ohmni.state import StateMachine
+
+from queue import Queue
+from threading import Thread
 
 import base64
 import zmq
@@ -32,26 +36,42 @@ def stop_motion(mask, v_left, v_right, x, y, theta, limit_time):
     sample_time = 0.1
     l = 0.333
     #predict left, right and center trajectories
-    #center
-    predicted_traj_center = TrajectoryPlanner(x,y, v_left, v_right,theta, l, sample_time)
-    predicted_traj_center.run(v_right, v_left, limit_time)
-    traj_center = [(i,j) for i,j in zip(predicted_traj_center.path_x, predicted_traj_center.path_y)]
-    #left
-    predicted_traj_left = TrajectoryPlanner(x-10, y, v_left, v_right, theta, l, sample_time)
-    predicted_traj_left.run(v_right, v_left, limit_time)
-    traj_left = [(i, j) for i,j in zip(predicted_traj_left.path_x, predicted_traj_left.path_y)]
-    #right
-    predicted_traj_right = TrajectoryPlanner(x+10, y, v_left, v_right, theta, l, sample_time) 
-    predicted_traj_right.run(v_right, v_left, limit_time)
-    traj_right = [(i, j) for i,j in zip(predicted_traj_right.path_x, predicted_traj_right.path_y)]
-    #check collisions
-    oa = ObstacleAvoidance(mask) 
-    is_collide_center, boundRect= oa.check_collide_with_traj(traj_center)
-    is_collide_left, _ = oa.check_collide_with_traj(traj_left)
-    is_collide_right, _ = oa.check_collide_with_traj(traj_right)
+    n_course_point = 20
+    q=Queue()
+    def predict_traj_direction(direction, x,y):
+        predicted_traj = TrajectoryPlanner(x,y,v_left,v_right,theta,l,sample_time)
+        predicted_traj.run(v_right, v_left, limit_time)
+        path_x, path_y = predicted_traj.path_x, predicted_traj.path_y
+        #path_x, path_y = interpolate_b_spline_path(predicted_traj.path_x, predicted_traj.path_y, n_course_point)
+        traj = [(i,j) for i, j in zip(path_x, path_y)]
+        q.put([direction, traj])
 
-    is_collide = is_collide_center & is_collide_left & is_collide_right
-    traj = [traj_center, traj_left, traj_right]
+    t1 = Thread(target=predict_traj_direction, args=("left", x-25, y))
+    t2 = Thread(target=predict_traj_direction, args=("right",x+15, y))
+    t1.start()
+    t1.join()
+    t2.start()
+    t2.join()
+
+    #left
+    #traj_left = predict_traj_direction("left", x-25, y)
+    trajs = []
+    trajs.append(q.get())
+    trajs.append(q.get())
+    for i in trajs:
+        if i[0] == "left":
+            traj_left = i[1]
+        else:
+            traj_right = i[1]
+    #right
+    # traj_right = predict_traj_direction("right", x+15, y)
+    #check collisions
+    oa = ObstacleAvoidance(mask)
+    is_collide_left, boundRect = oa.check_collide_with_traj(traj_left)
+    is_collide_right, _ = oa.check_collide_with_traj(traj_right, boundRect)
+
+    is_collide = is_collide_left & is_collide_right
+    traj = [traj_left, traj_right]
 
     return is_collide, traj, boundRect
 
@@ -198,18 +218,18 @@ def start(server, botshell, autonomy=False, debug=False):
                     # Drive car
                     sm.next_state(False)
 
+                    # Detect floor
+                    t_seg = time.time()
+                    mask = detect_floor(fd, down_cam_img)
+                    print("time segment: ", time.time()-t_seg)
+
                     if not debug:
                         ctrl.goto(box)
-                        # Detect floor
-                        t_seg = time.time()
-                        mask = detect_floor(fd, down_cam_img)
-                    
-                        print("time segment: ", time.time()-t_seg)
-                    
+                       
                         #get v_left, v_right to draw predicted trajectory of 2 wheels
                         v_left, v_right = ctrl.get_vlr(box)
                         print("Vleft: {}, Vright: {}".format(v_left, v_right))
-                        x,y = mask.shape[1]//2 + 25, mask.shape[0]//2 - 15
+                        x,y = mask.shape[1]//2 + 25, mask.shape[0]//2 - 10
                         theta = 0
                         
                         #mask = mask[0:mask.shape[0]//2, 0:mask.shape[1]//2]
@@ -219,7 +239,7 @@ def start(server, botshell, autonomy=False, debug=False):
                         mask[np.where(mask == 0)] = 0
                         mask[np.where(mask == 1)] = 255
                         
-                        is_stop, traj, boundRect = stop_motion(mask, -v_left/2, -v_right/2, x,y,theta, limit_time)
+                        is_stop, traj, boundRect = stop_motion(mask, -v_left, -v_right, x,y,theta, limit_time)
                         
                         print("Is stop: ", is_stop)
                         print("Time stop: ", time.time()-t_stop)
@@ -228,16 +248,16 @@ def start(server, botshell, autonomy=False, debug=False):
 
                         #visualize the results
                         colors=[(255, 0, 0), (255, 255, 0), (0, 255, 0)]
-                        for direction_traj in traj: #center, left, right
-                            color = 0
-                            for p in direction_traj:
-                                mask = cv2.circle(mask,(int(p[0]), int(p[1])),3,colors[color], 1)
-                            color += 1
-
+                        color = 0
+                        #for direction_traj in traj: #center, left, right
+                        #    for p in direction_traj:
+                        #        mask = cv2.circle(mask,(int(p[0]), int(p[1])),3,colors[color], 1)
+                        #    color += 1
+                        
+                        color = 0
                         for direction_traj in traj:
-                            color = 0
-                            for ii in range(len(traj)-1):
-                                mask = cv2.line(mask, (int(traj[ii][0]), int(traj[ii][1])), (int(traj[ii+1][0]), int(traj[ii+1][1])), colors[color], 1)
+                            for ii in range(len(direction_traj)-1):
+                                mask = cv2.line(mask, (int(direction_traj[ii][0]), int(direction_traj[ii][1])), (int(direction_traj[ii+1][0]), int(direction_traj[ii+1][1])), colors[color], 1)
                             color += 1
 
                         for r in boundRect:
@@ -253,6 +273,8 @@ def start(server, botshell, autonomy=False, debug=False):
 
                         if is_stop: #Stop
                             ctrl.stop()
+                        else:
+                            ctrl.goto(box)
                     # Draw bounding box of tracking objective
                     if debug:
                         img = image.draw_box(img, box)
