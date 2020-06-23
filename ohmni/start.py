@@ -6,8 +6,10 @@ from utils import image, camera, ros
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking, formalize_data
-from floor_detection.src.detector_2 import FloorDetection, ObstacleAvoidance
-from floor_detection.src.TrajectoryPlanner import TrajectoryPlanner
+
+from floor_detection.src.floor_detection import FloorDetection
+from floor_detection.src.trajectory_planner import TrajectoryPlanner
+from floor_detection.src.obstacle_avoidance import ObstacleAvoidance
 
 from ohmni.controller import Notifier, Heteronomy, Autonomy
 from ohmni.state import StateMachine
@@ -248,12 +250,6 @@ def start(server, botshell, autonomy=False, debug=False):
 
                         #visualize the results
                         colors=[(255, 0, 0), (255, 255, 0), (0, 255, 0)]
-                        color = 0
-                        #for direction_traj in traj: #center, left, right
-                        #    for p in direction_traj:
-                        #        mask = cv2.circle(mask,(int(p[0]), int(p[1])),3,colors[color], 1)
-                        #    color += 1
-                        
                         color = 0
                         for direction_traj in traj:
                             for ii in range(len(direction_traj)-1):
