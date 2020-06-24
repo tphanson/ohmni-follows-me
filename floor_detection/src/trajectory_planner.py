@@ -21,7 +21,7 @@ class TrajectoryPlanner:
         self.theta = self.theta + w_dir
 
         # Update new position
-        self.x = self.x - v_dir * np.sin(self.theta)
+        self.x = self.x + v_dir * np.sin(self.theta)
         self.y = self.y - v_dir * np.cos(self.theta)
         
         # Add new position to path

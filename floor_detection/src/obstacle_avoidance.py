@@ -82,7 +82,7 @@ class ObstacleAvoidance:
 
         for i, c in enumerate(contours):
             tmpRect = cv.boundingRect(cv.approxPolyDP(c,3,True))
-            if tmpRect[1] < self.img_height//2:
+            if tmpRect[1] < self.img_height//2 and tmpRect[1] + tmpRect[3] < self.img_height//2:
                 boundRect.append(tmpRect)
 
         return boundRect

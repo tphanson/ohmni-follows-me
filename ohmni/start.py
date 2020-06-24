@@ -44,7 +44,7 @@ def stop_motion(mask, v_left, v_right, x, y, theta, limit_time):
         predicted_traj = TrajectoryPlanner(x,y,v_left,v_right,theta,l,sample_time)
         predicted_traj.run(v_right, v_left, limit_time)
         path_x, path_y = predicted_traj.path_x, predicted_traj.path_y
-        #path_x, path_y = interpolate_b_spline_path(predicted_traj.path_x, predicted_traj.path_y, n_course_point)
+        path_x, path_y = interpolate_b_spline_path(predicted_traj.path_x, predicted_traj.path_y, n_course_point)
         traj = [(i,j) for i, j in zip(path_x, path_y)]
         q.put([direction, traj])
 
@@ -230,13 +230,13 @@ def start(server, botshell, autonomy=False, debug=False):
                         theta = 0
                         
                         #mask = mask[0:mask.shape[0]//2, 0:mask.shape[1]//2]
-                        limit_time = 0.3
+                        limit_time = 0.2
                         t_stop = time.time()
                       
                         mask[np.where(mask == 0)] = 0
                         mask[np.where(mask == 1)] = 255
                         
-                        is_stop, traj, boundRect = stop_motion(mask, -v_left, -v_right, x,y,theta, limit_time)
+                        is_stop, traj, boundRect = stop_motion(mask, -v_left//1.2, -v_right//1.2, x,y,theta, limit_time)
                         
                         print("Is stop: ", is_stop)
                         print("Time stop: ", time.time()-t_stop)
