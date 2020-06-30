@@ -16,7 +16,7 @@ class TrajectoryPlanner:
         self.path_y = [y]
 
     def update_parameters(self, v_right, v_left):
-        w_dir = (v_right - v_left) / (2 * self.L*10)
+        w_dir = (v_right - v_left) / (2 * self.L*5)
         v_dir = (v_right + v_left) / 2
         self.theta = self.theta + w_dir
 

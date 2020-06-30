@@ -38,13 +38,13 @@ def stop_motion(mask, v_left, v_right, x, y, theta, limit_time):
     sample_time = 0.1
     l = 0.333
     #predict left, right and center trajectories
-    n_course_point = 20
+    n_course_point = 10
     q=Queue()
     def predict_traj_direction(direction, x,y):
         predicted_traj = TrajectoryPlanner(x,y,v_left,v_right,theta,l,sample_time)
         predicted_traj.run(v_right, v_left, limit_time)
         path_x, path_y = predicted_traj.path_x, predicted_traj.path_y
-        path_x, path_y = interpolate_b_spline_path(predicted_traj.path_x, predicted_traj.path_y, n_course_point)
+        #path_x, path_y = interpolate_b_spline_path(predicted_traj.path_x, predicted_traj.path_y, n_course_point)
         traj = [(i,j) for i, j in zip(path_x, path_y)]
         q.put([direction, traj])
 
@@ -68,6 +68,7 @@ def stop_motion(mask, v_left, v_right, x, y, theta, limit_time):
     is_collide_right, _ = oa.check_collide_with_traj(traj_right, boundRect)
 
     is_collide = is_collide_left & is_collide_right
+    
     traj = [traj_left, traj_right]
 
     return is_collide, traj, boundRect
@@ -158,6 +159,7 @@ def start(server, botshell, autonomy=False, debug=False):
         down_cam_img = cam_thread2.img
 
         
+        
         if pilimg is None:
             time.sleep(0.05)
             continue
@@ -168,6 +170,7 @@ def start(server, botshell, autonomy=False, debug=False):
 
         imgstart = time.time()
         img = np.asarray(pilimg)
+        
         print("Size image: ", np.asarray(down_cam_img).shape)
         
         imgend = time.time()
@@ -191,6 +194,7 @@ def start(server, botshell, autonomy=False, debug=False):
         if state == 'init_run':
             notifier.say_ready()
             notifier.send_status('run')
+            
             sm.next_state(True, 0.5)
 
         # Tracking
@@ -216,9 +220,11 @@ def start(server, botshell, autonomy=False, debug=False):
                     sm.next_state(False)
 
                     # Detect floor
+                    
                     t_seg = time.time()
                     mask = detect_floor(fd, down_cam_img)
                     print("time segment: ", time.time()-t_seg)
+
 
                     if not debug:
                         ctrl.goto(box)
@@ -235,6 +241,7 @@ def start(server, botshell, autonomy=False, debug=False):
                       
                         mask[np.where(mask == 0)] = 0
                         mask[np.where(mask == 1)] = 255
+                        
                         
                         is_stop, traj, boundRect = stop_motion(mask, -v_left//1.2, -v_right//1.2, x,y,theta, limit_time)
                         
@@ -257,6 +264,7 @@ def start(server, botshell, autonomy=False, debug=False):
                         # combine mask and original down cam image
                         mask = cv2.resize(mask, (down_cam_img.shape[1], down_cam_img.shape[0]))
                         horizontal_concat = np.concatenate((down_cam_img, mask), axis=1)
+                        
                         encoded, buffer = cv2.imencode('.jpg', horizontal_concat)
                         jpg_as_text = base64.b64encode(buffer)
                         #stream to the laptop

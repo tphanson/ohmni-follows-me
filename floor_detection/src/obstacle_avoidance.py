@@ -57,15 +57,15 @@ class ObstacleAvoidance:
                 x1, y1, x2, y2 = traj[i][0], traj[i][1], traj[i+1][0], traj[i+1][1]
                 if lineRect(((x1, y1), (x2, y2)), rect):
                     return True, boundRect
-
+        
         for i in range(len(traj)-1):
             start = (int(traj[i][0]), int(traj[i][1]))
             end = (int(traj[i+1][0]), int(traj[i+1][1]))
             discrete_line = list(zip(*line(*start, *end)))
             for p in discrete_line:
-                if self.img[p[1], p[0]] == 255:#white is obstacles
+                if self.img[p[1]-1, p[0]-1] == 255:#white is obstacles
                     return True, boundRect
-
+        
         return False, boundRect
     
     def find_obstacles(self):
@@ -82,7 +82,7 @@ class ObstacleAvoidance:
 
         for i, c in enumerate(contours):
             tmpRect = cv.boundingRect(cv.approxPolyDP(c,3,True))
-            if tmpRect[1] < self.img_height//2 and tmpRect[1] + tmpRect[3] < self.img_height//2:
+            if tmpRect[1] < self.img_height//2-10 and tmpRect[1] + tmpRect[3] < self.img_height//2-10:
                 boundRect.append(tmpRect)
 
         return boundRect
