@@ -1,6 +1,7 @@
 import time
 import numpy as np
-from utils import image, camera, ros
+import cv2 as cv
+from utils import image, ros
 from detection.posenet import PoseDetection
 from detection.coco import HumanDetection
 from tracker.triplet import HumanTracking, formalize_data
@@ -64,7 +65,7 @@ def tracking(tracker, objs, img):
     return bboxes_batch[argmax]
 
 
-def start(server, botshell, autonomy=False, debug=False):
+def start(botshell, autonomy=False, debug=False):
     if debug:
         rosimg = ros.ROSImage()
         rosimg.client.run()
@@ -72,6 +73,8 @@ def start(server, botshell, autonomy=False, debug=False):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking(threshold=50)
+    camera = cv.VideoCapture(0)
+    print(camera.shape)
 
     notifier = Notifier(botshell)
     htnm = Heteronomy((1024, 1280), botshell)
@@ -85,17 +88,12 @@ def start(server, botshell, autonomy=False, debug=False):
     sm = StateMachine()
 
     while True:
-        pilimg = camera.fetch(server)
-        if pilimg is None:
-            time.sleep(0.05)
-            continue
-
         fpsstart = time.time()
         state = sm.get_state()
         print('Debug:', state)
 
         imgstart = time.time()
-        img = np.asarray(pilimg)
+        _, img = camera.read()
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
