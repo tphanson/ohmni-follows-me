@@ -76,8 +76,8 @@ def start(botshell, autonomy=False, debug=False):
     camera = cv.VideoCapture(0)
 
     notifier = Notifier(botshell)
-    htnm = Heteronomy((1024, 1280), botshell)
-    atnm = Autonomy((1024, 1280), botshell)
+    htnm = Heteronomy((480, 640), botshell)
+    atnm = Autonomy((480, 640), botshell)
     ctrl = atnm if autonomy else htnm
     ctrl.start()
 
@@ -93,7 +93,6 @@ def start(botshell, autonomy=False, debug=False):
 
         imgstart = time.time()
         _, img = camera.read()
-        print(img.shape)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
