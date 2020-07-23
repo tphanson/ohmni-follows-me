@@ -74,7 +74,6 @@ def start(botshell, autonomy=False, debug=False):
     hd = HumanDetection()
     ht = HumanTracking(threshold=50)
     camera = cv.VideoCapture(0)
-    print(camera.shape)
 
     notifier = Notifier(botshell)
     htnm = Heteronomy((1024, 1280), botshell)
@@ -94,6 +93,7 @@ def start(botshell, autonomy=False, debug=False):
 
         imgstart = time.time()
         _, img = camera.read()
+        print(img.shape)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
