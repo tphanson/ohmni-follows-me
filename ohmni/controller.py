@@ -1,5 +1,7 @@
 import time
 import numpy as np
+import cv2 as cv
+from detection import floornet
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
@@ -132,6 +134,8 @@ class Heteronomy:
         self.frame_shape = frame_shape
         self.botshell = botshell
         self.estimation = Estimation(frame_shape)
+        self.camera = cv.VideoCapture(1)
+        self.floorNet = floornet.FloorNet(frame_shape)
 
     def start(self):
         print('*** Start manual move')
@@ -145,6 +149,10 @@ class Heteronomy:
         # Estimate controller params
         lw, rw = self.estimation.wheel(box)
         pos = self.estimation.neck(box)
+        _, img = self.camera.read()
+        _, _, collision = self.floorNet.predict(img)
+        if collision:
+            return self.wait()
         # Static test
         print('*** Manual move:', lw, rw)
         print('*** Neck position:', pos)

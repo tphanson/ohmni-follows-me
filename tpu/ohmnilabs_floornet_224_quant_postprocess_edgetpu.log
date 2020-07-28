@@ -1,0 +1,16 @@
+Edge TPU Compiler version 14.1.317412892
+Input: ohmnilabs_floornet_224_quant_postprocess.tflite
+Output: ohmnilabs_floornet_224_quant_postprocess_edgetpu.tflite
+
+Operator                       Count      Status
+
+ADD                            15         Mapped to Edge TPU
+PAD                            5          Mapped to Edge TPU
+CONCATENATION                  4          Mapped to Edge TPU
+DEPTHWISE_CONV_2D              17         Mapped to Edge TPU
+DEQUANTIZE                     1          Operation is working on an unsupported data type
+QUANTIZE                       4          Mapped to Edge TPU
+QUANTIZE                       1          Operation is otherwise supported, but not mapped due to some unspecified limitation
+MUL                            4          Mapped to Edge TPU
+CONV_2D                        34         Mapped to Edge TPU
+TRANSPOSE_CONV                 5          Mapped to Edge TPU

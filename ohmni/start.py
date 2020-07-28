@@ -78,11 +78,10 @@ def start(botshell, autonomy=False, debug=False):
     # Get image shape
     _, img = camera.read()
     (height, width, _) = img.shape
-    print(height, width)
 
     notifier = Notifier(botshell)
-    htnm = Heteronomy((480, 640), botshell)
-    atnm = Autonomy((480, 640), botshell)
+    htnm = Heteronomy((height, width), botshell)
+    atnm = Autonomy((height, width), botshell)
     ctrl = atnm if autonomy else htnm
     ctrl.start()
 
