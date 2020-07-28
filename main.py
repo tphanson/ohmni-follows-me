@@ -1,12 +1,7 @@
 import sys
-import os
 import socket
 from tests import wheel
 from ohmni import start as ohmni
-
-
-if os.path.exists("/dev/libcamera_stream"):
-    os.remove("/dev/libcamera_stream")
 
 # Init botshell
 botshell = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

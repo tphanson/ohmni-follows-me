@@ -68,7 +68,7 @@ def tracking(tracker, objs, img):
 def start(botshell, autonomy=False, debug=False):
     if debug:
         rosimg = ros.ROSImage()
-        rosimg.client.run()
+        talker = rosimg.gen_talker('/ofm/draw_image/compressed')
 
     pd = PoseDetection()
     hd = HumanDetection()
@@ -144,7 +144,7 @@ def start(botshell, autonomy=False, debug=False):
 
         # Publish ROS topic
         if debug:
-            rosimg.apush(img)
+            talker.push(img)
 
         # Calculate frames per second (FPS)
         fpsend = time.time()
@@ -155,5 +155,7 @@ def start(botshell, autonomy=False, debug=False):
         print('Total estimated time {:.4f}'.format(fpsend-fpsstart))
         print('FPS: {:.1f} \n\n'.format(1 / (fpsadjust-fpsstart)))
 
+    talker.stop()
+    rosimg.stop()
     ctrl.stop()
     print('Stopped OFM.')

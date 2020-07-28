@@ -6,31 +6,42 @@ import threading
 import time
 
 
-class ROSImage:
-    def __init__(self):
-        self.in_topic = '/main_cam/image_raw/compressed'
-        self.out_topic = '/ofm/draw_image/compressed'
-        self.in_data_type = 'sensor_msgs/CompressedImage'
-        self.out_data_type = 'sensor_msgs/CompressedImage'
+class Listener:
+    def __init__(self, client, topic, data_type='sensor_msgs/CompressedImage'):
+        self.client = client
+        self.topic = topic
+        self.data_type = data_type
+
+        self.listener = roslibpy.Topic(self.client, self.topic, self.data_type,
+                                       throttle_rate=100, queue_size=1)
+        self.listener.subscribe(self.__callback)
         self.header = None
         self.image = None
+
+    def __compressed_to_cv(self, msg):
+        buffer = base64.b64decode(msg['data'])
+        img = np.fromstring(buffer, dtype=np.uint8)
+        img = cv.imdecode(img, cv.IMREAD_COLOR)
+        return msg['header'], img
+
+    def __callback(self, msg):
+        self.header, self.image = self.__compressed_to_cv(msg)
+
+    def get(self):
+        return self.header, self.image
+
+    def stop(self):
+        pass
+
+
+class Talker:
+    def __init__(self, client, topic, data_type='sensor_msgs/CompressedImage'):
+        self.client = client
+        self.topic = topic
+        self.data_type = data_type
+
+        self.talker = roslibpy.Topic(self.client, self.topic, self.data_type)
         self.seq = 0
-
-        self.client = roslibpy.Ros(host='localhost', port=9090)
-        self.listener = roslibpy.Topic(
-            self.client, self.in_topic, self.in_data_type,
-            throttle_rate=100, queue_size=1)
-        self.talker = roslibpy.Topic(
-            self.client, self.out_topic, self.out_data_type)
-
-    def __compressed_to_cv(self, _msg):
-        buffer = base64.b64decode(_msg['data'])
-        _img = np.fromstring(buffer, dtype=np.uint8)
-        _img = cv.imdecode(_img, cv.IMREAD_COLOR)
-        return _msg['header'], _img
-
-    def __callback(self, _msg):
-        self.header, self.image = self.__compressed_to_cv(_msg)
 
     def __header(self):
         _time = time.time()
@@ -41,7 +52,7 @@ class ROSImage:
             'seq': self.seq
         }
 
-    def gen_compressed_img(self, _img):
+    def _compress_img(self, _img):
         _, buffer = cv.imencode('.jpeg', _img)
         _data = base64.b64encode(buffer)
         _header = self.__header()
@@ -51,25 +62,38 @@ class ROSImage:
             'format': 'rgb8; jpeg compressed bgr8'
         }
 
-    def isAlive(self):
-        return self.client.is_connected
+    def _sync_push(self, img):
+        msg = self._compress_img(img)
+        self.talker.publish(roslibpy.Message(msg))
 
-    def start(self):
-        print("Start listening")
-        self.client.run()
-        self.listener.subscribe(self.__callback)
+    def _async_push(self, img):
+        t = threading.Thread(target=self._sync_push, args=(img,), daemon=True)
+        t.start()
+
+    def push(self, img):
+        self._async_push(img)
 
     def stop(self):
         self.talker.unadvertise()
+
+
+class ROSImage:
+    def __init__(self, host='localhost', port=9090):
+        self.host = host
+        self.port = port
+        self.client = roslibpy.Ros(host=self.host, port=self.port)
+        self.client.run()
+
+    def isAlive(self):
+        return self.client.is_connected
+
+    def gen_talker(self, topic):
+        """ For topic examples: '/ofm/draw_image/compressed' """
+        return Talker(self.client, topic)
+
+    def gen_listener(self, topic):
+        """ For topic examples: '/main_cam/image_raw/compressed' """
+        return Listener(self.client, topic)
+
+    def stop(self):
         self.client.terminate()
-
-    def get(self):
-        return self.header, self.image
-
-    def push(self, _img):
-        msg = self.gen_compressed_img(_img)
-        self.talker.publish(roslibpy.Message(msg))
-
-    def apush(self, _img):
-        t = threading.Thread(target=self.push, args=(_img,), daemon=True)
-        t.start()
