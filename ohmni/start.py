@@ -97,9 +97,9 @@ def start(botshell, autonomy=False, debug=False):
         print('Debug:', state)
 
         imgstart = time.time()
-        ret, img = camera.read()
-        nav_ret, _ = nav_camera.read()
-        print("==================", ret, nav_ret)
+        _, img = camera.read()
+        _, nav_img = nav_camera.read()
+        print("==================", img.shape, nav_img.shape)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
         continue
