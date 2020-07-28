@@ -74,8 +74,6 @@ def start(botshell, autonomy=False, debug=False):
     hd = HumanDetection()
     ht = HumanTracking(threshold=50)
     camera = cv.VideoCapture(0)
-    camera.set(3, 320)
-    camera.set(4, 240)
     # Get image shape
     _, img = camera.read()
     (height, width, _) = img.shape
