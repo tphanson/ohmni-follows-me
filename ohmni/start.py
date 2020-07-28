@@ -74,12 +74,8 @@ def start(botshell, autonomy=False, debug=False):
     hd = HumanDetection()
     ht = HumanTracking(threshold=50)
     camera = cv.VideoCapture(0)
-    camera.set(3,320)
-    camera.set(4,240)
-    nav_camera = cv.VideoCapture(1)
-    nav_camera.set(3,320)
-    nav_camera.set(4,240)
-
+    camera.set(3, 320)
+    camera.set(4, 240)
     # Get image shape
     _, img = camera.read()
     (height, width, _) = img.shape
@@ -102,11 +98,8 @@ def start(botshell, autonomy=False, debug=False):
 
         imgstart = time.time()
         _, img = camera.read()
-        _, nav_img = nav_camera.read()
-        print("==================", img.shape, nav_img.shape)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
-        continue
 
         # Stop
         if state == 'init_idle':

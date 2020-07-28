@@ -135,6 +135,9 @@ class Heteronomy:
         self.botshell = botshell
         self.estimation = Estimation(frame_shape)
         self.floorNet = floornet.FloorNet(frame_shape)
+        self.camera = cv.VideoCapture(1)
+        self.camera.set(3, 320)
+        self.camera.set(4, 240)
 
     def start(self):
         print('*** Start manual move')
@@ -148,12 +151,10 @@ class Heteronomy:
         # Estimate controller params
         lw, rw = self.estimation.wheel(box)
         pos = self.estimation.neck(box)
-        # ret, img = self.camera.read()
-        # print("===============================", ret)
-        # if img is not None:
-        #     _, _, collision = self.floorNet.predict(img)
-        #     if collision:
-        #         return self.wait()
+        _, img = self.camera.read()
+        _, _, collision = self.floorNet.predict(img)
+        if collision:
+            return self.wait()
         # Static test
         print('*** Manual move:', lw, rw)
         print('*** Neck position:', pos)
