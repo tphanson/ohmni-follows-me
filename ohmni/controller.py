@@ -149,9 +149,9 @@ class Heteronomy:
         # Estimate controller params
         lw, rw = self.estimation.wheel(box)
         pos = self.estimation.neck(box)
-        _, img = self.camera.read()
+        ret, img = self.camera.read()
+        print("===============================", ret)
         if img is not None:
-            print("===============================")
             _, _, collision = self.floorNet.predict(img)
             if collision:
                 return self.wait()
