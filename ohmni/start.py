@@ -74,6 +74,7 @@ def start(botshell, autonomy=False, debug=False):
     hd = HumanDetection()
     ht = HumanTracking(threshold=50)
     camera = cv.VideoCapture(0)
+    nav_camera = cv.VideoCapture(1)
 
     # Get image shape
     _, img = camera.read()
@@ -91,9 +92,10 @@ def start(botshell, autonomy=False, debug=False):
     sm = StateMachine()
 
     while True:
+        ret, _ = nav_camera.read()
         fpsstart = time.time()
         state = sm.get_state()
-        print('Debug:', state)
+        print('Debug:', state, ret)
 
         imgstart = time.time()
         _, img = camera.read()
