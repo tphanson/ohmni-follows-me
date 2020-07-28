@@ -92,13 +92,14 @@ def start(botshell, autonomy=False, debug=False):
     sm = StateMachine()
 
     while True:
-        ret, _ = nav_camera.read()
         fpsstart = time.time()
         state = sm.get_state()
-        print('Debug:', state, ret)
+        print('Debug:', state)
 
         imgstart = time.time()
-        _, img = camera.read()
+        ret, img = camera.read()
+        nav_ret, _ = nav_camera.read()
+        print("==================", ret, nav_ret)
         imgend = time.time()
         print('Image estimated time {:.4f}'.format(imgend-imgstart))
 
