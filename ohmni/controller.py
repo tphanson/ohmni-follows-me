@@ -150,7 +150,7 @@ class Heteronomy:
         lw, rw = self.estimation.wheel(box)
         pos = self.estimation.neck(box)
         ret, img = self.camera.read()
-        print("===============================", ret)
+        print("===============================", ret, self.camera)
         if img is not None:
             _, _, collision = self.floorNet.predict(img)
             if collision:
