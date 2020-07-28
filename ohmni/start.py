@@ -73,7 +73,7 @@ def start(botshell, autonomy=False, debug=False):
     pd = PoseDetection()
     hd = HumanDetection()
     ht = HumanTracking(threshold=50)
-    # camera = cv.VideoCapture(0)
+    camera = cv.VideoCapture(2)
     nav_camera = cv.VideoCapture(1)
 
     # Get image shape
@@ -97,7 +97,7 @@ def start(botshell, autonomy=False, debug=False):
         print('Debug:', state)
 
         imgstart = time.time()
-        # ret, img = camera.read()
+        ret, img = camera.read()
         nav_ret, _ = nav_camera.read()
         print("==================", ret, nav_ret)
         imgend = time.time()
