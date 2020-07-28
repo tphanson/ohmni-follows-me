@@ -75,6 +75,11 @@ def start(botshell, autonomy=False, debug=False):
     ht = HumanTracking(threshold=50)
     camera = cv.VideoCapture(0)
 
+    # Get image shape
+    _, img = camera.read()
+    (height, width, _) = img.shape
+    print(height, width)
+
     notifier = Notifier(botshell)
     htnm = Heteronomy((480, 640), botshell)
     atnm = Autonomy((480, 640), botshell)
