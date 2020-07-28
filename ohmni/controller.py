@@ -151,6 +151,7 @@ class Heteronomy:
         pos = self.estimation.neck(box)
         _, img = self.camera.read()
         if img is not None:
+            print("===============================")
             _, _, collision = self.floorNet.predict(img)
             if collision:
                 return self.wait()
