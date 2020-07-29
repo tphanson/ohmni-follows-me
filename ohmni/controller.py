@@ -1,8 +1,8 @@
 import time
 import numpy as np
 import cv2 as cv
-from queue import Queue
-from threading
+import queue
+import threading
 from detection import floornet
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
@@ -141,7 +141,7 @@ class Heteronomy:
         self.camera.set(3, 320)
         self.camera.set(4, 240)
 
-        self.q = Queue(maxsize=2)
+        self.q = queue.Queue(maxsize=2)
 
     def start(self):
         """ Start the controller thread """
