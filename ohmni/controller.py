@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import cv2 as cv
-import queue
+import asyncio
 import threading
 from detection import floornet
 
@@ -141,7 +141,7 @@ class Heteronomy:
         self.camera.set(3, 320)
         self.camera.set(4, 240)
 
-        self.q = queue.Queue(maxsize=2)
+        self.q = asyncio.Queue(maxsize=2)
 
     def start(self):
         """ Start the controller thread """
