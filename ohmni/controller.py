@@ -169,8 +169,11 @@ class Heteronomy:
             # Estimate controller params
             lw, rw = self.estimation.wheel(box)
             pos = self.estimation.neck(box)
+            fnstart = time.time()
             _, img = self.camera.read()
             _, _, collision = self.floorNet.predict(img)
+            fnend = time.time()
+            print('FloorNet estimated time {:.4f}'.format(fnend-fnstart))
             if collision:
                 print('*** Collision detected')
                 self.wait()
