@@ -183,7 +183,7 @@ class Heteronomy:
     def goto(self, box):
         """ Feed data to queue for other processes using """
         if self.q.full():
-            self.q.get(box) # Prevent block
+            self.q.get(box) # Prevent blocking
         self.q.put(box)
 
     def wait(self):
