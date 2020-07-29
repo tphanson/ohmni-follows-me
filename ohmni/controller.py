@@ -1,6 +1,8 @@
 import time
 import numpy as np
 import cv2 as cv
+from queue import Queue
+from threading
 from detection import floornet
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
@@ -139,28 +141,48 @@ class Heteronomy:
         self.camera.set(3, 320)
         self.camera.set(4, 240)
 
+        self.q = Queue(maxsize=2)
+
     def start(self):
+        """ Start the controller thread """
         print('*** Start manual move')
+        t = threading.Thread(target=self._goto, args=(), daemon=True)
+        t.start()
 
     def stop(self):
+        """ Stop Ohmni, set neck to initial state """
         print('*** Stop manual move')
         self.botshell.sendall(b'manual_move 0 0\n')
         self.botshell.sendall(f'neck_angle {NECK_POS}\n'.encode())
 
+    def _goto(self):
+        """ Fetch data from queue and execute it """
+
+        while True:
+            # Get box
+            box = self.q.get()
+            print("==========", box)
+            if box is None:
+                time.sleep(0.05)  # Recheck in 20Hz
+                continue
+
+            # Estimate controller params
+            lw, rw = self.estimation.wheel(box)
+            pos = self.estimation.neck(box)
+            # _, img = self.camera.read()
+            # _, _, collision = self.floorNet.predict(img)
+            # if collision:
+            #     return self.wait()
+            # Static test
+            print('*** Manual move:', lw, rw)
+            print('*** Neck position:', pos)
+            # Dynamic test
+            self.botshell.sendall(f'manual_move {lw} {rw}\n'.encode())
+            self.botshell.sendall(f'neck_angle {pos}\n'.encode())
+
     def goto(self, box):
-        # Estimate controller params
-        lw, rw = self.estimation.wheel(box)
-        pos = self.estimation.neck(box)
-        _, img = self.camera.read()
-        _, _, collision = self.floorNet.predict(img)
-        if collision:
-            return self.wait()
-        # Static test
-        print('*** Manual move:', lw, rw)
-        print('*** Neck position:', pos)
-        # Dynamic test
-        self.botshell.sendall(f'manual_move {lw} {rw}\n'.encode())
-        self.botshell.sendall(f'neck_angle {pos}\n'.encode())
+        """ Feed data to queue for other processes using """
+        self.q.put(box)
 
     def wait(self):
         print('*** Manual move:', 0, 0)
