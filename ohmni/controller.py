@@ -169,10 +169,10 @@ class Heteronomy:
             # Estimate controller params
             lw, rw = self.estimation.wheel(box)
             pos = self.estimation.neck(box)
-            # _, img = self.camera.read()
-            # _, _, collision = self.floorNet.predict(img)
-            # if collision:
-            #     return self.wait()
+            _, img = self.camera.read()
+            _, _, collision = self.floorNet.predict(img)
+            if collision:
+                return self.wait()
             # Static test
             print('*** Manual move:', lw, rw)
             print('*** Neck position:', pos)
