@@ -140,7 +140,10 @@ def start(botshell, autonomy=False, debug=False):
                     # Drive car
                     sm.next_state(False)
                     if not debug:
+                        fnstart = time.time()
                         ctrl.goto(box)
+                        fnend = time.time()
+                        print('Controller estimated time {:.4f}'.format(fnend-fnstart))
                     # Draw bounding box of tracking objective
                     if debug:
                         img = image.draw_box(img, box)
