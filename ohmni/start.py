@@ -72,7 +72,7 @@ def start(botshell, autonomy=False, debug=False):
 
     pd = PoseDetection()
     hd = HumanDetection()
-    ht = HumanTracking(threshold=50)
+    ht = HumanTracking(threshold=35)
     camera = cv.VideoCapture(0)
     # Get image shape
     _, img = camera.read()
