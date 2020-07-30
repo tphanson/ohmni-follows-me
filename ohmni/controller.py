@@ -168,16 +168,18 @@ class Heteronomy:
             # Estimate controller params
             lw, rw = self.estimation.wheel(box)
             pos = self.estimation.neck(box)
-            _, img = self.camera.read()
-            _, _, collision = self.floorNet.predict(img)
-            if collision:
-                print('*** Collision detected')
-                self.wait()
-            else:
-                print('*** Manual move:', lw, rw)
-                print('*** Neck position:', pos)
-                self.botshell.sendall(f'manual_move {lw} {rw}\n'.encode())
-                self.botshell.sendall(f'neck_angle {pos}\n'.encode())
+            # Detect collision
+            # _, img = self.camera.read()
+            # _, _, collision = self.floorNet.predict(img)
+            # if collision:
+            #     print('*** Collision detected')
+            #     self.wait()
+            #     continue
+            # Send commands
+            print('*** Manual move:', lw, rw)
+            print('*** Neck position:', pos)
+            self.botshell.sendall(f'manual_move {lw} {rw}\n'.encode())
+            self.botshell.sendall(f'neck_angle {pos}\n'.encode())
 
     def goto(self, box):
         """ Feed data to queue for other processes using """
