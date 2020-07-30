@@ -161,7 +161,6 @@ class Heteronomy:
         while True:
             # Get box
             box = self.q.get()
-            print("==========", box)
             if box is None:
                 time.sleep(0.05)  # Recheck in 20Hz
                 continue
@@ -183,7 +182,7 @@ class Heteronomy:
     def goto(self, box):
         """ Feed data to queue for other processes using """
         if self.q.full():
-            self.q.get(box) # Prevent blocking
+            self.q.get(box)  # Prevent blocking
         self.q.put(box)
 
     def wait(self):
