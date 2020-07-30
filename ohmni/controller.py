@@ -138,8 +138,8 @@ class Heteronomy:
         self.estimation = Estimation(frame_shape)
         self.floorNet = floornet.FloorNet(frame_shape)
         self.camera = cv.VideoCapture(1)
-        self.camera.set(3, 320)
-        self.camera.set(4, 240)
+        # self.camera.set(3, 320)
+        # self.camera.set(4, 240)
 
         self.q = queue.Queue(maxsize=2)
 

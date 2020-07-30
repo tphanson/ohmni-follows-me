@@ -74,6 +74,8 @@ def start(botshell, autonomy=False, debug=False):
     hd = HumanDetection()
     ht = HumanTracking(threshold=35)
     camera = cv.VideoCapture(0)
+    camera.set(3, 320)
+    camera.set(4, 240)
     # Get image shape
     _, img = camera.read()
     (height, width, _) = img.shape
@@ -143,7 +145,8 @@ def start(botshell, autonomy=False, debug=False):
                         fnstart = time.time()
                         ctrl.goto(box)
                         fnend = time.time()
-                        print('Controller estimated time {:.4f}'.format(fnend-fnstart))
+                        print('Controller estimated time {:.4f}'.format(
+                            fnend-fnstart))
                     # Draw bounding box of tracking objective
                     if debug:
                         img = image.draw_box(img, box)
