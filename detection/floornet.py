@@ -22,7 +22,7 @@ class Inference:
         self.interpreter = tflite.Interpreter(
             model_path=self.model_dir,
             experimental_delegates=[
-                tflite.load_delegate(EDGETPU_SHARED_LIB, {"device": "usb:0"})
+                tflite.load_delegate(EDGETPU_SHARED_LIB, {"device": "usb:1"})
             ])
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
