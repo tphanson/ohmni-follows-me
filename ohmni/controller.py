@@ -169,12 +169,12 @@ class Heteronomy:
             lw, rw = self.estimation.wheel(box)
             pos = self.estimation.neck(box)
             # Detect collision
-            # _, img = self.camera.read()
-            # _, _, collision = self.floorNet.predict(img)
-            # if collision:
-            #     print('*** Collision detected')
-            #     self.wait()
-            #     continue
+            _, img = self.camera.read()
+            _, _, collision = self.floorNet.predict(img)
+            if collision:
+                print('*** Collision detected')
+                self.wait()
+                continue
             # Send commands
             print('*** Manual move:', lw, rw)
             print('*** Neck position:', pos)
