@@ -16,7 +16,7 @@ class HumanDetection:
         self.interpreter = tflite.Interpreter(
             model_path=MODELS,
             experimental_delegates=[
-                tflite.load_delegate(EDGETPU_SHARED_LIB, {"device": "usb:1"})
+                tflite.load_delegate(EDGETPU_SHARED_LIB, {"device": "usb:0"})
             ])
         self.confidence = confidence
         self.input_details = self.interpreter.get_input_details()
