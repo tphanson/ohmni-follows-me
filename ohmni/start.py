@@ -74,8 +74,8 @@ def start(botshell, autonomy=False, debug=False):
     hd = HumanDetection()
     ht = HumanTracking(threshold=35)
     camera = cv.VideoCapture(0)
-    camera.set(3, 320)
-    camera.set(4, 240)
+    # camera.set(3, 320)
+    # camera.set(4, 240)
     # Get image shape
     _, img = camera.read()
     (height, width, _) = img.shape
@@ -87,7 +87,8 @@ def start(botshell, autonomy=False, debug=False):
     ctrl.start()
 
     # Wait for autonomy process starting
-    time.sleep(5)
+    if autonomy:
+        time.sleep(5)
 
     sm = StateMachine()
 

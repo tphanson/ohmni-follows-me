@@ -20,7 +20,7 @@ NECK_POS = 500
 ROTATION = 450
 # Speed of run
 BACKWARD = 600
-FORWARD = 1200 # 1900 max
+FORWARD = 1200  # 1900 max
 # Speed of neck
 NECK_DELTA = 10
 NECK = [300, 550]
@@ -138,8 +138,8 @@ class Heteronomy:
         self.estimation = Estimation(frame_shape)
         self.floorNet = floornet.FloorNet(frame_shape)
         self.camera = cv.VideoCapture(1)
-        # self.camera.set(3, 320)
-        # self.camera.set(4, 240)
+        self.camera.set(3, 320)
+        self.camera.set(4, 240)
 
         self.q = queue.Queue(maxsize=2)
 
