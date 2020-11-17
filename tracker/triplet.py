@@ -75,7 +75,6 @@ class HumanTracking:
         return inter_area/float(anchor_area+predicted_area-inter_area)
 
     def infer(self, img):
-        print(self.input_details[0])
         self.interpreter.allocate_tensors()
         self.interpreter.set_tensor(
             self.input_details[0]['index'], [list(img)])
