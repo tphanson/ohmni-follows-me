@@ -3,7 +3,6 @@ import numpy as np
 import cv2 as cv
 import queue
 import threading
-# from detection import floornet
 
 # RO: 0.00253 rad/s/unit ; unit: (1,1)
 # MOV: 0.43 mm/s/unit ; unit: (1,-1)
@@ -136,11 +135,6 @@ class Heteronomy:
         self.frame_shape = frame_shape
         self.botshell = botshell
         self.estimation = Estimation(frame_shape)
-        # self.floorNet = floornet.FloorNet(frame_shape)
-        self.camera = cv.VideoCapture(1)
-        self.camera.set(3, 320)
-        self.camera.set(4, 240)
-
         self.q = queue.Queue(maxsize=2)
 
     def start(self):
@@ -171,13 +165,6 @@ class Heteronomy:
             # Control neck
             print('*** Neck position:', pos)
             self.botshell.sendall(f'neck_angle {pos}\n'.encode())
-            # Detect collision
-            _, img = self.camera.read()
-            # _, _, collision = self.floorNet.predict(img)
-            # if collision:
-            #     print('*** Collision detected')
-            #     self.wait()
-            #     continue
             # Control wheels
             print('*** Manual move:', lw, rw)
             self.botshell.sendall(f'manual_move {lw} {rw}\n'.encode())
