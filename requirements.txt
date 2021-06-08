@@ -1,4 +1,4 @@
 roslibpy==0.7.1
 numpy==1.13.3
 opencv_python==4.1.1.26
-Pillow==7.1.2
+Pillow==8.2.0
